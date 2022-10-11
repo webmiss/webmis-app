@@ -4,8 +4,8 @@
 ## 安装
 
 ```bash
-$ git clone https://github.com/webmiss/webmis_vueapp.git
-$ cd webmis_vueapp
+$ git clone https://github.com/webmiss/webmis-vueapp.git
+$ cd webmis-vueapp
 $ yarn install
 ```
 
