@@ -1,0 +1,40 @@
+{
+  "name": "webmis-vue",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@better-scroll/core": "^2.1.1",
+    "@better-scroll/observe-dom": "^2.1.1",
+    "@better-scroll/observe-image": "^2.1.1",
+    "@better-scroll/pull-down": "^2.1.1",
+    "@better-scroll/pull-up": "^2.1.1",
+    "@better-scroll/slide": "^2.1.1",
+    "@better-scroll/wheel": "^2.1.1",
+    "axios": "^1.1.2",
+    "core-js": "^3.6.5",
+    "vue": "^3.1.1",
+    "vue-router": "^4.0.2",
+    "vuex": "^4.0.0"
+  },
+  "devDependencies": {
+    "@antv/f2": "^4.0.33",
+    "@babel/core": "^7.12.16",
+    "@vue/cli-plugin-babel": "~5.0.8",
+    "@vue/cli-plugin-router": "~5.0.8",
+    "@vue/cli-plugin-typescript": "~5.0.8",
+    "@vue/cli-plugin-vuex": "~5.0.8",
+    "@vue/cli-service": "~5.0.8",
+    "@vue/compiler-sfc": "^3.1.1",
+    "typescript": "~4.8.4"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
