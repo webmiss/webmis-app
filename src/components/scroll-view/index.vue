@@ -48,13 +48,13 @@ export default defineComponent({
     startY: {type: Number, default: 0},                                     //初始化位置-纵轴
     loading: {type: Number, default: 48},                                   //Loading高度
     loadingTheme: {type: String, default: 'flow'},                          //Loading样式: flow、swing、circle、wave
-    loadingColor: {type: String, default: Env.themes.primary},              //Loading颜色
+    loadingColor: {type: String, default: '#6FB737'},              //Loading颜色
     upper: {type: Number, default: 64},                                     //顶部距离
     lower: {type: Number, default: 80},                                     //底部距离
     upperText: {type: String, default: '已刷新'},                           //刷新文本
     lowerText: {type: String, default: '正在加载'},                         //加载文本
-    upperColor: {type: String, default: Env.themes.text2},                  //刷新颜色
-    lowerColor: {type: String, default: Env.themes.text2},                  //加载颜色
+    upperColor: {type: String, default: '#909399'},                  //刷新颜色
+    lowerColor: {type: String, default: '#909399'},                  //加载颜色
     isUpper: {type: Boolean, default: true},                                //是否下拉
     isLower: {type: Boolean, default: true},                                //是否上拉
     scrollbar: {type: Object, default: {fade: false, interactive: true}},   //滚动条

@@ -61,7 +61,7 @@ export default defineComponent({
   },
   data(){
     const wheel: any = [];
-    const primary: string = Env.themes.primary;
+    const primary: string = '#6FB737';
     const pickerData: any = [];
     const oldIndex: number[] = [];
     const setTimeout: number = 0;

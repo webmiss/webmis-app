@@ -11,14 +11,14 @@
         <wm-scroll-view class="demo" ref="DemoScroll" @down="reFresh" @up="upLoad" @scroll="scroll">
           <!-- Swiper -->
           <wm-swipe class="swipe">
-            <wm-swipe-item class="swipe_item">
-              <wm-chart-line :data="chartData.line" unit="元" :isDot="false"></wm-chart-line>
+            <wm-swipe-item class="swipe_item bg1">
+              <!-- <wm-chart-line :data="chartData.line" unit="元" :isDot="false"></wm-chart-line> -->
             </wm-swipe-item>
-            <wm-swipe-item class="swipe_item">
-              <wm-chart-interval :data="chartData.interval" unit="元"></wm-chart-interval>
+            <wm-swipe-item class="swipe_item bg2">
+              <!-- <wm-chart-interval :data="chartData.interval" unit="元"></wm-chart-interval> -->
             </wm-swipe-item>
-            <wm-swipe-item class="swipe_item">
-              <wm-chart-pie :data="chartData.pie" unit="元"></wm-chart-pie>
+            <wm-swipe-item class="swipe_item bg3">
+              <!-- <wm-chart-pie :data="chartData.pie" unit="元"></wm-chart-pie> -->
             </wm-swipe-item>
           </wm-swipe>
           <!-- Picker -->
@@ -38,8 +38,11 @@
 <style scoped>
 .demo{height: 100%;}
 .item{padding: 0 15px; line-height: 60px; border: #F2F4F8 1px solid; box-sizing: border-box;}
-.swipe{width: 100%; height: 48vmin; background-color: #F2F4F8;}
-.swipe_item{height: 100%; height: 48vmin; text-align: center;}
+.swipe{overflow: hidden; width: calc(100% - 30px); height: 48vmin; background-color: #F2F4F8; border-radius: 8px; margin: 0 auto;}
+.swipe_item{height: 100%; height: 48vmin; text-align: center; background-size: cover; background-repeat: no-repeat; background-position: center;}
+.swipe_item.bg1{background-image: url('https://img.zcool.cn/tubelocation/7a2463dca022000dce1000089d76.jpg?x-oss-process=image/format,webp/quality,q_100');}
+.swipe_item.bg2{background-image: url('https://img.zcool.cn/tubelocation/75ec63df3d75000dce1000ed15dd.jpg?x-oss-process=image/format,webp/quality,q_100');}
+.swipe_item.bg3{background-image: url('https://img.zcool.cn/tubelocation/007763df3d8f000dce10000d169f.jpg?x-oss-process=image/format,webp/quality,q_100');}
 </style>
 
 <script lang="ts" src="./Demo.ts"></script>

@@ -22,7 +22,7 @@ export default defineComponent({
   props: {
     data: {type: Object, default: []},                        //数据: [{lable: '首页', icon: 'icons icon_home'}]
     active: {type: Number, default: 0},                       //默认菜单
-    activeColor: {type: String, default: Env.themes.primary}, //默认菜单
+    activeColor: {type: String, default: '#6FB737'}, //默认菜单
     height: {type: String, default: '54px'},                  //高度
   },
   methods:{

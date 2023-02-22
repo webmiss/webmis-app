@@ -151,7 +151,7 @@ export default defineComponent({
   name: 'Loading',
   props: {
     theme: {type: String, default: 'flow'}, //样式: flow、swing、circle、wave
-    color: {type: String, default: Env.themes.primary},  //颜色
+    color: {type: String, default: '#6FB737'},  //颜色
   },
 });
 </script>

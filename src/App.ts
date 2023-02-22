@@ -18,11 +18,10 @@ export default defineComponent({
     // 切换动画
     const transitionName: string = '';
     // 更新APP
-    const update: any = {show:false, os:'', down:false, loading:'0%', msg:'检测更新', file:'', total:0};
-    const updateCfg: any = Env.update;
+    const update: any = {show:false, os:'', down:false, loading:'1%', msg:'检测更新', file:'', total:0, button:'下载并安装'};
     // 信息
     const info: any = {title: Env.title, version: Env.version, copy: Env.copy};
-    return {state,router,transitionName,update,updateCfg,info}
+    return {state, router, transitionName, update, info}
   },
   watch:{
     $route(to: any, from: any){
@@ -75,7 +74,7 @@ export default defineComponent({
       if (this.update.os == 'iOS') {
         // 苹果手机
         this.update.msg = '请在桌面查看安装进度';
-        window.open(Env.upIosUrl);
+        window.open(Env.update.iosUrl);
         // 关闭APP
         setTimeout(()=>{
           // @ts-ignore

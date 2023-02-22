@@ -1,10 +1,10 @@
 import Env from '@/env'
 import Toast from '@/library/ui/toast'
-import Post from '@/library/request//post'
+import Post from '@/library/request/post'
 import Storage from '@/library/Storage'
 
 /* 本地消息 */
-export default (title: string, content: string, isRead: boolean)=>{
+export default (title: string, content: string, isRead: boolean=false)=>{
   // 浏览器
   if(Env.msg.browser && window.Notification && Notification.permission !== "denied") {
     Notification.requestPermission(function(status) {
@@ -15,7 +15,6 @@ export default (title: string, content: string, isRead: boolean)=>{
   const text = Env.msg.content=='title'?title:content;
   Toast(text);
   /* 是否阅读 */
-  isRead = isRead || false;
   if(!isRead) return;
   // 百度语音
   const token = Storage.getItem('token') || '';
