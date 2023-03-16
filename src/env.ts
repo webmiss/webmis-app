@@ -54,7 +54,7 @@ export default {
   },
   /* Socket */
   socket: {
-    type: 'api',
+    channel: 'api',
     start: false, //启动
     server: socket, //链接地址
     time: 3000, //重连时间
