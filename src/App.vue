@@ -1,4 +1,7 @@
 <template>
+  <!-- 软件升级 -->
+  <Update></Update>
+  <!-- 路由 -->
   <router-view v-slot="{ Component, route }">
     <transition :name="transitionName">
       <keep-alive :include="state.keepAlive">
@@ -31,7 +34,7 @@ import Ui from './library/ui';
 /* 组件 */
 // import wmPopup from './components/popup/index.vue';
 /* Tools */
-// import Login from './views/tools/UserLogin.vue';
+import Update from './views/tools/Update.vue';
 
 const emit = defineEmits(['update:show', 'close']);
 const userLogin = ref();
@@ -39,20 +42,25 @@ const userLogin = ref();
 const store = useStore();
 const state = store.state;
 const route = useRoute();
-const router = useRouter();
+const router: any = useRouter();
 // 切换动画
 const transitionName = ref('');
 
 /* 监听 */
 watch(()=>route.path, (now: string, old: string)=>{
-  if(now=='/' && old=='/') return ;
+  // 首页
+  if(now=='/' && old=='/') return Storage.setItem('lastRoute', old);
   // 页面切换动画
-  transitionName.value = router.isBack?'slide-right':'slide-left';
-  console.log(now, old, transitionName.value, router.isBack);
+  const lastRoute = Storage.getItem('lastRoute');
+  transitionName.value = lastRoute===now?'slide-right':'slide-left';
+  Storage.setItem('lastRoute', now==='/'?now:old);
 }, { deep: true });
 
 /* 加载完成 */
 onMounted(()=>{
+  window.addEventListener('orientationchange', () => {
+    if (Math.abs(window.orientation) === 90) Ui.Toast('请切换竖屏方式');
+  }, false); 
 });
 
 </script>

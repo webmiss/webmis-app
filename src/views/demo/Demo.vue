@@ -1,5 +1,5 @@
 <template>
-  <div class="demo_body" @click="router.go(-1); router.isBack=true">返回</div>
+  <div class="demo_body" @click="router.go(-1)">返回</div>
 </template>
 
 <style lang="less" scoped>

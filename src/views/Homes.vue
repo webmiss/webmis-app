@@ -1,6 +1,6 @@
 <template>
   <div>
-    <span class="home_demo" @click="router.push({path: '/demo'}); router.isBack=false">Demo</span>
+    <span class="home_demo" @click="router.push({path: '/demo'})">Demo</span>
     <div>
       ct、ct、ct、ct、ct、ct、ct、ct、ct、ct、ct、ct、ct、ct、ct、ct、ct、ct、ct、ct、ct、ct、ct、
     </div>
@@ -15,9 +15,8 @@
 import { ref, watch, onMounted, onActivated } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
-/* UI组件 */
-import wmChartPie from '../components/chart/pie.vue';
-import wmChartInterval from '../components/chart/interval.vue';
+/* JS组件 */
+import Ui from '../library/ui';
 
 // 是否加载
 const isLoad = ref(false);
