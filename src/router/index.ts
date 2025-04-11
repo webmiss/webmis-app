@@ -1,22 +1,15 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+import Home from '../views/Homes.vue';
+import Demo from '../views/demo/Demo.vue';
 
 /* 路由 */
 const routes: Array<RouteRecordRaw> = [
-  {path:'/', name:'home', component:()=>import('../views/Home.vue')},
-  {path:'/refresh', name:'Refresh', component:()=>import('../views/Refresh.vue')},
-  {path:'/demo', name:'Demo', meta:{keepAlive:false}, component:()=>import('../views/demo/Demo.vue')},
+  { path: '/', name: 'Home', component: Home },
+  { path: '/refresh', name: 'Refresh', component: ()=>import('../views/tools/Refresh.vue') },
+  { path: '/demo', name: 'Demo', meta: {keepAlive:false}, component: Demo },
 ]
-
-/* 配置 */
-const router: any = createRouter({
-  history: createWebHashHistory(process.env.BASE_URL),
+/* 创建 */
+export default createRouter({
+  history: createWebHistory(),
   routes
 })
-
-/* 返回上级 */
-router.goBack = function(num: number){
-  this.isBack = true;
-  this.go(num);
-}
-
-export default router

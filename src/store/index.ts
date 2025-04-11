@@ -1,23 +1,24 @@
-import { createStore } from 'vuex'
+import { createStore } from 'vuex';
 
 export default createStore({
   state: {
-    mode: 'light',      //模式: light(浅色)、dark(深色)
-    width: 0,           //宽
-    height: 0,          //高
-    statusHeight: 0,    //状态栏
-    scan: null,         //摄像头
-    isLogin: '',        //登录状态
-    uInfo: {},          //用户信息
-    geolocation: {},    //定位
-    socket: null,       //Socket
+    isLogin: false,      // 登录状态
+    isUinfo: false,      // 修改信息
+    isPasswd: false,     // 修改密码
+    token: '',           // 用户Token
+    uinfo: {},           // 用户信息
+    menusAction: [],     // 动作菜单
+    socket: null,        // Socket
+    msg: {gid:'', fid:'', num: 0, list: []},     // Msg
     /* 缓存路由 */
     keepAlive: ['Home'],
+  },
+  getters: {
   },
   mutations: {
   },
   actions: {
   },
   modules: {
-  },
+  }
 })

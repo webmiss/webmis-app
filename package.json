@@ -1,43 +1,27 @@
 {
-  "name": "webmis-vue",
-  "version": "1.0.0",
+  "name": "webmis",
   "private": true,
+  "version": "3.0.0",
+  "type": "module",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "dev": "vite --host 0.0.0.0",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@antv/f2": "^4.0.41",
-    "@better-scroll/core": "^2.5.0",
-    "@better-scroll/observe-dom": "^2.5.0",
-    "@better-scroll/observe-image": "^2.5.0",
-    "@better-scroll/pull-down": "^2.5.0",
-    "@better-scroll/pull-up": "^2.5.0",
-    "@better-scroll/slide": "^2.5.0",
-    "@better-scroll/wheel": "^2.5.0",
-    "axios": "^1.3.2",
-    "core-js": "^3.27.2",
-    "vue": "^3.2.47",
-    "vue-router": "^4.1.6",
+    "axios": "^1.8.2",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
     "vuex": "^4.1.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.12",
-    "@vue/cli-plugin-babel": "~5.0.8",
-    "@vue/cli-plugin-router": "~5.0.8",
-    "@vue/cli-plugin-typescript": "~5.0.8",
-    "@vue/cli-plugin-vuex": "~5.0.8",
-    "@vue/cli-service": "~5.0.8",
-    "@vue/compiler-sfc": "^3.2.47",
-    "less": "^4.1.3",
-    "less-loader": "^11.1.0",
-    "sass-resources-loader": "^2.2.5",
-    "typescript": "~4.9.5"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ]
+    "@types/node": "^22.13.10",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/tsconfig": "^0.7.0",
+    "less": "^4.2.2",
+    "path": "^0.12.7",
+    "typescript": "~5.7.2",
+    "vite": "^6.2.0",
+    "vue-tsc": "^2.2.4"
+  }
 }
