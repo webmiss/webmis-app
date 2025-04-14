@@ -7,7 +7,7 @@ export default class Env {
   public static lang: string = 'zh_CN'          // 语言
   public static copy: string = '©'+(new Date()).getFullYear()+' webmis.vip';
   public baseUrl: string = '';                  // 网址
-  public apiUrl: string = 'admin/';             // 接口地址
+  public apiUrl: string = 'api/';               // 接口地址
   public socketUrl: string = '';                // Socket地址
 
   /* 构造函数 */
@@ -39,25 +39,18 @@ export default class Env {
     return {
       start: true,              // 启动
       server: this.socketUrl,   // 服务器
-      channel: 'admin',         // 频道
+      channel: 'api',           // 频道
       time: 3000,               // 重连时间
       heartbeat: 10000,         // 心跳时间
     }
   }
 
-  /* TinyMce */
-  public static tinymce(): object {
+  /* Update */
+  public static update(): object {
     return {
-      key: 'dm9pn8sfmiyaalv1r49hvf8ww9x8denshvuhp1tf7z51k6jj',
+      start: true,              // 启动
+      iosUrl: 'itms-apps://itunes.apple.com/cn/app/tao-bao-sui-shi-sui-xiang/id387682726?mt=8',
     }
-  }
-
-  /* Language */
-  public static LangList(): Array<any> {
-    return [
-      {label: 'English', value: 'en_US'},
-      {label: '简体中文', value: 'zh_CN'},
-    ]
   }
 
 }

@@ -3,10 +3,10 @@
     <div class="update_ct">
       <div class="update_logo"></div>
       <div class="update_title">{{ title }}</div>
-      <div class="update_load" :style="{backgroundImage: 'linear-gradient(to right, #6FB737, #6FB737 '+form.loading+', #000000 '+form.loading+', #000000 100%)'}"></div>
-      <div class="update_msg" v-html="form.msg "></div>
+      <div class="update_load" :style="{backgroundImage: 'linear-gradient(to right, #6FB737, #6FB737 '+update.loading+', #000000 '+update.loading+', #000000 100%)'}"></div>
+      <div class="update_msg" v-html="update.msg "></div>
       <div class="update_bottom">
-        <wmButton type="primary" effect="dark" :disabled="form.down" @click="updateDown()">{{ form.button }}</wmButton>
+        <wmButton type="primary" effect="dark" :disabled="!update.down" @click="updateDown()">{{ update.button }}</wmButton>
       </div>
     </div>
     <div class="update_copy">{{ copy }}</div>
@@ -30,6 +30,8 @@ import { useStore } from 'vuex';
 /* JS组件 */
 import Env from '../../config/Env';
 import Ui from '../../library/ui';
+import Plus from '../../library/plus';
+import Request from '../../library/request';
 /* 组件 */
 import wmButton from '../../components/form/button/index.vue';
 
@@ -45,10 +47,11 @@ const store = useStore();
 const state = store.state;
 const title: string = Env.title+' '+Env.version;
 const copy: string = Env.copy;
+const cfg: any = Env.update();
 // 变量
 const isShow = ref(false);
 // 更新APP
-const form: any = ref({show:false, os:'', down:false, loading:'1%', msg:'检测更新', file:'', total:0, button:'下载并安装'});
+const update = ref({os: '', down:false, loading:'1%', msg:'检测更新', file:'', size:0, button:'下载并安装'});
 
 /* 监听 */
 watch(()=>props.show, (val:boolean)=>{
@@ -57,24 +60,72 @@ watch(()=>props.show, (val:boolean)=>{
 
 /* 创建完成 */
 onMounted(()=>{
-  loadData();
+  if(cfg.start) loadData();
 });
 
 /* 加载数据 */
 const loadData = (): void => {
-  console.log('检测升级');
-  setTimeout(()=>{
-    isShow.value = true;
-    const d: any = {version:'3.0.1', size: 3485924};
-    form.value.msg = '新版本: '+d.version+'&nbsp;&nbsp;大小: '+(d.size/1024/1024).toFixed(2)+'MB';
-  }, 1000);
+  Plus.Ready(()=>{
+    // @ts-ignore
+    update.value.os = plus.os.name || '';
+    // update.value.os = 'Android';
+    Request.Post('index/version', {
+      os: update.value.os,
+    }, (res:any)=>{
+      const {code, msg, data} = res.data;
+      if(code===0 && data.version!==Env.version) {
+        isShow.value = true;
+        update.value.down = true;
+        update.value.file = data.file;
+        update.value.size = data.size;
+        update.value.msg = '新版本: '+data.version+'&nbsp;&nbsp;大小: '+(data.size/1024/1024).toFixed(2)+'MB';
+      } else Ui.Toast(msg);
+    });
+  });
 }
 
 /* 下载更新 */
 const updateDown = (): void => {
-  form.value.loading = '80%';
-  form.value.down = true;
-  form.value.button = '正在下载';
+  update.value.down = false;
+  update.value.button = '正在下载';
+  // 安卓手机
+  if(update.value.os=='Android') {
+    // @ts-ignore 安卓手机
+    let down = plus.downloader.createDownload(update.value.file, {
+      'timeout': 0,
+    },(d: any, status: any)=>{
+      if(status == 200){
+        // @ts-ignore 安装并重启
+        plus.runtime.install(d.filename, {force:true},()=>{
+          // @ts-ignore
+          plus.runtime.restart();
+        },()=>{
+          Ui.Toast('安装失败!');
+        });
+      }else{
+        update.value.down = true;
+        update.value.msg = '下载失败';
+      }
+    });
+    // 开始任务
+    down.start();
+    // 下载进度
+    down.addEventListener('statechanged', (res: any, status: any)=>{
+      // @ts-ignore
+      let complete = parseInt(res.downloadedSize/update.value.size*100);
+      update.value.loading = complete+'%';
+      update.value.msg = '正在下载：'+update.value.loading;
+      if (complete >= 100) update.value.msg = '下载完成，安装并重启';
+    });
+  }else if(update.value.os=='iOS'){
+    // 苹果手机
+    Ui.Toast('请在桌面查看安装进度!');
+    window.open(cfg.iosUrl);
+    setTimeout(()=>{
+      // @ts-ignore
+      plus.runtime.quit();
+    }, 3000);
+  }
 }
 
 </script>
