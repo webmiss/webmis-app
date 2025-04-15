@@ -1,5 +1,5 @@
 <template>
-  <button class="wm-button" :class="effect+'_'+type"
+  <button class="wm-button flex_center" :class="effect+'_'+type"
     :style="{
       width: width,
       height: height,
@@ -18,10 +18,9 @@
 
 <style lang="less" scoped>
 .wm-button:focus,button:active:focus,button.active:focus,button.focus,button:active.focus,button.active.focus{outline: none; border-color: transparent; box-shadow: none;}
-.wm-button{user-select: none; white-space: nowrap; margin: 0 4px; border: transparent 1px solid; background: none; cursor: pointer; font-size: 14px; text-align: center; box-sizing: border-box; white-space:normal}
+.wm-button{user-select: none; white-space: nowrap; margin: 0 4px; border: transparent 1px solid; background: none; cursor: pointer; font-size: 14px; text-align: center; box-sizing: border-box; white-space: normal;}
 .wm-button:disabled{opacity: 0.5; cursor: not-allowed;}
-.wm-button i{float: left; width: 24px; text-align: center;}
-.wm-button span{float: left;}
+.wm-button i{width: 24px; text-align: center;}
 /* default */
 .wm-button.plain_default{background-color: @LighterFill; color: @Text; border-color: @BaseBorder;}
 .wm-button.dark_default{background-color: @Primary; color: #FFF; border-color: @Primary1;}
@@ -52,12 +51,12 @@
 
 /* 参数 */
 const props = defineProps({
-  effect: {type: String, default: 'plain'},         // 样式: plain, dark, text
+  effect: {type: String, default: 'dark'},          // 样式: plain, dark, text
   type: {type: String, default: 'default'},         // 类型: primary, success, warning, danger, info
-  width: {type: String, default: 'max-content'},    // 宽度
+  width: {type: String, default: '100%'},           // 宽度
   height: {type: String, default: '32px'},          // 高度
   padding: {type: String, default: '0 16px'},       // 内部间距
-  margin: {type: String, default: '0 4px'},         // 外部间距
+  margin: {type: String, default: '0 0'},           // 外部间距
   radius: {type: String, default: '4px'},           // 圆角
   fontSize: {type: String, default: '14px'},        // 文字大小
   icon: {type: String, default: ''},                // 图标

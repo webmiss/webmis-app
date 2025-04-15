@@ -21,7 +21,7 @@
 </template>
 
 <style lang="less">
-.wm-page_bar{position: absolute; top: 0; width: 100%; padding: 5px 10px; box-sizing: border-box;}
+.wm-page_bar{position: absolute; z-index: 99; top: 0; width: 100%; padding: 5px 10px; box-sizing: border-box;}
 .wm-page_bar_left{position: absolute; left: 10px;}
 .wm-page_bar_right{position: absolute; right: 10px;}
 .wm-page_bar_right .text{padding: 5px 10px;}
@@ -40,7 +40,7 @@ const props = defineProps({
   width: {type: String, default: '100%'},                         // 宽
   height: {type: String, default: '100%'},                        // 高
   barHeight: {type: String, default: '48px'},                     // 状态栏-高度
-  barBgColor: {type: String, default: ''},                        // 状态栏-背景颜色
+  barBgColor: {type: String, default: '#FFF'},                    // 状态栏-背景颜色
   barShadow: {type: String, default: '0 0 1px rgba(0,0,0,0.2)'},  // 状态栏-背景颜色
 });
 const emit = defineEmits(['update:value', 'data']);
