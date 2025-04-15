@@ -14,7 +14,7 @@
     <div v-if="immersed" :style="{height: 'calc('+height+' - '+state.statusHeight+'px)'}">
       <slot></slot>
     </div>
-    <div v-else :style="{height: 'calc('+height+' - '+barHeight+' - '+state.statusHeight+'px)', paddingTop: 'calc('+barHeight+' + '+state.statusHeight+'px + 5px)'}">
+    <div v-else :style="{height: 'calc('+height+' - '+barHeight+' - '+state.statusHeight+'px)', paddingTop: 'calc('+barHeight+' + '+state.statusHeight+'px)'}">
       <slot></slot>
     </div>
   </div>

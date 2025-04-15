@@ -20,8 +20,6 @@ import Ui from '../../library/ui';
 /* 组件 */
 import PageView from '../../components/view/page.vue';
 
-// 是否加载
-const isLoad = ref(false);
 // 状态
 const store = useStore();
 const state = store.state;
@@ -30,10 +28,9 @@ const router = useRouter();
 
 /* 创建完成 */
 onMounted(()=>{
-  isLoad.value = true;
 });
 onActivated(()=>{
-  if(isLoad && state.isLogin) loadData();
+  loadData();
 });
 
 /* 加载数据 */

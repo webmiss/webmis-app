@@ -14,7 +14,7 @@
 <style lang="less">
 /* 表单缩放问题 */
 @media only screen and (min-device-width : 320px) and (max-device-width : 1024px) {
-  select:focus, textarea:focus, input:focus { font-size: 16px !important; }
+  select:focus, textarea:focus, input:focus { font-size: 15px !important; }
 }
 /* 样式 */
 @import url('./assets/style/icon.less');

@@ -8,7 +8,7 @@ const routes: Array<RouteRecordRaw> = [
   { path: '/demo', name: 'Demo', meta: {keepAlive:false}, component: ()=>import('../views/demo/Demo.vue') },
   /* 用户 */
   { path: '/user/login', name: 'UserLogin', meta: {keepAlive:true}, component: ()=>import('../views/user/Login.vue') },
-  { path: '/user/register', name: 'UserRegister', meta: {keepAlive:true}, component: ()=>import('../views/user/Register.vue') },
+  { path: '/html', name: 'Html', meta: {keepAlive:false}, component: ()=>import('../views/user/Html.vue') },
 ]
 /* 创建 */
 export default createRouter({
