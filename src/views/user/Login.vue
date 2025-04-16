@@ -19,7 +19,7 @@
           <span>已阅读并同意<b @click="router.push({path: '/html', query:{name:'m_user'}})">《用户协议》</b>和<b @click="router.push({path: '/html', query:{name:'m_service'}})">《隐私条款》</b></span>
         </li>
         <li>
-          <wmButton width="100%" height="40px" @click="clickSub()">{{ login.botton }}</wmButton>
+          <wmButton width="100%" height="40px" @click="clickSub()" :disabled="login.disabled">{{ login.botton_text }}</wmButton>
         </li>
         <li class="other">
           <span @click="changeType('passwd')">密码登录</span>|<span @click="changeType('tel')">手机号码</span>
@@ -59,7 +59,7 @@ const state = store.state;
 const route = useRoute();
 const router = useRouter();
 // 变量
-const login = ref({text: '获取验证码', botton: '登 录'});
+const login = ref({text: '获取验证码', disabled: false, botton_text: '登 录'});
 const form = ref({type:'passwd', uname:'', passwd:'', code:'', vcode:'', agreement:{label:'', value:'agreement', checked:false}});
 
 /* 创建完成 */
@@ -93,6 +93,13 @@ const clickSub = (): void => {
   const data = verify(form.value);
   if(!data) return;
   console.log(data);
+  // 请求
+  login.value.disabled = true;
+  login.value.botton_text = '正在登录';
+  setTimeout(()=>{
+    login.value.disabled = false;
+    login.value.botton_text = '重试';
+  }, 3000);
 }
 
 </script>

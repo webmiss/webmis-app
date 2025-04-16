@@ -2,8 +2,8 @@
   <PageView bgColor="#FFF">
     <template #bar_left><i class="back ui ui_arrow_left" @click="router.go(-1)"></i></template>
     <template #bar_title>{{ info.title }}</template>
-    <ScrollView>
-      <div class="html_time">最后修改时间: {{ info.time || '-' }}</div>
+    <ScrollView v-model:refreshing="scroll.refreshing" @refresh="loadData" :isLower="false">
+      <div class="html_time">修改时间: {{ info.time || '-' }}</div>
       <div class="html_body" v-html="info.content"></div>
     </ScrollView>
   </PageView>
@@ -30,24 +30,34 @@ const state = store.state;
 const route = useRoute();
 const router = useRouter();
 // 变量
-const info = ref({title:'', time:'', content:''});
+const info = ref({name: <any>'', title:'', time:'', content:''});
+const scroll = ref({refreshing: false, loading: false, finished: false});
 
 /* 创建完成 */
 onMounted(()=>{
 });
 onActivated(()=>{
+  info.value.name = route.query.name;
   loadData();
 });
 
 /* 加载数据 */
 const loadData = (): void => {
-  if(route.query.name==='m_user') {
+  if(info.value.name==='m_user') {
     info.value.title = '用户协议';
-    info.value.content = '用户协议';
-  } else if(route.query.name==='m_service') {
+    info.value.content = '<p>用户协议</p>';
+    let i: number = 0;
+    for(i==1; i<=100; i++) {
+      info.value.content += '<p>用户协议'+i+'</p>';
+    }
+  } else if(info.value.name==='m_service') {
     info.value.title = '隐私条款';
     info.value.content = '隐私条款';
   }
+  setTimeout(()=>{
+    scroll.value.refreshing = false;
+    Ui.Toast(info.value.name);
+  }, 1000);
 }
 
 </script>
