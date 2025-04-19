@@ -1,6 +1,6 @@
 <template>
   <div class="wm-page_body" :style="{background: bgColor, color: color}">
-    <div class="wm-page_bar" :style="{backgroundColor: barBgColor, boxShadow: barShadow, height: barHeight, lineHeight: 'calc('+barHeight+' - 10px)', paddingTop: 'calc('+state.statusHeight+'px + 5px)'}">
+    <div class="wm-page_bar" :style="{color: barColor, backgroundColor: barBgColor, boxShadow: barShadow, height: barHeight, lineHeight: 'calc('+barHeight+' - 10px)', paddingTop: 'calc('+state.statusHeight+'px + 5px)'}">
       <div class="wm-page_bar_left" v-if="$slots.bar_left">
         <slot name="bar_left"></slot>
       </div>
@@ -39,7 +39,8 @@ const props = defineProps({
   bgColor: {type: String, default: ''},                           // 背景颜色
   width: {type: String, default: '100%'},                         // 宽
   height: {type: String, default: '100%'},                        // 高
-  barHeight: {type: String, default: '48px'},                     // 状态栏-高度
+  barHeight: {type: String, default: '50px'},                     // 状态栏-高度
+  barColor: {type: String, default: ''},                          // 状态栏-文本颜色
   barBgColor: {type: String, default: '#FFF'},                    // 状态栏-背景颜色
   barShadow: {type: String, default: '0 0 1px rgba(0,0,0,0.2)'},  // 状态栏-阴影
 });
