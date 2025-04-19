@@ -141,7 +141,7 @@
           <div class="me_body">
             <div class="me_top">
               <div class="me_bg"></div>
-              <div class="me_logo"></div>
+              <div class="me_logo" @click="login()"></div>
               <div class="me_info">
                 <h1>用户昵称</h1>
                 <span>部门: 信息技术&nbsp;&nbsp;职务: 软件开发</span>
@@ -283,7 +283,7 @@ onActivated(()=>{
 
 /* 登录 */
 const login = (): void => {
-  setTimeout(()=>{ router.push({path: '/user/login'}); }, 1000);
+  router.push({path: '/user/login'});
 }
 
 /* 切换菜单 */
