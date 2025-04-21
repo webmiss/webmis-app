@@ -46,4 +46,9 @@ export default class Util {
     }
   }
 
+  /* 随机数 */
+  public static getRandomInt(min: number, max: number): number {
+    return Math.floor(Math.random()*(max-min+1))+min;
+  }
+
 }

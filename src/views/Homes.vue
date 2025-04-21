@@ -3,12 +3,12 @@
     <template #home>
       <PageView bgColor="#0064C8" barColor="#FFF" barBgColor="#0064C8" barShadow="">
         <template #bar_title>
-          <div class="home_sea flex_center"><i class="ui ui_search"></i><span>搜索</span></div>
+          <div class="home_sea flex_center"><i class="ui ui_search"></i><span>货品查询</span></div>
         </template>
         <ScrollView v-model:refreshing="scrollHome.refreshing" @refresh="loadData" :isLower="false">
           <div class="home_body">
-            <div class="bubble bubble1"></div>
-            <div class="bubble bubble2"></div>
+            <div class="bubble bubble1" :style="{left: bubble.left1+'%', top: bubble.top1+'%'}"></div>
+            <div class="bubble bubble2" :style="{left: bubble.left2+'%', top: bubble.top2+'%'}"></div>
             <div class="home_stock">
               <div class="title">剩余库存</div>
               <div class="num">239405</div>
@@ -181,9 +181,9 @@
 /* 首页 */
 .home_sea{margin: 0 auto; width: calc(100% - 40px); height: 40px; line-height: 40px; font-size: 16px; color: rgba(255,255,255,0.8); background-color: rgba(255,255,255,0.08); border-radius: 20px;}
 .home_body{overflow: hidden; position: relative; min-height: calc(100% - 20px); padding: 10px; color: #FFF;}
-.home_body .bubble{position: absolute; border-radius: 50%; background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%);}
+.home_body .bubble{position: absolute; border-radius: 50%; background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%); transition: all 15s ease; transform: translateZ(0);}
 .home_body .bubble1{width: 160px; height: 160px; left: 1%; top: 3%;}
-.home_body .bubble2{width: 640px; height: 640px; left: 40%; top: 20%;}
+.home_body .bubble2{width: 320px; height: 320px; left: 40%; top: 20%;}
 .home_stock{position: relative; margin: 10px auto; width: 210px; height: 210px; border: rgba(255,255,255,0.3) 3px solid; border-left-color: @Primary; border-right-color: @Primary; text-align: center; border-radius: 50%; background: #007DFF;}
 .home_stock div{position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);}
 .home_stock .title{margin-top: -40px; line-height: 20px; font-size: 14px;}
@@ -194,7 +194,7 @@
 .home_total ul{margin: 0 auto;}
 .home_total li{padding: 0 16px; margin: 0 8px; border-radius: 20px; color: rgba(255,255,255,0.8);}
 .home_total .active{color: #FFF; background-color: #007DFF; font-weight: bold;}
-.home_total_list{margin: 10px auto; max-width: 640px; border-top: rgba(255,255,255,0.1) 1px solid;}
+.home_total_list{margin: 10px auto; max-width: 1024px; border-top: rgba(255,255,255,0.1) 1px solid;}
 .home_total_list li{width: 50%; padding: 10px; border-bottom: rgba(255,255,255,0.1) 1px solid; box-sizing: border-box;}
 .home_total_list li:nth-child(odd){border-right: rgba(255,255,255,0.1) 1px solid;}
 .home_total_list .title{line-height: 32px; font-size: 12px; color: rgba(255,255,255,0.8);}
@@ -241,17 +241,19 @@
 </style>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onActivated } from 'vue';
+import { ref, watch, onMounted, onActivated, onUnmounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
 /* JS组件 */
 import Env from '../config/Env';
 import Ui from '../library/ui';
+import Util from '../library/utils';
 /* 组件 */
 import TabBar from '../components/tabs/tabbar.vue';
 import PageView from '../components/view/page.vue';
 import ScrollView from '../components/view/scroll.vue';
 
+defineOptions({name: 'Home'});
 // 状态
 const store = useStore();
 const state = store.state;
@@ -266,19 +268,30 @@ const tabbar = ref({active: 'home', color: '', bgColor: '', activeColor: '', col
 const scrollHome = ref({refreshing: false, loading: false, finished: false});
 const scrollMsg = ref({refreshing: false, loading: false, finished: false});
 const scrollMe = ref({refreshing: false, loading: false, finished: false});
+const bubble = ref({left1:1, top1:3, left2:40, top2:20});
+let time: any = null;
 
 /* 监听 */
 watch(()=>state.isLogin, (isLogin: boolean)=>{
   if(isLogin) loadData();
   else login();
 },{ deep: true });
+watch(()=>route.path, (now: string)=>{
+  if(now!=='/') clearInterval(time);
+}, { deep: true });
 
 /* 创建完成 */
 onMounted(()=>{
   tabChange({slot: 'home'});
 });
 onActivated(()=>{
-  // if(!state.isLogin) login();
+  if(!state.isLogin) {
+    login();
+  } else {
+    // 首页背景动画
+    setTimeout(()=>{ homeAnimation(); }, 3000);
+    time = setInterval(()=>{ homeAnimation(); }, 20000);
+  }
 });
 
 /* 登录 */
@@ -297,6 +310,14 @@ const tabChange = (d: any): void => {
     tabbar.value.bgColor = '#FFF';
     tabbar.value.activeColor = '#0064C8';
   }
+}
+
+/* 首页动画 */
+const homeAnimation = (): void => {
+  bubble.value.left1 = Util.getRandomInt(1, 20);
+  bubble.value.top1 = Util.getRandomInt(3, 70);
+  bubble.value.left2 = Util.getRandomInt(10, 60);
+  bubble.value.top2 = Util.getRandomInt(30, 80);
 }
 
 /* 加载数据 */

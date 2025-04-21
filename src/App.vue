@@ -4,7 +4,7 @@
   <!-- 路由 -->
   <router-view v-slot="{ Component, route }">
     <transition :name="transitionName">
-      <keep-alive>
+      <keep-alive :include="state.keepAlive">
         <component :is="Component" :key="route.path" class="view" />
       </keep-alive>
     </transition>
