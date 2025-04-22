@@ -6,9 +6,10 @@ const routes: Array<RouteRecordRaw> = [
   { path: '/', name: 'Home', component: Home },
   { path: '/refresh', name: 'Refresh', component: ()=>import('../views/tools/Refresh.vue') },
   { path: '/demo', name: 'Demo', component: ()=>import('../views/demo/Demo.vue') },
+  { path: '/html', name: 'Html', component: ()=>import('../views/user/Html.vue') },
   /* 用户 */
   { path: '/user/login', name: 'UserLogin', component: ()=>import('../views/user/Login.vue') },
-  { path: '/html', name: 'Html', component: ()=>import('../views/user/Html.vue') },
+  { path: '/user/info', name: 'UserInfo', component: ()=>import('../views/user/Info.vue') },
 ]
 /* 创建 */
 export default createRouter({

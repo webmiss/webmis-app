@@ -141,18 +141,14 @@
           <div class="me_body">
             <div class="me_top">
               <div class="me_bg"></div>
-              <div class="me_logo" @click="login()"></div>
-              <div class="me_info">
-                <h1>用户昵称</h1>
-                <span>部门: 信息技术&nbsp;&nbsp;职务: 软件开发</span>
+              <div class="me_logo" :style="{backgroundImage:state.uinfo.img?'url('+(state.uinfo.img)+')':'', backgroundSize: state.uinfo.img?'100%':'60%'}" @click="openUrl('/user/info')"></div>
+              <div class="me_info" @click="openUrl('/user/info')">
+                <h1>{{ state.uinfo.nickname || '请登录' }}</h1>
+                <span>部门: {{ state.uinfo.department || '-' }}&nbsp;&nbsp;职务: {{ state.uinfo.position || '-' }}</span>
               </div>
             </div>
-            <ul class="me_list">
+            <ul class="menu_list">
               <li class="mtop10">
-                <div class="flex ico"><i class="ui ui_user"></i><b>个人信息</b></div>
-                <div class="flex"><i class="ui ui_arrow_right"></i></div>
-              </li>
-              <li class="mtop1">
                 <div class="flex ico"><i class="ui ui_edit"></i><b>意见反馈</b></div>
                 <div class="flex"><i class="ui ui_arrow_right"></i></div>
               </li>
@@ -170,7 +166,6 @@
               </li>
             </ul>
           </div>
-          <div class="bLine"></div>
         </ScrollView>
       </PageView>
     </template>
@@ -227,17 +222,10 @@
 .me_body{overflow: hidden; background-color: #F8F8F8;}
 .me_top{position: relative; height: 260px; background-color: #FFF;}
 .me_bg{position: absolute; z-index: 1; width: 120%; height: 48%; left: 50%; transform: translateX(-50%); border-radius: 0 0 50% 50%; background: #007DFF;}
-.me_logo{position: absolute; z-index: 2; width: 120px; height: 120px; left: 50%; top: 48%; transform: translate(-50%, -50%); border-radius: 50%; border: #FFF 2px solid; background-color: #F2F4F8; background-image: url('../assets/logo.svg'); background-size: 60%; background-repeat: no-repeat; background-position: center;}
+.me_logo{position: absolute; z-index: 2; width: 120px; height: 120px; left: 50%; top: 48%; transform: translate(-50%, -50%); border-radius: 50%; border: #FFF 2px solid; background-image: url('../assets/logo.svg'); background-size: 60%; background-color: #F2F4F8; background-repeat: no-repeat; background-position: center;}
 .me_info{position: absolute; padding: 8px 0; width: 100%; bottom: 0; text-align: center;}
 .me_info h1{line-height: 40px; font-size: 21px;}
 .me_info span{line-height: 24px; color: @Info; font-size: 12px;}
-.me_list{overflow: hidden;}
-.me_list li{height: 40px; line-height: 40px; padding: 8px 10px 8px 16px; background-color: #FFF; display: flex; justify-content: space-between; flex-wrap: wrap;}
-.me_list i{display: inline-block; text-align: center;}
-.me_list b{padding: 0 5px;}
-.me_list .ico i{width: 40px; font-size: 20px; color: @IconColor; background-color: #F2F4F8; border-radius: 50%;}
-.me_list span{font-size: 14px; color: @Info;}
-.me_list .ui_arrow_right{width: 28px; font-size: 14px; color: @Info;}
 </style>
 
 <script setup lang="ts">
@@ -248,6 +236,8 @@ import { useRoute, useRouter } from 'vue-router';
 import Env from '../config/Env';
 import Ui from '../library/ui';
 import Util from '../library/utils';
+import Request from '../library/request';
+import Storage from '../library/storage';
 /* 组件 */
 import TabBar from '../components/tabs/tabbar.vue';
 import PageView from '../components/view/page.vue';
@@ -272,10 +262,6 @@ const bubble = ref({left1:1, top1:3, left2:40, top2:20});
 let time: any = null;
 
 /* 监听 */
-watch(()=>state.isLogin, (isLogin: boolean)=>{
-  if(isLogin) loadData();
-  else login();
-},{ deep: true });
 watch(()=>route.path, (now: string)=>{
   if(now!=='/') clearInterval(time);
 }, { deep: true });
@@ -286,7 +272,7 @@ onMounted(()=>{
 });
 onActivated(()=>{
   if(!state.isLogin) {
-    login();
+    router.push({path: '/user/login'});
   } else {
     // 首页背景动画
     setTimeout(()=>{ homeAnimation(); }, 3000);
@@ -295,8 +281,9 @@ onActivated(()=>{
 });
 
 /* 登录 */
-const login = (): void => {
-  router.push({path: '/user/login'});
+const openUrl = (url: string, params: any={}): void => {
+  if(!state.isLogin) router.push({path: '/user/login'});
+  router.push({path: url, query: params});
 }
 
 /* 切换菜单 */

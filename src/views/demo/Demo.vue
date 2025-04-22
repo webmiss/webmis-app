@@ -134,5 +134,4 @@ const loadData = (): void => {
   }, 1000);
 }
 
-
 </script>

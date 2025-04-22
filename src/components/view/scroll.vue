@@ -52,14 +52,14 @@ const distance = ref(0);
 /* 开始 */
 const TouchStart = (e: any): void => {
   scrollTop.value = (freshContainer.value as any).scrollTop;
-  if(scrollTop.value <= 0) {
+  if(scrollTop.value<=0) {
     startY.value = e.touches[0].pageY;
   }
 };
 
 /* 移动 */
 const TouchMove = (e: any): void => {
-  if(scrollTop.value <= 0) {
+  if(props.isUpper && scrollTop.value<=0) {
     const currentY = e.touches[0].pageY;
     distance.value = currentY - startY.value;
   }

@@ -25,20 +25,23 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 /* UI组件 */
-import Storage from './library/storage';
 import Ui from './library/ui';
+import Request from './library/request';
+import Storage from './library/storage';
 import Plus from './library/plus';
 /* 组件 */
 import Update from './views/tools/Update.vue';
 
-// 变量
+// 状态
 const store = useStore();
 const state = store.state;
 const route = useRoute();
-// 切换动画
-const transitionName = ref('');
+const router = useRouter();
+// 变量
+const transitionName = ref('');         // 页面切换样式
+const verifyTokenTime = ref(30000);     // Token验证间隔时间
 
 /* 监听 */
 watch(()=>route.path, (now: string, old: string)=>{
@@ -53,6 +56,11 @@ watch(()=>route.path, (now: string, old: string)=>{
     Storage.setItem('routePosition', now==='/'?'0':currentPos);
   }
 }, { deep: true });
+watch(()=>state.isLogin, (isLogin: boolean)=>{
+  if(isLogin) {
+    setInterval(()=>{ verifyToken(); }, verifyTokenTime.value);
+  }
+},{ deep: true });
 
 /* 加载完成 */
 onMounted(()=>{
@@ -73,6 +81,51 @@ onMounted(()=>{
   });
   // 首页位置
   Storage.setItem('routePosition', '0');
+  // 验证Token
+  const token: string = Storage.getItem('token') || '';
+  if(token) {
+    state.isLogin = true;
+    state.token = token;
+    verifyToken(true);
+  }
 });
+
+/* 验证Token */
+const verifyToken = (uinfo: boolean=false): void => {
+  if(!state.token) return;
+  // 请求
+  Request.Post('user/token', {token: state.token, uinfo: uinfo}, (res:any)=>{
+    const {code, msg, data}: any = res.data;
+    if(code==0 && data.token_time>0) {
+      state.isLogin = true;
+      // 修改密码
+      if(!state.isPasswd && state.lang) state.isPasswd = data.isPasswd;
+      // 用户信息
+      if(Object.keys(data.uinfo).length!=0) {
+        state.uinfo = data.uinfo;
+        Storage.setItem('uname', data.uinfo.uname);
+        Storage.setItem('uinfo', JSON.stringify(data.uinfo));
+        Storage.setItem('user_img', data.uinfo.img);
+      }
+    } else {
+      Ui.Toast(msg);
+      logout().then(()=>{
+        router.push({path: '/user/login'});
+      });
+    }
+  },()=>{
+    Ui.Toast('网络错误');
+  });
+}
+
+/* 退出登录 */
+const logout = async (): Promise<void> => {
+  // 缓存信息
+  state.isLogin = false;
+  state.token = '';
+  state.uinfo = {};
+  Storage.removeItem('token');
+  Storage.removeItem('uinfo');
+}
 
 </script>
