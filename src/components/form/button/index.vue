@@ -58,7 +58,7 @@ const props = defineProps({
   padding: {type: String, default: '0 16px'},       // 内部间距
   margin: {type: String, default: '0 0'},           // 外部间距
   radius: {type: String, default: '4px'},           // 圆角
-  fontSize: {type: String, default: '14px'},        // 文字大小
+  fontSize: {type: String, default: '16px'},        // 文字大小
   icon: {type: String, default: ''},                // 图标
   iconSize: {type: String, default: '14px'},        // 图标大小
   disabled: {type: Boolean, default: false},        // 是否禁用

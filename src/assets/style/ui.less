@@ -35,11 +35,12 @@ h3{font-size: 16px; font-weight: 500;}
 .mtop10{margin-top: 10px;}
 .mtop5{margin-top: 5px;}
 .mtop1{margin-top: 1px;}
+.mbottom10{margin-bottom: 10px;}
 /* 内容 */
-.null{text-align: center; color: #999; line-height: 100px;}
-.null::before{content: '暂无数据';}
-.bLine{text-align: center; color: #999; line-height: 50px;}
-.bLine::before{content: '我是有底线的';}
+.null{position: relative; width: 100%; height: 100%;}
+.null::before{content: '暂无数据'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);}
+.bLine{height: 24px; line-height: 24px; color: #999; text-align: center;}
+.bLine::before{content: '';}
 /* 文本 */
 .tLeft{text-align: left;}
 .tCenter{text-align: center;}

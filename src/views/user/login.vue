@@ -18,11 +18,11 @@
           </form>
         </li>
         <li v-if="form.type==='tel'">
-          <wmInput v-model:value="form.vcode" icon="ui ui_safety" padding="0 10px 0 40px" maxlength="4" placeholder="验证码" :text="login.text" @click="getVcode()" @keyup.enter="clickLogin()"></wmInput>
+          <wmInput v-model:value="form.vcode" icon="ui ui_safety" padding="0 10px 0 40px" maxlength="4" placeholder="验证码" :text="login.text" @textClick="getVcode()" @keyup.enter="clickLogin()"></wmInput>
         </li>
         <li class="agreement flex_left">
           <wmCheckbox :options="login.agreement"></wmCheckbox>
-          <span>已阅读并同意<b @click="router.push({path: '/html', query:{name:'m_user'}})">《用户协议》</b>和<b @click="router.push({path: '/html', query:{name:'m_service'}})">《隐私条款》</b></span>
+          <span>已阅读并同意<b @click="router.push({path: '/base/html', query:{name:'m_user'}})">《服务协议》</b>和<b @click="router.push({path: '/base/html', query:{name:'m_service'}})">《隐私条款》</b></span>
         </li>
         <li>
           <wmButton width="100%" height="40px" @click="clickLogin()" :disabled="login.disabled">{{ login.botton_text }}</wmButton>

@@ -5,11 +5,12 @@ import Home from '../views/Homes.vue';
 const routes: Array<RouteRecordRaw> = [
   { path: '/', name: 'Home', component: Home },
   { path: '/refresh', name: 'Refresh', component: ()=>import('../views/tools/Refresh.vue') },
-  { path: '/demo', name: 'Demo', component: ()=>import('../views/demo/Demo.vue') },
-  { path: '/html', name: 'Html', component: ()=>import('../views/user/Html.vue') },
+  { path: '/demo', name: 'Demo', component: ()=>import('../views/demo/index.vue') },
+  { path: '/base/html', name: 'BaseHtml', component: ()=>import('../views/base/html.vue') },
   /* 用户 */
-  { path: '/user/login', name: 'UserLogin', component: ()=>import('../views/user/Login.vue') },
-  { path: '/user/info', name: 'UserInfo', component: ()=>import('../views/user/Info.vue') },
+  { path: '/user/login', name: 'UserLogin', component: ()=>import('../views/user/login.vue') },
+  { path: '/user/setup', name: 'UserSetup', component: ()=>import('../views/user/setup/index.vue') },
+  { path: '/user/info', name: 'UserInfo', component: ()=>import('../views/user/info/index.vue') },
 ]
 /* 创建 */
 export default createRouter({

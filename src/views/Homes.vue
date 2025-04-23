@@ -54,7 +54,7 @@
       </PageView>  
     </template>
     <template #msg>
-      <PageView bgColor="#F8F8F8" barColor="#FFF" barBgColor="#007DFF">
+      <PageView bgColor="linear-gradient(to bottom, #FFF 0%, #F8F8F8 100%)" barColor="#FFF" barBgColor="#007DFF">
         <template #bar_title>消息中心</template>
         <div class="msg_sea_body">
           <div class="msg_sea flex_center"><i class="ui ui_search"></i><span>搜索</span></div>
@@ -134,35 +134,43 @@
       </PageView>
     </template>
     <template #me>
-      <PageView bgColor="linear-gradient(to bottom, #007DFF 0%, #007DFF 50%, #F8F8F8 50%, #F8F8F8 100%)" barBgColor="#007DFF" barShadow="">
-        <template #bar_left><div class="me_ico"><i class="ui ui_scan"></i></div></template>
-        <template #bar_right><div class="me_ico"><i class="ui ui_setting"></i></div></template>
+      <PageView bgColor="linear-gradient(to bottom, #007DFF 0%, #007DFF 50%, #FFF 50%, #F8F8F8 100%)" barBgColor="#007DFF" barShadow="">
+        <template #bar_left>
+          <div class="me_ico"><i class="ui ui_scan"></i></div>
+        </template>
+        <template #bar_right>
+          <div class="me_ico"><i class="ui ui_setting" @click="openUrl('/user/setup')"></i></div>
+        </template>
         <ScrollView v-model:refreshing="scrollMe.refreshing" @refresh="loadData" :isLower="false">
           <div class="me_body">
             <div class="me_top">
               <div class="me_bg"></div>
               <div class="me_logo" :style="{backgroundImage:state.uinfo.img?'url('+(state.uinfo.img)+')':'', backgroundSize: state.uinfo.img?'100%':'60%'}" @click="openUrl('/user/info')"></div>
-              <div class="me_info" @click="openUrl('/user/info')">
-                <h1>{{ state.uinfo.nickname || '请登录' }}</h1>
+              <div class="me_info">
+                <h1>{{ state.uinfo.nickname || '请设置' }}</h1>
                 <span>部门: {{ state.uinfo.department || '-' }}&nbsp;&nbsp;职务: {{ state.uinfo.position || '-' }}</span>
               </div>
             </div>
-            <ul class="menu_list">
-              <li class="mtop10">
+            <ul class="menu_list mbottom10">
+              <li class="flex mtop10" @click="openUrl('/user/info')">
+                <div class="flex ico"><i class="ui ui_user"></i><b>个人资料</b></div>
+                <div class="flex"><i class="ui ui_arrow_right"></i></div>
+              </li>
+              <li class="flex mtop1">
                 <div class="flex ico"><i class="ui ui_edit"></i><b>意见反馈</b></div>
                 <div class="flex"><i class="ui ui_arrow_right"></i></div>
               </li>
-              <li class="mtop10">
+              <li class="flex mtop10" @click="openUrl('/base/html', {name:'m_user'})">
                 <div class="flex ico"><i class="ui ui_order"></i><b>服务协议</b></div>
                 <div class="flex"><i class="ui ui_arrow_right"></i></div>
               </li>
-              <li class="mtop1">
+              <li class="flex mtop1" @click="openUrl('/base/html', {name:'m_service'})">
                 <div class="flex ico"><i class="ui ui_safety"></i><b>隐私政策</b></div>
                 <div class="flex"><i class="ui ui_arrow_right"></i></div>
               </li>
-              <li class="mtop1">
-                <div class="flex ico"><i class="ui ui_service"></i><b>关于我们</b></div>
-                <div class="flex"><span>{{ Env.version }}</span><i class="ui ui_arrow_right"></i></div>
+              <li class="flex mtop10" @click="openUrl('/user/setup')">
+                <div class="flex ico"><i class="ui ui_setting"></i><b>设置</b></div>
+                <div class="flex"><i class="ui ui_arrow_right"></i></div>
               </li>
             </ul>
           </div>
@@ -220,20 +228,19 @@
 .me_ico .ui_scan{font-size: 24px;}
 .me_ico .ui_setting{font-size: 24px;}
 .me_body{overflow: hidden; background-color: #F8F8F8;}
-.me_top{position: relative; height: 260px; background-color: #FFF;}
+.me_top{position: relative; height: 280px; background-color: #FFF;}
 .me_bg{position: absolute; z-index: 1; width: 120%; height: 48%; left: 50%; transform: translateX(-50%); border-radius: 0 0 50% 50%; background: #007DFF;}
-.me_logo{position: absolute; z-index: 2; width: 120px; height: 120px; left: 50%; top: 48%; transform: translate(-50%, -50%); border-radius: 50%; border: #FFF 2px solid; background-image: url('../assets/logo.svg'); background-size: 60%; background-color: #F2F4F8; background-repeat: no-repeat; background-position: center;}
-.me_info{position: absolute; padding: 8px 0; width: 100%; bottom: 0; text-align: center;}
+.me_logo{position: absolute; z-index: 2; width: 120px; height: 120px; left: 50%; top: 46%; transform: translate(-50%, -50%); border-radius: 50%; border: #FFF 1px solid; background-image: url('../assets/logo.svg'); background-size: 60%; background-color: #F2F4F8; background-repeat: no-repeat; background-position: center;}
+.me_info{position: absolute; padding: 16px 0; bottom: 0; text-align: center; left: 50%; transform: translateX(-50%);}
 .me_info h1{line-height: 40px; font-size: 21px;}
 .me_info span{line-height: 24px; color: @Info; font-size: 12px;}
 </style>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onActivated, onUnmounted } from 'vue';
+import { ref, watch, onMounted, onActivated } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
 /* JS组件 */
-import Env from '../config/Env';
 import Ui from '../library/ui';
 import Util from '../library/utils';
 import Request from '../library/request';

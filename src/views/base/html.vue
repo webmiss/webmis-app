@@ -35,8 +35,6 @@ const scroll = ref({refreshing: false, loading: false, finished: false});
 
 /* 创建完成 */
 onMounted(()=>{
-});
-onActivated(()=>{
   info.value.name = route.query.name;
   loadData();
 });
@@ -44,11 +42,11 @@ onActivated(()=>{
 /* 加载数据 */
 const loadData = (): void => {
   if(info.value.name==='m_user') {
-    info.value.title = '用户协议';
-    info.value.content = '<p>用户协议</p>';
+    info.value.title = '服务协议';
+    info.value.content = '<p>服务协议</p>';
     let i: number = 0;
     for(i==1; i<=100; i++) {
-      info.value.content += '<p>用户协议'+i+'</p>';
+      info.value.content += '<p>服务协议'+i+'</p>';
     }
   } else if(info.value.name==='m_service') {
     info.value.title = '隐私条款';
