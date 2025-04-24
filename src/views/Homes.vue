@@ -141,7 +141,7 @@
         <template #bar_right>
           <div class="me_ico"><i class="ui ui_setting" @click="openUrl('/user/setup')"></i></div>
         </template>
-        <ScrollView v-model:refreshing="scrollMe.refreshing" @refresh="loadData" :isLower="false">
+        <ScrollView :isUpper="false" :isLower="false">
           <div class="me_body">
             <div class="me_top">
               <div class="me_bg"></div>
@@ -160,11 +160,11 @@
                 <div class="flex ico"><i class="ui ui_edit"></i><b>意见反馈</b></div>
                 <div class="flex"><i class="ui ui_arrow_right"></i></div>
               </li>
-              <li class="flex mtop10" @click="openUrl('/base/html', {name:'m_user'})">
+              <li class="flex mtop10" @click="openUrl('/base/html', {name:'m_service'})">
                 <div class="flex ico"><i class="ui ui_order"></i><b>服务协议</b></div>
                 <div class="flex"><i class="ui ui_arrow_right"></i></div>
               </li>
-              <li class="flex mtop1" @click="openUrl('/base/html', {name:'m_service'})">
+              <li class="flex mtop1" @click="openUrl('/base/html', {name:'m_privacy'})">
                 <div class="flex ico"><i class="ui ui_safety"></i><b>隐私政策</b></div>
                 <div class="flex"><i class="ui ui_arrow_right"></i></div>
               </li>

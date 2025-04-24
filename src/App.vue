@@ -115,6 +115,9 @@ const verifyToken = (uinfo: boolean=false): void => {
     }
   },()=>{
     Ui.Toast('网络错误');
+    logout().then(()=>{
+      router.push({path: '/user/login'});
+    });
   });
 }
 
