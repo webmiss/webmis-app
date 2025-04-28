@@ -24,7 +24,7 @@
           <div class="flex ico"><b>姓名</b></div>
           <div class="flex"><span class="info">{{ state.uinfo.name || '-' }}</span></div>
         </li>
-        <li class="flex mtop1">
+        <li class="flex mtop1" @click="changeInfo('gender', state.uinfo.gender)">
           <div class="flex ico"><b>性别</b></div>
           <div class="flex"><span class="info">{{ state.uinfo.gender || '请选择' }}</span><i class="ui ui_arrow_right"></i></div>
         </li>
@@ -71,6 +71,8 @@ const changeInfo = async (name: string, value: string): Promise<void> => {
     res = await proxy.$showModal({title:'所属部门', content:value, editable: true});
   }else if(name==='position') {
     res = await proxy.$showModal({title:'担任职务', content:value, editable: true});
+  }else if(name==='gender') {
+    res = await proxy.$actionSheet({title:'选择性别', active: value, actions:[{label:'男', value:'男'}, {label:'女', value:'女'}]});
   }
   // 确认
   if(res.confirm) {
