@@ -1,13 +1,13 @@
 import { createApp, h } from 'vue';
-import Sheet from '../components/action-sheet/index.vue';
+import Picker from '../components/picker/index.vue';
 
 export default {
   install(app) {
-    const actionSheet = (options) => {
+    const showPicker = (options) => {
       return new Promise((resolve) => {
         const container = document.createElement('div');
         const instance = createApp({
-          render: () => h(Sheet, {
+          render: () => h(Picker, {
             ...options,
             visible: true,
             'onUpdate:visible': (val) => {
@@ -24,6 +24,6 @@ export default {
         document.body.appendChild(container);
       });
     };
-    app.config.globalProperties.$actionSheet = actionSheet;
+    app.config.globalProperties.$showPicker = showPicker;
   }
 }; 
