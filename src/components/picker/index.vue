@@ -36,7 +36,7 @@
 .wm-picker_column_mask{position: absolute; z-index: 1; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; background-image: linear-gradient(180deg, rgba(255, 255, 255, .9), rgba(255, 255, 255, .4)), linear-gradient(0deg, rgba(255, 255, 255, .9), rgba(255, 255, 255, .4)); background-repeat: no-repeat; background-position: center top, center bottom;}
 .wm-picker_column_frame{position: absolute; z-index: 2; width: 100%; top: 50%; left: 0; transform: translateY(-50%); pointer-events: none; box-shadow: 0 0 2px rgba(0, 0, 0, .1);}
 .wm-picker_list{overflow: hidden; user-select: none;}
-.wm-picker_list li{text-align: center; font-size: 16px;}
+.wm-picker_list li{text-align: center; font-size: 16px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;}
 .wm-picker_list li:active{background-color: @Active;}
 .wm-picker_list .active{color: @Primary; background-color: @Primary6;}
 </style>
