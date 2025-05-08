@@ -51,6 +51,7 @@ import { useRouter } from 'vue-router';
 import Request from '../../../library/request';
 import Ui from '../../../library/ui';
 import Files from '../../../library/files';
+import Time from '../../../library/time';
 /* 组件 */
 import PageView from '../../../components/view/page.vue';
 import ScrollView from '../../../components/view/scroll.vue';
@@ -75,19 +76,13 @@ const changeInfo = async (name: string, value: string): Promise<void> => {
     res = await proxy.$actionSheet({title:'选择性别', active: value, actions:[{label:'男', value:'男'}, {label:'女', value:'女'}]});
   }else if(name==='birthday') {
     let active = value?value.split('-'):[];
-    active = ['YunNan', 'YuXi', 'JiangChuan'];
-    res = await proxy.$showPicker({title:'选择生日', active: active, columns: getColumns(),
-    changeCallBack:(v: any)=>{
-      console.log('changeCallBack', v);
-    }
-  });
-    console.log(res);
-    return;
+    const days = Time.daysLimit('1970-01-01', Time.Date('Y-m-d'));
+    res = await proxy.$showPicker({title:'选择生日', active: active, columns: days});
   }
   // 确认
   if(res.confirm) {
     const data: any = {};
-    data[name] = res.content.trim();
+    data[name] = name==='birthday'?res.content.join('-'):res.content.trim();
     // 请求
     Request.Post('user/change_uinfo', {token: state.token, uinfo:data}, (res:any)=>{
       const {code, msg} = res.data;
@@ -95,78 +90,6 @@ const changeInfo = async (name: string, value: string): Promise<void> => {
       return Ui.Toast(msg);
     });
   }
-}
-
-const getColumns = (): Array<any> => {
-  let data: Array<any>=[];
-  // data = [{label: '男', value: '男'}, {label: '女', value: '女'}];
-  // data = [
-  //   [
-  //     {label:'2025年', value:'2025'},
-  //     {label:'2024年', value:'2024'},
-  //     {label:'2023年', value:'2023'},
-  //   ],
-  //   [
-  //     {label:'01月', value:'01'},
-  //     {label:'02月', value:'02'},
-  //     {label:'03月', value:'03'},
-  //     {label:'04月', value:'04'},
-  //     {label:'05月', value:'05'},
-  //     {label:'06月', value:'06'},
-  //     {label:'07月', value:'07'},
-  //     {label:'08月', value:'08'},
-  //     {label:'09月', value:'09'},
-  //     {label:'10月', value:'10'},
-  //     {label:'11月', value:'11'},
-  //     {label:'12月', value:'12'},
-  //   ],
-  //   [
-  //     {label:'01日', value:'01'},
-  //     {label:'02日', value:'02'},
-  //     {label:'03日', value:'03'},
-  //     {label:'04日', value:'04'},
-  //     {label:'05日', value:'05'},
-  //     {label:'06日', value:'06'},
-  //     {label:'07日', value:'07'},
-  //     {label:'08日', value:'08'},
-  //     {label:'09日', value:'09'},
-  //     {label:'10日', value:'10'},
-  //     {label:'11日', value:'11'},
-  //     {label:'12日', value:'12'},
-  //     {label:'13日', value:'13'},
-  //     {label:'14日', value:'14'},
-  //     {label:'15日', value:'15'},
-  //     {label:'16日', value:'16'},
-  //     {label:'17日', value:'17'},
-  //     {label:'18日', value:'18'},
-  //     {label:'19日', value:'19'},
-  //     {label:'20日', value:'20'},
-  //     {label:'21日', value:'21'},
-  //     {label:'22日', value:'22'},
-  //     {label:'23日', value:'23'},
-  //     {label:'24日', value:'24'},
-  //     {label:'25日', value:'25'},
-  //     {label:'26日', value:'26'},
-  //     {label:'27日', value:'27'},
-  //     {label:'28日', value:'28'},
-  //     {label:'29日', value:'29'},
-  //     {label:'30日', value:'30'},
-  //   ],
-  // ];
-  data = [
-    {label: '云南', value: 'YunNan', children: [
-      {label: '昆明', value: 'KunMing', children: [
-        {label: '五华区', value: 'WuHua'},
-        {label: '官渡区', value: 'GuanDu'},
-        {label: '西山区', value: 'XiShan'},
-      ]},
-      {label: '玉溪', value: 'YuXi', children: [
-        {label: '红塔区', value: 'HongTa'},
-        {label: '江川区', value: 'JiangChuan'},
-      ]},
-    ]}
-  ];
-  return data;
 }
 
 /* 上传头像 */
