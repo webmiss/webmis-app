@@ -26,27 +26,45 @@
             <ul class="home_total_list flex">
               <li>
                 <div class="title">采购入库</div>
-                <div class="num flex"><h3>201</h3><span class="red">+10.52%</span></div>
+                <div class="num flex">
+                  <h3>201</h3>
+                  <span class="red">+10.52%</span>
+                </div>
               </li>
               <li>
                 <div class="title">采购退货</div>
-                <div class="num flex"><h3>168</h3><span class="green">-8.36%</span></div>
+                <div class="num flex">
+                  <h3>168</h3>
+                  <span class="green">-8.36%</span>
+                </div>
               </li>
               <li>
                 <div class="title">调拨出</div>
-                <div class="num flex"><h3>298</h3><span class="green">-4.53%</span></div>
+                <div class="num flex">
+                  <h3>298</h3>
+                  <span class="green">-4.53%</span>
+                </div>
               </li>
               <li>
                 <div class="title">调拨入</div>
-                <div class="num flex"><h3>309</h3><span class="red">+3.08%</span></div>
+                <div class="num flex">
+                  <h3>309</h3>
+                  <span class="red">+3.08%</span>
+                </div>
               </li>
               <li>
                 <div class="title">销售出仓</div>
-                <div class="num flex"><h3>24</h3><span class="green">-39.73%</span></div>
+                <div class="num flex">
+                  <h3>24</h3>
+                  <span class="green">-39.73%</span>
+                </div>
               </li>
               <li>
                 <div class="title">售后退货</div>
-                <div class="num flex"><h3>16</h3><span class="green">-9.16%</span></div>
+                <div class="num flex">
+                  <h3>16</h3>
+                  <span class="green">-9.16%</span>
+                </div>
               </li>
             </ul>
           </div>
@@ -193,16 +211,16 @@
 .home_stock .num{line-height: 60px; padding: 0 16px; font-size: 36px; font-weight: bold; text-shadow: 0 0 4px rgba(0,0,0,0.3);}
 .home_stock .day{margin-top: 50px; line-height: 20px; font-size: 14px;}
 .home_stock .time{margin-top: 70px; line-height: 20px; font-size: 12px;}
-.home_total{line-height: 40px; padding: 4px 0; margin-top: 30px;}
+.home_total{position: relative; line-height: 40px; padding: 4px 0; margin-top: 30px;}
 .home_total ul{margin: 0 auto;}
 .home_total li{padding: 0 16px; margin: 0 8px; border-radius: 20px; color: rgba(255,255,255,0.8);}
 .home_total .active{color: #FFF; background-color: #007DFF; font-weight: bold;}
-.home_total_list{margin: 10px auto; max-width: 1024px; border-top: rgba(255,255,255,0.1) 1px solid;}
-.home_total_list li{width: 50%; padding: 10px; border-bottom: rgba(255,255,255,0.1) 1px solid; box-sizing: border-box;}
-.home_total_list li:nth-child(odd){border-right: rgba(255,255,255,0.1) 1px solid;}
+.home_total_list{position: relative; margin: 10px auto; max-width: 1024px; border-top: rgba(255,255,255,0.08) 1px solid;}
+.home_total_list li{width: 50%; padding: 10px; border-bottom: rgba(255,255,255,0.04) 1px solid; box-sizing: border-box;}
+.home_total_list li:nth-child(odd){border-right: rgba(255,255,255,0.04) 1px solid;}
 .home_total_list .title{line-height: 32px; font-size: 12px; color: rgba(255,255,255,0.8);}
 .home_total_list .num{position: relative; line-height: 28px;}
-.home_total_list h3{font-size: 21px;}
+.home_total_list h3{font-size: 24px;}
 .home_total_list span{position: absolute; right: 0; font-size: 14px;}
 .home_total_list .green{color: @Success;}
 .home_total_list .red{color: @Danger;}
