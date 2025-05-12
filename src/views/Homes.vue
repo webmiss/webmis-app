@@ -10,6 +10,12 @@
             <div class="bubble bubble1" :style="{left: bubble.left1+'%', top: bubble.top1+'%'}"></div>
             <div class="bubble bubble2" :style="{left: bubble.left2+'%', top: bubble.top2+'%'}"></div>
             <div class="home_stock">
+              <div class="waves">
+                <div id="wave1" class="wave"></div>
+                <div id="wave2" class="wave"></div>
+                <div id="wave3" class="wave"></div>
+                <div id="wave4" class="wave"></div>
+              </div>
               <div class="title">剩余库存</div>
               <div class="num">239405</div>
               <div class="day">2025/04/19</div>
@@ -205,12 +211,22 @@
 .home_body .bubble{position: absolute; border-radius: 50%; background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%); transition: all 15s ease; transform: translateZ(0);}
 .home_body .bubble1{width: 160px; height: 160px; left: 1%; top: 3%;}
 .home_body .bubble2{width: 320px; height: 320px; left: 40%; top: 20%;}
-.home_stock{position: relative; margin: 10px auto; width: 210px; height: 210px; border: rgba(255,255,255,0.3) 3px solid; border-left-color: @Primary; border-right-color: @Primary; text-align: center; border-radius: 50%; background: #007DFF;}
+.home_stock{overflow: hidden; position: relative; margin: 10px auto; width: 210px; height: 210px; border: rgba(255,255,255,0.3) 3px solid; border-left-color: @Primary; border-right-color: @Primary; text-align: center; border-radius: 50%; background: #007DFF;}
 .home_stock div{position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);}
 .home_stock .title{margin-top: -40px; line-height: 20px; font-size: 14px;}
-.home_stock .num{line-height: 60px; padding: 0 16px; font-size: 36px; font-weight: bold; text-shadow: 0 0 4px rgba(0,0,0,0.3);}
-.home_stock .day{margin-top: 50px; line-height: 20px; font-size: 14px;}
-.home_stock .time{margin-top: 70px; line-height: 20px; font-size: 12px;}
+.home_stock .num{position: relative; z-index: 2; line-height: 60px; padding: 0 16px; font-size: 36px; font-weight: bold; text-shadow: 0 0 4px rgba(0,0,0,0.3);}
+.home_stock .day{position: relative; z-index: 2; line-height: 20px; font-size: 14px;}
+.home_stock .time{position: relative; z-index: 2; line-height: 20px; font-size: 12px;}
+/* 首页-水波纹 */
+.home_stock .waves{position: absolute; z-index: 1; top: 100%; width: 100%; height: 100px; zoom: 0.6;}
+.home_stock .wave{position: absolute; top: 0px; left: 50%; width: 100%; height: 100%; background: url(../assets/img/wave.svg); background-size: 1000px 100px;}
+.home_stock .wave#wave1 {z-index: 1000; opacity: 1; bottom: 0; animation: animateWave 6s linear infinite;}
+.home_stock .wave#wave2 {z-index: 999; opacity: 0.5; bottom: 10px; animation: animateWave2 6s linear infinite;}
+.home_stock .wave#wave3 {z-index: 1000; opacity: 0.2; bottom: 15px; animation: animateWave 4s linear infinite;}
+.home_stock .wave#wave4 {z-index: 999; opacity: 0.7; bottom: 20px; animation: animateWave2 4s linear infinite;}
+@keyframes animateWave { 0% {background-position: 1000px;} 100% {background-position-x: 0px;}}
+@keyframes animateWave2 { 0% {background-position: 0px;} 100% {background-position-x: 1000px;}}
+/* 首页-统计 */
 .home_total{position: relative; line-height: 40px; padding: 4px 0; margin-top: 30px;}
 .home_total ul{margin: 0 auto;}
 .home_total li{padding: 0 16px; margin: 0 8px; border-radius: 20px; color: rgba(255,255,255,0.8);}
