@@ -26,7 +26,7 @@
 </style>
   
 <script setup lang="ts">
-import { onMounted, watch, onBeforeUnmount, getCurrentInstance } from 'vue';
+import { onMounted, onBeforeUnmount, getCurrentInstance } from 'vue';
 import { ref } from 'vue';
 
 /* 参数 */
@@ -47,20 +47,20 @@ var emit = defineEmits(['active']);
 /* 状态 */
 const total: any = ref(0);                  // 轮播图总数量
 const page: any = ref(0);                   // 当前位置
-var swiper: any = null;
+var swiper: any = null;                     // 滑动内容
 var first: boolean = false;                 // 首次运行
-var frame: any = {w:0, h:0};                // 框架宽高
 var move_arr: any = [];                     // 移动间隔
-var index: any = 0;                         // 移动间隔
+var index: any = 0;                         // 初始位置
 var pause_time: any = null;                 // 间隔时间
 var excess_time: any = null;                // 过度时间
-var startPage: any = {x:0, y:0};
-var movePage: any = {x:0, y:0};
+var startPage: any = {x:0, y:0};            // 手指触摸的位置
+var movePage: any = {x:0, y:0};             // 手指移动的距离
 
 /* 创建完成 */
 onMounted(() => {
   init();
 });
+
 /* 页面销毁 */
 onBeforeUnmount(() => {
   clearTimeout(pause_time); // 移除定时
@@ -69,22 +69,20 @@ onBeforeUnmount(() => {
 
 /* 初始化 */
 const init = (): void => {
-  let swipe = (proxy.$refs.swipe as any);
-  // 获取元素宽高
-  frame = {w:swipe.offsetWidth, h:swipe.offsetHeight};
+  const swipe = proxy.$refs.swipe
   // 内容数量小于等于一时停止往下
-  swiper = (proxy.$refs.scroll as any);
+  swiper = proxy.$refs.scroll;
   if(swiper.children.length <= 1) return;
   // 数量
   total.value = swiper.children.length;
   // 获取到第一张图片的demo并添加到轮播图末尾
-  let str = swiper.children[0].outerHTML;
-  swiper.innerHTML = swiper.innerHTML+str;
+  const str = swiper.children[0].outerHTML;
+  swiper.innerHTML += str;
   // 内容长度
   if(props.direction == 'left' || props.direction == 'right') swiper.style = 'width:'+ swiper.children.length*swipe.offsetWidth +'px'
   else swiper.style = 'height:'+ swiper.children.length*swipe.offsetHeight+'px'
   // 计算每张图片间隔位置
-  let new_arr = [{distance: 0}];
+  const new_arr = [{distance: 0}];
   if(props.direction == 'left' || props.direction == 'right') for(let i = 1; i < swiper.children.length+1; i++) new_arr.push({distance: i*swipe.offsetWidth});
   else for(let i = 1; i < swiper.children.length+1; i++) new_arr.push({distance: i*swipe.offsetHeight});
   move_arr = new_arr;
@@ -130,7 +128,7 @@ const automatic = (): void => {
 
 /* 移动动作 */
 const moveAction = (): void => {
-  if(!props.isMove && swiper.children.length <= 1) return;
+  if(!props.isMove || swiper.children.length <= 1) return;
   if(props.direction == 'top'){ // 向上
     if(index < total.value){
       swiper.style.transitionDuration = props.speed+'ms';
@@ -168,14 +166,14 @@ const moveAction = (): void => {
     }
     swiper.style.transform = 'translate(-'+ move_arr[index].distance +'px,0)';
   }
-  page.value = index==total.value?0:index;
-  emit('active', index==total.value?0:index);
+  page.value = index == total.value?0:index;
+  emit('active', index == total.value?0:index);
 }
 
 /* 手指按下 */
 const start = (e: any): void => {
-  if(!props.isMove && swiper.children.length <= 1) return;
-  let touch = e.touches?e.touches[0]:e;
+  if(!props.isMove || swiper.children.length <= 1) return;
+  const touch = e.touches?e.touches[0]:e;
   startPage = {x:touch.clientX, y:touch.clientY};
   movePage = {x:0, y:0};
   clearTimeout(pause_time);
@@ -183,13 +181,10 @@ const start = (e: any): void => {
 
 /* 手指移动 */
 const move = (e: any): void => {
-  if(!props.isMove && swiper.children.length <= 1) return;
+  if(!props.isMove || swiper.children.length <= 1) return;
   swiper.style.transitionDuration = '0ms';
   const touch = e.touches?e.touches[0]:e;
-  movePage = {
-    x: touch.clientX - startPage.x,
-    y: touch.clientY - startPage.y,
-  }
+  movePage = {x: touch.clientX - startPage.x, y: touch.clientY - startPage.y}
   if(props.direction == 'top' || props.direction == 'down'){ // 竖向
     if(movePage.y > 0){
       if(index == 0) index = total.value;
@@ -198,7 +193,7 @@ const move = (e: any): void => {
       if(index == total.value) index = 0;
       swiper.style.transform = 'translate(0,-'+ (move_arr[index].distance-movePage.y) +'px)';
     }
-  }else if(props.direction == 'left'||props.direction == 'right'){ // 横向
+  }else if(props.direction == 'left' || props.direction == 'right'){ // 横向
     if(movePage.x > 0){
       if(index == 0) index = total.value;
       swiper.style.transform = 'translate(-'+ (move_arr[index].distance-movePage.x) +'px,0)';
@@ -211,28 +206,28 @@ const move = (e: any): void => {
 
 /* 手指松开 */
 const end = (e: any): void => {
-  if(!props.isMove && swiper.children.length<=1) return;
+  if(!props.isMove || swiper.children.length <= 1) return;
   // 滑动方向
   const ratio = Math.abs(movePage.x/movePage.y) || 0;
   if(props.direction == 'left' || props.direction == 'right'){
-    if(ratio>0 && movePage.x>props.moveDistance) moveDirection('left');
-    else if(ratio>0 && -movePage.x<props.moveDistance) { // 不满足距离时还原
+    if(ratio > 0 && movePage.x > props.moveDistance) moveDirection('left');
+    else if(ratio > 0 && -movePage.x < props.moveDistance) { // 不满足距离时还原
       swiper.style.transitionDuration = props.speed+'ms';
-      swiper.style.transform = 'translate(-'+ move_arr[index].distance +'px,0)';
-    }else if(ratio>0 && movePage.x<-props.moveDistance) moveDirection('right');
+      swiper.style.transform = 'translate(-'+ move_arr[index].distance+'px,0)';
+    }else if(ratio > 0 && movePage.x < -props.moveDistance) moveDirection('right');
   }else{
-    if(ratio<0 && movePage.y>props.moveDistance) moveDirection('down');
-    else if(ratio<0 && -movePage.y<props.moveDistance) { // 不满足距离时还原
+    if(ratio < 0 && movePage.y>props.moveDistance) moveDirection('down');
+    else if(ratio < 0 && -movePage.y < props.moveDistance) { // 不满足距离时还原
       swiper.style.transitionDuration = props.speed+'ms';
       swiper.style.transform = 'translate(0,-'+ move_arr[index].distance +'px)';
-    }else if(ratio<0 && movePage.y<-props.moveDistance) moveDirection('top');
+    }else if(ratio < 0 && movePage.y <- props.moveDistance) moveDirection('top');
   };
   automatic();
 }
 
 /* 移动方向 */
 const moveDirection = (direction: string): void => {
-  if(!props.isMove&&swiper.children.length<=1) return;
+  if(!props.isMove || swiper.children.length <= 1) return;
   if(direction == 'top' || direction == 'down'){ // 向上、向下
     swiper.style.transitionDuration = props.speed+'ms';
     if(direction == 'down'){
@@ -248,8 +243,8 @@ const moveDirection = (direction: string): void => {
     }else index = index + 1;
     swiper.style.transform = 'translate(-'+ move_arr[index].distance +'px,0)';
   };
-  page.value = index==total.value?0:index;
-  emit('active',index == total.value?0:index);
+  page.value = index == total.value?0:index;
+  emit('active', index == total.value?0:index);
 }
 
 /* 上一页 */
