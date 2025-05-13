@@ -8,7 +8,14 @@
           <i class="ui ui_close" @click="close()"></i>
         </div>
         <ul class="wm-action_sheet_list mtop1">
-          <li v-for="v in actions" @click="subConfirm(v.value)" :style="{color: active==v.value?activeColor:''}">{{ v.label }}</li>
+          <li v-for="v in actions" :style="{color: active==v.value?activeColor:''}">
+            <div v-if="v.type==='time'" class="wm-action_sheet_time" @click="subConfirm('time', v)">
+              <input type="text" :value="v.stime" placeholder="开始时间" @blur="subConfirm('stime', $event)">
+              <span>-</span>
+              <input type="text" :value="v.etime" placeholder="结束时间" @blur="subConfirm('etime', $event)">
+            </div>
+            <div v-else @click="subConfirm('text', v)">{{ v.label }}</div>
+          </li>
           <li v-if="showCancel" class="mtop10" :style="{color: cancelColor}" @click="subCancel()">{{ cancelText }}</li>
         </ul>
       </div>
@@ -27,6 +34,10 @@
 .wm-action_sheet_list li{height: 50px; line-height: 50px; text-align: center; font-size: 16px; background-color: #FFF;}
 .wm-action_sheet_list li:active{background-color: @Active;}
 .wm-action_sheet_list .active{color: @Primary; background-color: @Primary6;}
+.wm-action_sheet_time{overflow: hidden;}
+.wm-action_sheet_time input{width: calc(50% - 40px); height: 40px; text-align: center; border: @BaseBorder 1px solid; background-color: @BaseFill; box-sizing: border-box; border-radius: 4px;}
+.wm-action_sheet_time input:focus{outline: none; border-color: @Primary; background-color: @Primary5; border: 1px solid @Primary; box-shadow: none;}
+.wm-action_sheet_time span{display: inline-block; width: 32px; text-align: center;}
 </style>
 
 <script setup lang="ts">
@@ -37,19 +48,21 @@ const props = defineProps({
   visible: { type: Boolean, default: false },             // 是否显示
   title: { type: String, default: '标题' },               // 标题
   active: { type: String, default: <any>'' },             // 默认值
-  actions: { type: Array<any>, default: [] },             // 选项 [{label:'男', value:'男'}, {label:'女', value:'女'}]
+  actions: { type: Array<any>, default: [] },             // 选项 [{type:'time', stime:'', etime:''}, {label:'全部', value:'all'}]
   activeColor: { type: String, default: '#0064C8' },      // 选择颜色
   showCancel: { type: Boolean, default: true },           // 是否显示取消按钮
   cancelText: { type: String, default: '取消' },          // 取消按钮文本
   cancelColor: { type: String, default: '#73767A' },      // 确认按钮颜色
 });
-const emit = defineEmits(['confirm', 'cancel', 'update:visible']);
+const emit = defineEmits(['confirm', 'cancel', 'close', 'update:visible']);
 /* 变量 */
 const opacity = ref('0');
 const translateY = ref('100%');
+const content = ref(<any>'');
 
 /* 创建完成 */
 onMounted(()=>{
+  content.value = '';
   // 动画
   setTimeout(()=>{
     opacity.value = '1';
@@ -58,9 +71,17 @@ onMounted(()=>{
 });
 
 /* 确定 */
-const subConfirm = (value: any) => {
-  emit('confirm', value);
-  close();
+const subConfirm = (type: string, value: any) => {
+  if(type==='time') {
+    content.value = value;
+  } else if(type==='stime') {
+    content.value.stime = value.target.value;
+  } else if(type==='etime') {
+    content.value.etime = value.target.value;
+  } else {
+    emit('confirm', value);
+    close();
+  }
 };
 
 /* 取消 */
@@ -73,6 +94,7 @@ const subCancel = () => {
 const close = () => {
   opacity.value = '0';
   translateY.value = '100%';
+  emit('close', content.value);
   setTimeout(()=>{
     emit('update:visible', false);
   }, 300);

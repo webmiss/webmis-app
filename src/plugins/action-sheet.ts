@@ -17,7 +17,8 @@ export default {
               }, 300);
             },
             onConfirm: (value) => resolve({ confirm: true, content: value }),
-            onCancel: () => resolve({ confirm: false })
+            onCancel: () => resolve({ confirm: false }),
+            onClose: (value) => resolve({ close: true, content: value }),
           })
         });
         instance.mount(container);
