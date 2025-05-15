@@ -206,7 +206,8 @@
 
 <style lang="less" scoped>
 /* 首页 */
-.home_sea{margin: 0 auto; width: calc(100% - 40px); height: 40px; line-height: 40px; font-size: 16px; color: rgba(255,255,255,0.8); background-color: rgba(255,255,255,0.08); border-radius: 20px;}
+.home_sea{display: inline-block; margin: 0 auto; padding: 0 16px; height: 40px; line-height: 40px; font-size: 16px; color: rgba(255,255,255,0.8); border-radius: 20px;}
+.home_sea:active{background-color: rgba(255,255,255,0.04);}
 .home_body{overflow: hidden; position: relative; min-height: calc(100% - 20px); padding: 10px; color: #FFF;}
 .home_body .bubble{position: absolute; border-radius: 50%; background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%); transition: all 15s ease; transform: translateZ(0);}
 .home_body .bubble1{width: 160px; height: 160px; left: 1%; top: 3%;}
