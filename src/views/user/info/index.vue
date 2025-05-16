@@ -74,6 +74,7 @@ const changeInfo = async (name: string, value: string): Promise<void> => {
     res = await proxy.$showModal({title:'担任职务', content:value, editable: true});
   }else if(name==='gender') {
     res = await proxy.$actionSheet({title:'选择性别', active: value, actions:[{label:'男', value:'男'}, {label:'女', value:'女'}]});
+    res.content = res.content.value;
   }else if(name==='birthday') {
     let active = value?value.split('-'):[];
     const days = Time.daysLimit('1970-01-01', Time.Date('Y-m-d'));
