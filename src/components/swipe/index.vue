@@ -72,12 +72,15 @@ const init = (): void => {
   const swipe = proxy.$refs.swipe
   // 内容数量小于等于一时停止往下
   swiper = proxy.$refs.scroll;
-  if(swiper.children.length <= 1) return;
   // 数量
   total.value = swiper.children.length;
-  // 获取到第一张图片的demo并添加到轮播图末尾
-  const str = swiper.children[0].outerHTML;
-  swiper.innerHTML += str;
+  if(total.value <= 1) return;
+  // 获取到第一个元素并添加到末尾-禁止循环不执行并将page指定到最后
+  if(props.loop) {
+    const str = swiper.children[0].outerHTML;
+    swiper.innerHTML += str;
+  }
+  if(props.direction == 'left' || props.direction == 'down') page.value = total.value - 1;
   // 内容长度
   if(props.direction == 'left' || props.direction == 'right') swiper.style = 'width:'+ swiper.children.length*swipe.offsetWidth +'px'
   else swiper.style = 'height:'+ swiper.children.length*swipe.offsetHeight+'px'
@@ -87,34 +90,41 @@ const init = (): void => {
   else for(let i = 1; i < swiper.children.length+1; i++) new_arr.push({distance: i*swipe.offsetHeight});
   move_arr = new_arr;
   // 轮播方向left&down是移动到最后一张
-  if(props.direction == 'left') {index = total.value; swiper.style.transform = 'translate(-'+ move_arr[total.value].distance +'px,0)';}
-  else if(props.direction == 'down') {index = total.value; swiper.style.transform = 'translate(0,-'+ move_arr[total.value].distance +'px)';}
+  if(props.direction == 'left') {index = total.value-1; swiper.style.transform = 'translate(-'+ move_arr[total.value-1].distance +'px,0)';}
+  else if(props.direction == 'down') {index = total.value-1; swiper.style.transform = 'translate(0,-'+ move_arr[total.value-1].distance +'px)';}
   /* 自动 */
   automatic();
-  /* 无缝衔接处理 */
-  swiper.addEventListener("webkitTransitionEnd",() => {
-    if(props.direction == 'right' && index == total.value) {
-      index = 0;
-      swiper.style.transitionDuration = '0ms'; 
-      swiper.style.transform = 'translate(0px,0)';
-    }else if(props.direction == 'left' && index == 0) {
-      index = total.value;
-      swiper.style.transitionDuration = '0ms'; 
-      swiper.style.transform = 'translate(-'+ move_arr[index].distance +'px,0)';
-    }else if(props.direction == 'top' && index == total.value) {
-      index = 0;
-      swiper.style.transitionDuration = '0ms'; 
-      swiper.style.transform = 'translate(0,0)';
-    }else if(props.direction == 'down' && index == 0) {
-      index = total.value;
-      swiper.style.transitionDuration = '0ms'; 
-      swiper.style.transform = 'translate(0,-'+ move_arr[index].distance +'px)';
-    }
-  },false);
+  /* 无缝衔接处理-禁止循环不执行 */
+  if(props.loop) {
+    swiper.addEventListener("webkitTransitionEnd",() => {
+      if(props.direction == 'right' && index == total.value) {
+        index = 0;
+        swiper.style.transitionDuration = '0ms'; 
+        swiper.style.transform = 'translate(0px,0)';
+      }else if(props.direction == 'left' && index == 0) {
+        index = total.value;
+        swiper.style.transitionDuration = '0ms'; 
+        swiper.style.transform = 'translate(-'+ move_arr[index].distance +'px,0)';
+      }else if(props.direction == 'top' && index == total.value) {
+        index = 0;
+        swiper.style.transitionDuration = '0ms'; 
+        swiper.style.transform = 'translate(0,0)';
+      }else if(props.direction == 'down' && index == 0) {
+        index = total.value;
+        swiper.style.transitionDuration = '0ms'; 
+        swiper.style.transform = 'translate(0,-'+ move_arr[index].distance +'px)';
+      }
+    },false);
+  }
 }
 
 /* 自动 */
 const automatic = (): void => {
+  if(!props.autoplay) return
+  if(!props.loop) {
+    if((props.direction == 'left' || props.direction == 'down') && index < 1) return;
+    if((props.direction == 'right' || props.direction == 'top') && index >= total.value - 1) return;
+  }
   clearTimeout(pause_time);
   pause_time = setTimeout(() => {
     moveAction();
@@ -138,15 +148,6 @@ const moveAction = (): void => {
       swiper.style.transitionDuration = '0ms';
     }
     swiper.style.transform = 'translate(0,-'+ move_arr[index].distance +'px)';
-  }else if(props.direction == 'right'){ // 向左
-    if(index < total.value){
-      swiper.style.transitionDuration = props.speed+'ms';
-      index = index + 1;
-    } else {
-      index = 0;
-      swiper.style.transitionDuration = '0ms';
-    }
-    swiper.style.transform = 'translate(-'+ move_arr[index].distance +'px,0)';
   }else if(props.direction == 'down'){ // 向下
     if(index > 0){
       swiper.style.transitionDuration = props.speed+'ms';
@@ -156,6 +157,15 @@ const moveAction = (): void => {
       swiper.style.transitionDuration = '0ms';
     }
     swiper.style.transform = 'translate(0,-'+ move_arr[index].distance +'px)';
+  }else if(props.direction == 'right'){ // 向左
+    if(index < total.value){
+      swiper.style.transitionDuration = props.speed+'ms';
+      index = index + 1;
+    } else {
+      index = 0;
+      swiper.style.transitionDuration = '0ms';
+    }
+    swiper.style.transform = 'translate(-'+ move_arr[index].distance +'px,0)';
   }else if(props.direction == 'left'){ // 向右
     if(index > 0){
       swiper.style.transitionDuration = props.speed+'ms';
@@ -187,17 +197,21 @@ const move = (e: any): void => {
   movePage = {x: touch.clientX - startPage.x, y: touch.clientY - startPage.y}
   if(props.direction == 'top' || props.direction == 'down'){ // 竖向
     if(movePage.y > 0){
+      if(!props.loop && index < 1) return;
       if(index == 0) index = total.value;
       swiper.style.transform = 'translate(0,-'+ (move_arr[index].distance-movePage.y) +'px)';
     }else{
+      if(!props.loop && index >= total.value - 1) return;
       if(index == total.value) index = 0;
       swiper.style.transform = 'translate(0,-'+ (move_arr[index].distance-movePage.y) +'px)';
     }
   }else if(props.direction == 'left' || props.direction == 'right'){ // 横向
     if(movePage.x > 0){
+      if(!props.loop && index < 1) return;
       if(index == 0) index = total.value;
       swiper.style.transform = 'translate(-'+ (move_arr[index].distance-movePage.x) +'px,0)';
     }else{
+      if(!props.loop && index >= total.value - 1) return;
       if(index == total.value) index = 0;
       swiper.style.transform = 'translate(-'+ (move_arr[index].distance-movePage.x) +'px,0)';
     }
@@ -228,6 +242,10 @@ const end = (e: any): void => {
 /* 移动方向 */
 const moveDirection = (direction: string): void => {
   if(!props.isMove || swiper.children.length <= 1) return;
+  if(!props.loop) {
+    if((direction == 'left' || direction == 'top') && index < 1) return;
+    if((direction == 'right' || direction == 'down') && index >= total.value - 1) return;
+  }
   if(direction == 'top' || direction == 'down'){ // 向上、向下
     swiper.style.transitionDuration = props.speed+'ms';
     if(direction == 'down'){
