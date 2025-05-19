@@ -50,13 +50,13 @@ const props = defineProps({
   fps: { type: Number, default: 10 },                     // 帧频
   width: { type: Number, default: 250 },                  // 宽
   height: { type: Number, default: 250 },                 // 高
+  isClose: { type: Boolean, default: true },              // 扫码成功退出
 });
 const emit = defineEmits(['confirm', 'cancel', 'update:visible']);
 /* 变量 */
 const opacity = ref('0');
 const translateX = ref('100%');
 const msg = ref(<any>'');
-const content = ref(<any>'');
 const stream = ref(<any>null);
 const html5QrCode = ref(<any>null);
 
@@ -100,8 +100,9 @@ const startScan = (): void => {
     {fps: 30, qrbox: {width: props.width, height: props.height}},   // 配置
   (text: string, res: any)=>{
     // 扫描成功
-    content.value = text;
-    close();
+    emit('confirm', text);
+    // 是否关闭
+    if(props.isClose) close();
   }, (err: any)=>{
     // 扫描错误
     // console.log(err);
@@ -113,9 +114,8 @@ const startScan = (): void => {
 /* 关闭 */
 const close = () => {
   stream.value.getTracks().forEach((track: any) => track.stop());
-  html5QrCode.value?.stop().then(()=>{
-    emit('cancel', content.value);
-  });
+  html5QrCode.value?.stop();
+  emit('cancel');
   // 动画
   opacity.value = '0';
   translateX.value = '100%';
