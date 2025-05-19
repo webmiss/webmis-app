@@ -2,7 +2,7 @@
   <Teleport to="body">
     <div v-if="visible" class="wm-show_modal_body">
       <div class="wm-show_modal_mask" :style="{opacity: opacity}"></div>
-      <div class="wm-show_modal_content" :style="{transform: 'translate(-50%, '+translateY+')', opacity: opacity}">
+      <div class="wm-show_modal_content" :style="{transform: 'translate3D(-50%, '+translateY+', 0)', opacity: opacity}">
         <h2 class="title">{{ title }}</h2>
         <div class="content">
           <p v-if="!editable">{{ content }}</p>
@@ -19,7 +19,7 @@
 
 <style lang="less" scoped>
 .wm-show_modal_body{position: absolute; top: 0; left: 0; z-index: 999; width: 100%; height: 100%;}
-.wm-show_modal_mask{position: absolute; z-index: 1; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); transition: opacity 0.3s;}
+.wm-show_modal_mask{position: absolute; z-index: 1; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s;}
 .wm-show_modal_content{overflow: hidden; position: absolute; z-index: 2; top: 50%; left: 50%; width: calc(100% - 40px); max-width: 420px; transform: translate(-50%, -50%); text-align: center; background-color: #FFF; border-radius: 8px; transition: @Transition;}
 .wm-show_modal_content .title{padding: 16px 10px 0; line-height: 40px; font-size: 16px; font-weight: 540;}
 .wm-show_modal_content .content{padding: 16px 16px 32px; line-height: 24px; color: @Info;}
