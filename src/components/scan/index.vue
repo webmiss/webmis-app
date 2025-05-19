@@ -35,7 +35,7 @@
 .wm-scan .msg{padding: 16px 32px; line-height: 24px; color: @Info;}
 .wm-scan .perm{display: inline-block; margin: 0 auto; padding: 4px 32px; line-height: 40px; border-radius: 24px; background-color: @Minor;}
 .wm-scan .video{overflow: hidden; position: absolute; width: 100%; height: 100%;}
-.wm-scan #reader{width: 100%; top: 50%; transform: translateY(-50%);}
+.wm-scan #reader{width: 100%; top: calc(50% - 56px); transform: translateY(-50%);}
 </style>
 
 <script setup lang="ts">

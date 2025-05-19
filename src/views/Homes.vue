@@ -160,7 +160,7 @@
     <template #me>
       <PageView bgColor="linear-gradient(to bottom, #007DFF 0%, #007DFF 50%, #FFF 50%, #F8F8F8 100%)" barBgColor="#007DFF" barShadow="">
         <template #bar_left>
-          <div class="me_ico"><i class="ui ui_scan"></i></div>
+          <div class="me_ico"><i class="ui ui_scan" @click="openScan()"></i></div>
         </template>
         <template #bar_right>
           <div class="me_ico"><i class="ui ui_setting" @click="openUrl('/user/setup')"></i></div>
@@ -272,7 +272,7 @@
 </style>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onActivated } from 'vue';
+import { ref, watch, onMounted, onActivated, getCurrentInstance } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
 /* JS组件 */
@@ -280,12 +280,14 @@ import Ui from '../library/ui';
 import Util from '../library/utils';
 import Request from '../library/request';
 import Storage from '../library/storage';
+import Time from '../library/time';
 /* 组件 */
 import TabBar from '../components/tabs/tabbar.vue';
 import PageView from '../components/view/page.vue';
 import ScrollView from '../components/view/scroll.vue';
 
 defineOptions({name: 'Home'});
+const { proxy } = getCurrentInstance() as any ;
 // 状态
 const store = useStore();
 const state = store.state;
@@ -301,7 +303,10 @@ const scrollHome = ref({refreshing: false, loading: false, finished: false});
 const scrollMsg = ref({refreshing: false, loading: false, finished: false});
 const scrollMe = ref({refreshing: false, loading: false, finished: false});
 const bubble = ref({left1:1, top1:3, left2:40, top2:20});
+// 首页
 let time: any = null;
+const total = ref({time: '', list: <any>{now:<any>{}, old:<any>{}}});
+const homeForm = ref({active:'', stime: '', etime: ''});
 
 /* 监听 */
 watch(()=>route.path, (now: string)=>{
@@ -319,6 +324,8 @@ onActivated(()=>{
     // 首页背景动画
     setTimeout(()=>{ homeAnimation(); }, 3000);
     time = setInterval(()=>{ homeAnimation(); }, 20000);
+    // 首页数据
+    changeDay(homeForm.value.active?homeForm.value.active:'today');
   }
 });
 
@@ -341,7 +348,7 @@ const tabChange = (d: any): void => {
   }
 }
 
-/* 首页动画 */
+/* 首页-动画 */
 const homeAnimation = (): void => {
   bubble.value.left1 = Util.getRandomInt(1, 20);
   bubble.value.top1 = Util.getRandomInt(3, 70);
@@ -349,9 +356,45 @@ const homeAnimation = (): void => {
   bubble.value.top2 = Util.getRandomInt(30, 80);
 }
 
-/* 加载数据 */
+/* 首页-切换时间 */
+const changeDay = (active: string): void => {
+  homeForm.value.active = active;
+  switch(active) {
+    case 'today':
+      homeForm.value.stime = Time.Date('Y/m/d');
+      homeForm.value.etime = Time.Date('Y/m/d');
+      break;
+    case 'yesterday':
+      homeForm.value.stime = Time.Date('Y/m/d', Time.StrToTime('-1 day'));
+      homeForm.value.etime = Time.Date('Y/m/d', Time.StrToTime('-1 day'));
+      break;
+    case 'week':
+      homeForm.value.stime = Time.Date('Y/m/d', Time.StrToTime('-7 day'));
+      homeForm.value.etime = Time.Date('Y/m/d');
+      break;
+    case 'month':
+      homeForm.value.stime = Time.Date('Y/m/d', Time.StrToTime('-1 month'));
+      homeForm.value.etime = Time.Date('Y/m/d');
+      break;
+  }
+  loadData();
+}
+
+/* 首页-数据 */
 const loadData = (): void => {
   console.log('首页数据');
+}
+
+/* 首页-比例 */
+const getRatio = (now: number, old: number): string => {
+  const ratio: number = (now-old)/old*100;
+  return ratio>0?'<b style="color: #FF6600;">'+ratio.toFixed(1)+'%</b>':'<b style="color: #6AD177;">'+ratio.toFixed(1)+'%</b>'
+}
+
+/* 我的-扫码 */
+const openScan = async (): Promise<void> => {
+  const res = await proxy.$showScan({title:'扫描商品编码'});
+  if(res.confirm) console.log(res.content);
 }
 
 </script>
