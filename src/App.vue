@@ -57,14 +57,6 @@ watch(()=>route.path, (now: string, old: string)=>{
     Storage.setItem('routePosition', now==='/'?'0':currentPos);
   }
 }, { deep: true });
-watch(()=>state.isLogin, (isLogin: boolean)=>{
-  // if(isLogin) {
-  //   clearInterval(time);
-  //   time = setInterval(()=>{ verifyToken(); }, verifyTokenTime.value);
-  // } else {
-  //   router.push({path: '/user/login'});
-  // }
-},{ deep: true });
 
 /* 加载完成 */
 onMounted(()=>{
@@ -105,7 +97,6 @@ const isLogin = (): void => {
 
 /* 验证Token */
 const verifyToken = (uinfo: boolean=false): void => {
-  console.log('token', state.token);
   // 登录
   if(!state.token) {
     router.push({path: '/user/login'});
