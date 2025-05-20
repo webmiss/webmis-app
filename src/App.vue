@@ -41,7 +41,8 @@ const route = useRoute();
 const router = useRouter();
 // 变量
 const transitionName = ref('');         // 页面切换样式
-const verifyTokenTime = ref(30000);     // Token验证间隔时间
+let time: any = null;                   // Token验证-对象
+const verifyTokenTime = ref(30000);     // Token验证-间隔时间
 
 /* 监听 */
 watch(()=>route.path, (now: string, old: string)=>{
@@ -57,9 +58,12 @@ watch(()=>route.path, (now: string, old: string)=>{
   }
 }, { deep: true });
 watch(()=>state.isLogin, (isLogin: boolean)=>{
-  if(isLogin) {
-    setInterval(()=>{ verifyToken(); }, verifyTokenTime.value);
-  }
+  // if(isLogin) {
+  //   clearInterval(time);
+  //   time = setInterval(()=>{ verifyToken(); }, verifyTokenTime.value);
+  // } else {
+  //   router.push({path: '/user/login'});
+  // }
 },{ deep: true });
 
 /* 加载完成 */
@@ -82,17 +86,31 @@ onMounted(()=>{
   // 首页位置
   Storage.setItem('routePosition', '0');
   // 验证Token
+  isLogin();
+  clearInterval(time);
+  time = setInterval(()=>{ isLogin(); }, verifyTokenTime.value);
+});
+
+/* 是否登录 */
+const isLogin = (): void => {
   const token: string = Storage.getItem('token') || '';
   if(token) {
     state.isLogin = true;
     state.token = token;
     verifyToken(true);
+  } else {
+    verifyToken();
   }
-});
+}
 
 /* 验证Token */
 const verifyToken = (uinfo: boolean=false): void => {
-  if(!state.token) return;
+  console.log('token', state.token);
+  // 登录
+  if(!state.token) {
+    router.push({path: '/user/login'});
+    return;
+  }
   // 请求
   Request.Post('user/token', {token: state.token, uinfo: uinfo}, (res:any)=>{
     const {code, msg, data}: any = res.data;

@@ -35,9 +35,8 @@
 .wm-picker_column{overflow: hidden; flex: 110%;}
 .wm-picker_column_mask{position: absolute; z-index: 1; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; background-image: linear-gradient(180deg, rgba(255, 255, 255, .9), rgba(255, 255, 255, .4)), linear-gradient(0deg, rgba(255, 255, 255, .9), rgba(255, 255, 255, .4)); background-repeat: no-repeat; background-position: center top, center bottom;}
 .wm-picker_column_frame{position: absolute; z-index: 2; width: 100%; top: 50%; left: 0; transform: translateY(-50%); pointer-events: none; box-shadow: 0 0 2px rgba(0, 0, 0, .1);}
-.wm-picker_list{overflow: hidden; user-select: none;}
+.wm-picker_list{user-select: none; overflow: hidden; user-select: none; will-change: transform;}
 .wm-picker_list li{text-align: center; font-size: 16px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;}
-.wm-picker_list li:active{background-color: @Active;}
 .wm-picker_list .active{color: @Primary; background-color: @Primary6;}
 </style>
 
@@ -57,6 +56,7 @@ const props = defineProps({
   optionHeight: { type: String, default: '44px' },        // 配置-单行高度
   optionNum: { type: Number, default: 6 },                // 配置-数量
   changeCallBack: { type: Function, default: ()=>{} },    // 回调-改变
+  isAnimate: { type: Boolean, default: true },            // 惯性动画
 });
 const emit = defineEmits(['confirm', 'cancel', 'update:visible']);
 /* 变量 */
@@ -158,7 +158,7 @@ const setTransform = (index: number, k: number): void => {
   if(!obj) return;
   const n = objTop-k*objHeight;
   obj.style.transform = 'translate3d(0px, '+n+'px, 0px)';
-  obj.style.transitionDuration = '200ms';
+  obj.style.transitionDuration = '0ms';
 }
 
 /* 开始 */
@@ -169,7 +169,7 @@ const TouchStart = (e: any, index: number): void => {
   obj.style.transitionDuration = '0ms';
   // 位置
   startY = parseInt(e.touches[0].pageY);
-  objY = obj.style.transform.split(',')[1].split('px')[0];
+  objY = parseInt(obj.style.transform.split(',')[1].split('px')[0]);
   minY = objTop + objHeight/2;
   maxY = objTop - objHeight*objList.value[index].length + objHeight/2;
   // 时间
@@ -180,7 +180,7 @@ const TouchStart = (e: any, index: number): void => {
 const TouchMove = (e: any): void => {
   const currentY: number = e.touches[0].pageY;
   distance = currentY - startY;
-  moveY = parseInt(objY.toString())+parseInt(distance.toString());
+  moveY = objY+distance;
   if(moveY>minY) moveY=minY;
   if(moveY<maxY) moveY=maxY+1;
   e.currentTarget.style.transform = 'translate3d(0px, '+moveY+'px, 0px)';
@@ -191,36 +191,56 @@ const TouchMove = (e: any): void => {
 };
 
 /* 结束 */
-const TouchEnd = (e: any, index: number): void => {
-  let move = moveY+Math.ceil(velocity*20);
-  let time = Math.ceil(velocity*100);
-  if(move>minY) move=minY;
-  if(move<maxY) move=maxY+1;
+const TouchEnd = async (e: any, index: number): Promise<void> => {
+  // 位置
   const obj = e.currentTarget;
-  obj.style.transform = 'translate3d(0px, '+move+'px, 0px)';
-  obj.style.transitionDuration = time+'ms';
+  // 惯性动画
+  if(props.isAnimate) {
+    velocity *= 1.5;
+    if(velocity>5 || velocity<-5) await runAnimation(obj);
+  }
   // 调整位置
-  objTime = setTimeout(()=>{
-    const n = objHeight*Math.ceil(move/objHeight)-objHeight/2;
-    obj.style.transform = 'translate3d(0px, '+n+'px, 0px)';
-    obj.style.transitionDuration = '200ms';
-    // 联动菜单
-    if(isObj.value) {
-      getValue();
-      if(index===0) {
-        // 一级
-        setList([0, objPos.value[0], 0]);
-        setTransform(1, 0);
-        setTransform(2, 0);
-      }else if(index===1) {
-        // 二级
-        setList([0, objPos.value[0], objPos.value[1]]);
-        setTransform(2, 0);
+  const n = objHeight*Math.ceil(moveY/objHeight)-objHeight/2;
+  obj.style.transform = 'translate3d(0px, '+n+'px, 0px)';
+  obj.style.transitionDuration = '200ms';
+  // 联动菜单
+  if(isObj.value) {
+    getValue();
+    if(index===0) {
+      // 一级
+      setList([0, objPos.value[0], 0]);
+      setTransform(1, 0);
+      setTransform(2, 0);
+    }else if(index===1) {
+      // 二级
+      setList([0, objPos.value[0], objPos.value[1]]);
+      setTransform(2, 0);
+    }
+  }
+  props.changeCallBack(getValue());
+};
+
+/* 惯性动画 */
+const FRICTION = 0.95;
+const MIN_VELOCITY = 0.5;
+const runAnimation = (obj: any) => {
+  return new Promise(resolve => {
+    function animate() {
+      if (Math.abs(velocity) > MIN_VELOCITY && moveY<minY && moveY>maxY) {
+        velocity *= FRICTION;
+        moveY += velocity;
+        if(moveY>minY) moveY=minY;
+        if(moveY<maxY) moveY=maxY+1;
+        obj.style.transform = 'translate3d(0px, '+parseInt(moveY.toString())+'px, 0px)';
+        obj.style.transitionDuration = '0ms';
+        requestAnimationFrame(animate);
+      } else {
+        resolve(true);
       }
     }
-    props.changeCallBack(getValue());
-  }, time);
-};
+    requestAnimationFrame(animate);
+  });
+}
 
 /* 获取值 */
 const getValue = (): Array<any> => {

@@ -308,25 +308,17 @@ let time: any = null;
 const total = ref({time: '', list: <any>{now:<any>{}, old:<any>{}}});
 const homeForm = ref({active:'', stime: '', etime: ''});
 
-/* 监听 */
-watch(()=>route.path, (now: string)=>{
-  if(now!=='/') clearInterval(time);
-}, { deep: true });
-
 /* 创建完成 */
 onMounted(()=>{
   tabChange({slot: 'home'});
 });
 onActivated(()=>{
-  if(!state.isLogin) {
-    router.push({path: '/user/login'});
-  } else {
-    // 首页背景动画
-    setTimeout(()=>{ homeAnimation(); }, 3000);
-    time = setInterval(()=>{ homeAnimation(); }, 20000);
-    // 首页数据
-    changeDay(homeForm.value.active?homeForm.value.active:'today');
-  }
+  // 首页背景动画
+  setTimeout(()=>{ homeAnimation(); }, 3000);
+  clearInterval(time);
+  time = setInterval(()=>{ homeAnimation(); }, 20000);
+  // 首页数据
+  changeDay(homeForm.value.active?homeForm.value.active:'today');
 });
 
 /* 登录 */

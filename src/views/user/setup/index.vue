@@ -4,13 +4,19 @@
     <template #bar_title>设置</template>
     <ScrollView :isUpper="false" :isLower="false">
       <ul class="menu_list mbottom10">
-        <li class="flex mtop1" @click="Copy(state.uinfo.uid)">
+        <li class="flex mtop1">
           <div class="flex ico"><b>用户ID</b></div>
-          <div class="flex"><span class="info">{{ state.uinfo.uid || '-' }}</span></div>
+          <div class="flex" @click="Copy(state.uinfo.uid)">
+            <span class="info">{{ state.uinfo.uid || '-' }}</span>
+            <i class="ui ui_copy"></i>
+          </div>
         </li>
-        <li class="flex mtop1" @click="Copy(state.uinfo.uname)">
+        <li class="flex mtop1">
           <div class="flex ico"><b>登录帐号</b></div>
-          <div class="flex"><span class="info">{{ state.uinfo.uname || '-' }}</span></div>
+          <div class="flex" @click="Copy(state.uinfo.uname)">
+            <span class="info">{{ state.uinfo.uname || '-' }}</span>
+            <i class="ui ui_copy"></i>
+          </div>
         </li>
         <li class="flex mtop10">
           <div class="flex ico"><b>清理缓存</b></div>
