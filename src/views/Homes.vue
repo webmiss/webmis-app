@@ -230,7 +230,7 @@
 /* 首页-统计 */
 .home_total{position: relative; line-height: 40px; padding: 4px 0; margin-top: 30px;}
 .home_total ul{margin: 0 auto;}
-.home_total li{padding: 0 16px; margin: 0 8px; border-radius: 20px; color: rgba(255,255,255,0.8);}
+.home_total li{flex: 1; padding: 0 16px; margin: 0 8px; border-radius: 20px; text-align: center; color: rgba(255,255,255,0.8);}
 .home_total .active{color: #FFF; background-color: #007DFF; font-weight: bold;}
 .home_total_list{position: relative; margin: 10px auto; max-width: 1024px; border-top: rgba(255,255,255,0.08) 1px solid;}
 .home_total_list li{width: 50%; padding: 10px; border-bottom: rgba(255,255,255,0.04) 1px solid; box-sizing: border-box;}

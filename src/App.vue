@@ -85,13 +85,13 @@ onMounted(()=>{
 
 /* 是否登录 */
 const isLogin = (): void => {
-  const token: string = Storage.getItem('token') || '';
-  if(token) {
+  if(state.token) {
+    verifyToken();
+  } else {
+    const token: string = Storage.getItem('token') || '';
     state.isLogin = true;
     state.token = token;
     verifyToken(true);
-  } else {
-    verifyToken();
   }
 }
 
