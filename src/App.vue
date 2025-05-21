@@ -97,9 +97,9 @@ const isLogin = (): void => {
 
 /* 验证Token */
 const verifyToken = (uinfo: boolean=false): void => {
-  // 登录
+  // 是否登录
   if(!state.token) {
-    router.push({path: '/user/login'});
+    setTimeout(()=>{ router.push({path: '/user/login'}); }, 1000);
     return;
   }
   // 请求

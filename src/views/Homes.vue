@@ -313,12 +313,17 @@ onMounted(()=>{
   tabChange({slot: 'home'});
 });
 onActivated(()=>{
-  // 首页背景动画
-  setTimeout(()=>{ homeAnimation(); }, 3000);
-  clearInterval(time);
-  time = setInterval(()=>{ homeAnimation(); }, 20000);
-  // 首页数据
-  changeDay(homeForm.value.active?homeForm.value.active:'today');
+  // 是否登录
+  if(!state.token) {
+    setTimeout(()=>{ router.push({path: '/user/login'}); }, 1000);
+  } else {
+    // 首页背景动画
+    setTimeout(()=>{ homeAnimation(); }, 3000);
+    clearInterval(time);
+    time = setInterval(()=>{ homeAnimation(); }, 20000);
+    // 首页数据
+    changeDay(homeForm.value.active?homeForm.value.active:'today');
+  }
 });
 
 /* 登录 */
