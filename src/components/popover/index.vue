@@ -24,7 +24,7 @@
 .wm-popover_title h2{font-size: 15px; color: @Text; font-weight: bold;}
 .wm-popover_title i{position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px;}
 .wm-popover_title i:active{color: @Primary;}
-.wm-popover_content{overflow-y: auto;}
+.wm-popover_content{position: relative; overflow-y: auto;}
 .wm-popover_bottom{background-color: #FFF;}
 </style>
 
