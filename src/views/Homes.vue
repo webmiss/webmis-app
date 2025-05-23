@@ -17,7 +17,7 @@
                 <div id="wave4" class="wave"></div>
               </div>
               <div class="title">剩余库存</div>
-              <div class="num">239405</div>
+              <div class="num"><b>239405</b></div>
               <div class="day">2025/04/19</div>
               <div class="time">14:24:32</div>
             </div>
@@ -205,7 +205,6 @@
 </template>
 
 <style lang="less" scoped>
-/* 首页 */
 .home_sea{display: inline-block; margin: 0 auto; padding: 0 16px; height: 40px; line-height: 40px; font-size: 16px; color: rgba(255,255,255,0.8); border-radius: 20px;}
 .home_sea:active{background-color: rgba(255,255,255,0.04);}
 .home_body{overflow: hidden; position: relative; min-height: calc(100% - 20px); padding: 10px; color: #FFF;}
@@ -214,12 +213,13 @@
 .home_body .bubble2{width: 320px; height: 320px; left: 40%; top: 20%;}
 .home_stock{overflow: hidden; position: relative; margin: 10px auto; width: 210px; height: 210px; border: rgba(255,255,255,0.3) 3px solid; border-left-color: @Primary; border-right-color: @Primary; text-align: center; border-radius: 50%; background: #007DFF;}
 .home_stock div{position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);}
-.home_stock .title{margin-top: -40px; line-height: 20px; font-size: 14px;}
-.home_stock .num{position: relative; z-index: 2; line-height: 60px; padding: 0 16px; font-size: 36px; font-weight: bold; text-shadow: 0 0 4px rgba(0,0,0,0.3);}
+.home_stock .title{margin-top: -40px; line-height: 24px; font-size: 14px;}
+.home_stock .num{position: relative; z-index: 2; line-height: 60px; display: flex; justify-content: center; text-align: center;}
+.home_stock .num b{padding: 0 8px; font-size: 36px; text-shadow: 0 0 4px rgba(0,0,0,0.3);}
 .home_stock .day{position: relative; z-index: 2; line-height: 20px; font-size: 14px;}
 .home_stock .time{position: relative; z-index: 2; line-height: 20px; font-size: 12px;}
 /* 首页-水波纹 */
-.home_stock .waves{position: absolute; z-index: 1; top: 100%; width: 100%; height: 100px; zoom: 0.6;}
+.home_stock .waves{position: absolute; z-index: 1; top: 100%; width: 100%; height: 100px; zoom: 0.64;}
 .home_stock .wave{position: absolute; top: 0px; left: 50%; width: 100%; height: 100%; background: url(../assets/img/wave.svg); background-size: 1000px 100px;}
 .home_stock .wave#wave1 {z-index: 1000; opacity: 1; bottom: 0; animation: animateWave 6s linear infinite;}
 .home_stock .wave#wave2 {z-index: 999; opacity: 0.5; bottom: 10px; animation: animateWave2 6s linear infinite;}
@@ -229,16 +229,16 @@
 @keyframes animateWave2 { 0% {background-position: 0px;} 100% {background-position-x: 1000px;}}
 /* 首页-统计 */
 .home_total{position: relative; line-height: 40px; padding: 4px 0; margin-top: 30px;}
-.home_total ul{margin: 0 auto;}
+.home_total ul{margin: 0 auto; padding: 0 8px;}
 .home_total li{flex: 1; padding: 0 16px; margin: 0 8px; border-radius: 20px; text-align: center; color: rgba(255,255,255,0.8);}
 .home_total .active{color: #FFF; background-color: #007DFF; font-weight: bold;}
 .home_total_list{position: relative; margin: 10px auto; max-width: 1024px; border-top: rgba(255,255,255,0.08) 1px solid;}
 .home_total_list li{width: 50%; padding: 10px; border-bottom: rgba(255,255,255,0.04) 1px solid; box-sizing: border-box;}
 .home_total_list li:nth-child(odd){border-right: rgba(255,255,255,0.04) 1px solid;}
-.home_total_list .title{line-height: 32px; font-size: 12px; color: rgba(255,255,255,0.8);}
-.home_total_list .num{position: relative; line-height: 28px;}
-.home_total_list h3{font-size: 24px;}
-.home_total_list span{position: absolute; right: 0; font-size: 14px;}
+.home_total_list .title{padding: 0 8px; line-height: 30px; font-size: 12px; color: rgba(255,255,255,0.8);}
+.home_total_list .title_num{position: relative;}
+.home_total_list .num{position: relative; line-height: 40px;}
+.home_total_list .num h3{padding: 0 8px; font-size: 25px;}
 .home_total_list .green{color: @Success;}
 .home_total_list .red{color: @Danger;}
 /* 消息 */

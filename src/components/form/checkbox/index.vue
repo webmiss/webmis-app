@@ -5,14 +5,20 @@
         <i class="partially" v-if="partially"></i>
         <i class="all" v-else></i>
       </span>
-      <span class="label" v-if="options.label">{{ options.label }}</span>
+      <span class="label">
+        <span v-if="options.label">{{ options.label }}</span>
+        <slot v-else></slot>
+      </span>
     </li>
     <li v-else :style="{margin:margin, padding:padding}" @click.stop="clickCheckbox()">
       <span class="checkbox" :class="options.checked||value==options.value?'active':''">
         <i class="partially" v-if="partially"></i>
         <i class="all" v-else></i>
       </span>
-      <span class="label" v-if="options.label">{{ options.label }}</span>
+      <span class="label">
+        <span v-if="options.label">{{ options.label }}</span>
+        <slot v-else></slot>
+      </span>
     </li>
   </ul>
 </template>

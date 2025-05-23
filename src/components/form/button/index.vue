@@ -42,7 +42,7 @@
 .wm-button.dark_danger{background-color: @Danger; color: @Danger6; border-color: @Danger1;}
 .wm-button.text_danger{color: @Danger;}
 /* info */
-.wm-button.plain_info{background-color: @Info6; color: @Info; border-color: @Info2;}
+.wm-button.plain_info{background-color: @LighterFill; color: @Text; border-color: @Info2;}
 .wm-button.dark_info{background-color: @Info; color: @Info6; border-color: @Info1;}
 .wm-button.text_info{color: @Info;}
 </style>
