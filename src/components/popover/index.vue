@@ -21,7 +21,7 @@
 .wm-popover_body{position: fixed; z-index: 999; top: 0; left: 0; width: 100%; height: 100%;}
 .wm-popover{overflow: hidden; width: 100%; height: 100%; border-radius: 10px 10px 0 0;}
 .wm-popover_title{position: relative; height: 48px; background-color: #FFF; display: flex; justify-content: center; align-items: center;}
-.wm-popover_title h2{font-size: 15px; color: @Text;}
+.wm-popover_title h2{font-size: 15px; color: @Text; font-weight: bold;}
 .wm-popover_title i{position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px;}
 .wm-popover_title i:active{color: @Primary;}
 .wm-popover_content{overflow-y: auto;}
