@@ -5,7 +5,7 @@
       <div class="wm-show_modal_content" :style="{transform: 'translate3D(-50%, '+translateY+', 0)', opacity: opacity}">
         <h2 class="title">{{ title }}</h2>
         <div class="content">
-          <p v-if="!editable">{{ content }}</p>
+          <p v-if="!editable" v-html="content"></p>
           <input v-else v-model="inputValue" :placeholder="placeholder" />
         </div>
         <div class="footer">

@@ -1,6 +1,6 @@
 <template>
   <div class="wm-scroll_body" :style="{backgroundColor: bgColor, color: color}">
-    <div class="wm-scroll_ct" ref="freshContainer" @touchstart.passive="TouchStart" @touchmove.passive="TouchMove" @touchend="TouchEnd" @scroll="Scroll">
+    <div class="wm-scroll_ct" ref="freshContainer" @touchstart.passive="TouchStart" @touchmove.passive="TouchMove" @touchend.passive="TouchEnd" @scroll="Scroll">
       <!-- 下拉刷新 -->
       <div class="wm-scroll_refresh" :style="{marginTop: '-'+upper+'px', height: upper+'px', lineHeight: upper+'px', transform: `translateY(${distance}px)`}">
         <slot v-if="$slots.refresh" name="refresh"></slot>

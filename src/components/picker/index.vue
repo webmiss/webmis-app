@@ -12,7 +12,7 @@
           <div class="wm-picker_column_mask" :style="{backgroundSize: '100% 110px'}"></div>
           <div class="wm-picker_column_frame" :style="{height: optionHeight}"></div>
           <div class="wm-picker_column" v-for="(v,k) in objList">
-            <ul :ref="(el)=>setObjRef(el, k)" class="wm-picker_list" :style="{transform: 'translate3d(0px, 110px, 0px)'}" @touchstart.passive="TouchStart($event, k)" @touchmove.passive="TouchMove" @touchend="TouchEnd($event, k)">
+            <ul :ref="(el)=>setObjRef(el, k)" class="wm-picker_list" :style="{transform: 'translate3d(0px, 110px, 0px)'}" @touchstart.passive="TouchStart($event, k)" @touchmove.passive="TouchMove" @touchend.passive="TouchEnd($event, k)">
               <li v-for="row in v" :style="{height: optionHeight, lineHeight: optionHeight}">{{ row.label }}</li>
             </ul>
           </div>
@@ -110,7 +110,6 @@ const activeValue = (): void => {
 const setList = (pos: Array<any>=[0, 0, 0]): void => {
   let arr1=<any>[], arr2=<any>[], arr3=<any>[];
   // 一级
-  arr1
   for(let k1 in props.columns) {
     arr1.push({label: props.columns[k1].label, value: props.columns[k1].value});
     // 二级
