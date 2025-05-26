@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+import { createRouter, createWebHistory, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 import Home from '../views/Homes.vue';
 
 /* 路由 */
@@ -14,6 +14,7 @@ const routes: Array<RouteRecordRaw> = [
 ]
 /* 创建 */
 export default createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(),        // 服务器项目
+  // history: createWebHashHistory(),    // 本地APP
   routes
 })
