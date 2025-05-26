@@ -25,7 +25,7 @@
 .wm-preview_swipe{overflow: hidden; position: relative; width: 100%; height: 100%; touch-action: pan-x; -webkit-overflow-scrolling: touch;}
 .wm-preview_track{cursor: grab; height: 100%; transition-property: transform; display: flex;}
 .wm-preview_item{width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;}
-.wm-preview_image{width: 100%;}
+.wm-preview_image{width: 100%; transition-property: transform;}
 .wm-preview_image img{width: 100%;}
 </style>
 
@@ -38,7 +38,9 @@ const props = defineProps({
   title: {type: String, default: '标题'},                 // 标题
   images: {type: Array<any>, default: []},                // 图片地址
   index: {type: Number, default: 0},                      // 索引
-  tolerance: {type: Number, default: 0.2},                // 容差: 0-0.5
+  tolerance: {type: Number, default: 0.2},                // 滑动容差: 0-0.5scaleN
+  minScale: {type: Number, default: 1},                   // 缩放: 最小
+  maxScale: {type: Number, default: 3},                   // 缩放: 最大
 });
 const emit = defineEmits(['update:visible', 'update:index', 'close']);
 // 变量
@@ -49,6 +51,11 @@ const previewTrack = ref(null);
 // 移动
 let startX=0, distance=0;
 let move = ref(0);
+// 缩放
+const scale = ref(1);
+let isScale = false;
+let scaleN = 0;
+let initialDistance = 0;
 
 /* 创建完成 */
 onMounted(()=>{
@@ -67,46 +74,85 @@ onMounted(()=>{
 
 /* 开始 */
 const TouchStart = (e: any): void => {
-  const touch = e.touches?e.touches[0]:e;
-  startX = touch.pageX;
+  isScale = false;
+  scaleN = 0;
+  if(e.touches.length===2) {
+    isScale = true;
+    initialDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  } else {
+    startX = e.touches[0].pageX;
+  }
 };
 
 /* 移动 */
 const TouchMove = (e: any): void => {
-  if(props.images.length<=1) return;
-  const touch = e.touches?e.touches[0]:e;
-  distance = touch.pageX - startX;
-  let x: number = move.value+distance;
-  if(x > width.value) move.value = -(props.images.length-1)*width.value;
-  else if(x < -props.images.length*width.value) move.value = 0;
   // 容器
-  let obj: any = previewTrack.value;
+  const obj: any = previewTrack.value;
   if(!obj) return;
-  obj.style.transform = 'translateX('+x+'px)';
-  obj.style.transitionDuration = '0ms';
-  // 首尾相连
-  if(x >= 0) {
-    obj.children[props.images.length-1].style.transform = 'translateX(-'+props.images.length*width.value+'px)';
-  } else if(x <= -(props.images.length-1)*width.value) {
-    obj.children[0].style.transform = 'translateX('+props.images.length*width.value+'px)';
+  const imgObj = obj.children[page.value-1].children[0];
+  // 缩放
+  if(isScale) {
+    if(e.touches.length!==2) return;
+    const currentDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    const s = currentDistance / initialDistance;
+    const n = s>1?s-1:-(1-s);
+    scaleN = scale.value+n;
+    imgObj.style.transform = 'scale('+scaleN+')';
+    imgObj.style.transitionDuration = '0ms';
   } else {
-    obj.children[0].style.transform = '';
-    obj.children[props.images.length-1].style.transform = '';
+    // 重置放大
+    scaleN = 0;
+    scale.value = 1;
+    for(let v of obj.children) {
+      v.children[0].style.transform = 'scale(1)';
+      v.children[0].style.transitionDuration = '300ms';
+    }
+    // 滑动
+    if(props.images.length<=1) return;
+    distance = e.touches[0].pageX - startX;
+    let x: number = move.value+distance;
+    if(x > width.value) move.value = -(props.images.length-1)*width.value;
+    else if(x < -props.images.length*width.value) move.value = 0;
+    obj.style.transform = 'translateX('+x+'px)';
+    obj.style.transitionDuration = '0ms';
+    // 首尾相连
+    if(x >= 0) {
+      obj.children[props.images.length-1].style.transform = 'translateX(-'+props.images.length*width.value+'px)';
+    } else if(x <= -(props.images.length-1)*width.value) {
+      obj.children[0].style.transform = 'translateX('+props.images.length*width.value+'px)';
+    } else {
+      obj.children[0].style.transform = '';
+      obj.children[props.images.length-1].style.transform = '';
+    }
   }
 };
 
 /* 结束 */
 const TouchEnd = (): void => {
-  move.value += Math.round(distance/width.value+(distance>=0?props.tolerance:-props.tolerance))*width.value;
-  let obj: any = previewTrack.value;
-  if(obj) {
-    obj.style.transform = 'translateX('+move.value+'px)';
-    obj.style.transitionDuration = '300ms';
+  // 缩放
+  if(isScale) {
+    if(!scaleN) return;
+    if(scaleN<props.minScale) scaleN=props.minScale;
+    if(scaleN>props.maxScale) scaleN=props.maxScale;
+    const obj: any = previewTrack.value;
+    const imgObj = obj.children[page.value-1].children[0];
+    imgObj.style.transform = 'scale('+scaleN+')';
+    imgObj.style.transitionDuration = '300ms';
+    scale.value = scaleN;
+    scaleN = 0;
+  } else {
+    // 滑动
+    move.value += Math.round(distance/width.value+(distance>=0?props.tolerance:-props.tolerance))*width.value;
+    let obj: any = previewTrack.value;
+    if(obj) {
+      obj.style.transform = 'translateX('+move.value+'px)';
+      obj.style.transitionDuration = '300ms';
+    }
+    // 页码
+    let index: number = Math.abs(move.value/width.value);
+    if(index>=props.images.length) index = 0;
+    page.value = index+1;
   }
-  // 页码
-  let index: number = Math.abs(move.value/width.value);
-  if(index>=props.images.length) index = 0;
-  page.value = index+1;
 };
 
 /* 关闭 */
