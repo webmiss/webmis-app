@@ -1,6 +1,6 @@
 <template>
   <div class="wm-page_body" :style="{background: bgColor, color: color}">
-    <div class="wm-page_bar" :style="{color: barColor, backgroundColor: barBgColor, boxShadow: barShadow, height: barHeight, lineHeight: 'calc('+barHeight+' - 10px)', paddingTop: 'calc('+state.statusHeight+'px + 5px)'}">
+    <div class="wm-page_bar" :style="{color: barColor, backgroundColor: barBgColor, boxShadow: barShadow, height: barHeight, lineHeight: 'calc('+barHeight+' - 10px)', paddingTop: 'calc(env(safe-area-inset-top) + 5px)'}">
       <div class="wm-page_bar_left" v-if="$slots.bar_left">
         <slot name="bar_left"></slot>
       </div>
@@ -11,10 +11,10 @@
         <slot name="bar_title"></slot>
       </div>
     </div>
-    <div v-if="immersed" :style="{height: 'calc('+height+' - '+state.statusHeight+'px)'}">
+    <div v-if="immersed" class="wm-page_content" :style="{height: 'calc('+height+' - env(safe-area-inset-top) - 10px)'}">
       <slot></slot>
     </div>
-    <div v-else :style="{height: 'calc('+height+' - '+barHeight+' - '+state.statusHeight+'px)', paddingTop: 'calc('+barHeight+' + '+state.statusHeight+'px)'}">
+    <div v-else class="wm-page_content" :style="{height: 'calc('+height+' - '+barHeight+' - env(safe-area-inset-top) - 10px)', paddingTop: 'calc('+barHeight+' + env(safe-area-inset-top) + 10px)'}">
       <slot></slot>
     </div>
   </div>
@@ -22,11 +22,12 @@
 
 <style lang="less">
 .wm-page_body{width: 100%; height: 100%;}
-.wm-page_bar{position: absolute; z-index: 99; top: 0; width: 100%; padding: 5px 10px; box-sizing: border-box;}
+.wm-page_bar{position: absolute; z-index: 99; top: 0; width: calc(100% - 20px); padding: 5px 10px; display: flex; justify-content: center; align-items: center;}
 .wm-page_bar_left{position: absolute; left: 10px;}
 .wm-page_bar_right{position: absolute; right: 10px;}
 .wm-page_bar_right .text{padding: 5px 10px;}
-.wm-page_bar_title{height: 100%; text-align: center; font-size: 16px; font-weight: bold;}
+.wm-page_bar_title{text-align: center; font-size: 16px; font-weight: bold; display: flex; justify-content: center; align-items: center;}
+.wm-page_content{padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right);}
 </style>
 
 <script setup lang="ts">

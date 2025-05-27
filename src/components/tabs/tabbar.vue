@@ -1,7 +1,7 @@
 <template>
   <div class="wm-tabbar_body">
-    <div v-for="v in columns" class="wm-tabbar_ct" :style="{
-      height: 'calc(100% - '+height+')',
+    <div v-for="v in columns" class="wm-tabbar_content" :style="{
+      height: 'calc(100% - '+height+' - env(safe-area-inset-bottom))',
       visibility: active===v.slot?'inherit':'hidden',
     }">
       <slot v-if="v.slot" :name="v.slot"></slot>
@@ -18,8 +18,8 @@
 
 <style lang="less" scoped>
 .wm-tabbar_body{overflow: hidden; position: relative; width: 100%; height: 100%;}
-.wm-tabbar_ct{position: absolute; width: 100%;}
-.wm-tabbar_bottom{user-select: none; width: 100%; position: absolute; bottom: 0;}
+.wm-tabbar_content{position: absolute; width: calc(100% - env(safe-area-inset-left) - env(safe-area-inset-right)); padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right);}
+.wm-tabbar_bottom{user-select: none; width: 100%; position: absolute; bottom: 0; padding-bottom: env(safe-area-inset-bottom);}
 .wm-tabbar_bottom li{display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: center;}
 .wm-tabbar_bottom .icon{font-size: 24px;}
 .wm-tabbar_bottom .name{zoom: 0.8; font-size: 12px; padding-top: 4px;}
