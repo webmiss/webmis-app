@@ -310,7 +310,9 @@ const homeForm = ref({active:'', stime: '', etime: ''});
 
 /* 创建完成 */
 onMounted(()=>{
+  // 首页数据
   tabChange({slot: 'home'});
+  if(state.isLogin) changeDay(homeForm.value.active?homeForm.value.active:'today');
 });
 onActivated(()=>{
   // 是否登录
@@ -321,8 +323,6 @@ onActivated(()=>{
     setTimeout(()=>{ homeAnimation(); }, 3000);
     clearInterval(time);
     time = setInterval(()=>{ homeAnimation(); }, 20000);
-    // 首页数据
-    changeDay(homeForm.value.active?homeForm.value.active:'today');
   }
 });
 
