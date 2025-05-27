@@ -32,7 +32,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useStore } from 'vuex';
 import Plus from '../../library/plus';
 
 /* 参数 */
@@ -48,16 +47,14 @@ const props = defineProps({
   barShadow: {type: String, default: '0 0 1px rgba(0,0,0,0.2)'},  // 状态栏-阴影
 });
 const emit = defineEmits(['update:value', 'data']);
-// 状态
-const store = useStore();
-const state = store.state;
+// 变量
 const safe_top = ref('env(safe-area-inset-top)');
 
 /* 加载完成 */
 onMounted(()=>{
   Plus.Ready(()=>{
     // @ts-ignore
-    if(plus.os.name.toLowerCase()==='android') safe_top.value = state.statusHeight+'px';
+    if(plus.os.name.toLowerCase()==='android') safe_top.value = plus.navigator.getStatusbarHeight()+'px';
   });
 });
 
