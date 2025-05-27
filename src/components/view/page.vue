@@ -1,6 +1,6 @@
 <template>
   <div class="wm-page_body" :style="{background: bgColor, color: color}">
-    <div class="wm-page_bar" :style="{color: barColor, backgroundColor: barBgColor, boxShadow: barShadow, height: barHeight, lineHeight: 'calc('+barHeight+' - 10px)', paddingTop: 'calc(env(safe-area-inset-top) + 5px)'}">
+    <div class="wm-page_bar" :style="{color: barColor, background: barBgColor, boxShadow: barShadow, height: barHeight, lineHeight: 'calc('+barHeight+' - 10px)', paddingTop: 'calc('+safe_top+' + 5px)'}">
       <div class="wm-page_bar_left" v-if="$slots.bar_left">
         <slot name="bar_left"></slot>
       </div>
@@ -11,10 +11,10 @@
         <slot name="bar_title"></slot>
       </div>
     </div>
-    <div v-if="immersed" class="wm-page_content" :style="{height: 'calc('+height+' - env(safe-area-inset-top) - 10px)'}">
+    <div v-if="immersed" class="wm-page_content" :style="{height: 'calc('+height+' - '+safe_top+')'}">
       <slot></slot>
     </div>
-    <div v-else class="wm-page_content" :style="{height: 'calc('+height+' - '+barHeight+' - env(safe-area-inset-top) - 10px)', paddingTop: 'calc('+barHeight+' + env(safe-area-inset-top) + 10px)'}">
+    <div v-else class="wm-page_content" :style="{height: 'calc('+height+' - '+barHeight+' - '+safe_top+' - 10px)', paddingTop: 'calc('+barHeight+' + '+safe_top+' + 10px)'}">
       <slot></slot>
     </div>
   </div>
@@ -31,7 +31,9 @@
 </style>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
+import Plus from '../../library/plus';
 
 /* 参数 */
 const props = defineProps({
@@ -49,5 +51,14 @@ const emit = defineEmits(['update:value', 'data']);
 // 状态
 const store = useStore();
 const state = store.state;
+const safe_top = ref('env(safe-area-inset-top)');
+
+/* 加载完成 */
+onMounted(()=>{
+  Plus.Ready(()=>{
+    // @ts-ignore
+    if(plus.os.name.toLowerCase()==='android') safe_top.value = state.statusHeight+'px';
+  });
+});
 
 </script>

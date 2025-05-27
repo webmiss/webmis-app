@@ -9,8 +9,9 @@
         <div ref="previewTrack" class="wm-preview_track">
           <div v-for="img in images" class="wm-preview_item" :style="{width: width+'px'}">
             <div class="wm-preview_image">
-              <img :src="img">
+              <img :src="typeof img==='string'?img:img.value">
             </div>
+            <div class="wm-preview_label" v-if="typeof img==='object'">{{ img.label }}</div>
           </div>
         </div>
       </div>
@@ -24,9 +25,10 @@
 .wm-preview_top .ui_close{position: absolute; left: 10px; bottom: 8px; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;}
 .wm-preview_swipe{overflow: hidden; position: relative; width: 100%; height: 100%; touch-action: pan-x; -webkit-overflow-scrolling: touch;}
 .wm-preview_track{cursor: grab; height: 100%; transition-property: transform; display: flex;}
-.wm-preview_item{width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;}
+.wm-preview_item{position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;}
 .wm-preview_image{width: 100%; transition-property: transform;}
 .wm-preview_image img{width: 100%;}
+.wm-preview_label{line-height: 24px; padding: 8px; border-radius: 8px; max-width: calc(100% - 40px); text-align: center; position: absolute; bottom: 16px; background-color: rgba(0,0,0,0.5);}
 </style>
 
 <script setup lang="ts">

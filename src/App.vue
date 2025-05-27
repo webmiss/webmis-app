@@ -1,4 +1,6 @@
 <template>
+  <!-- 启动页 -->
+  <Start></Start>
   <!-- 软件升级 -->
   <Update></Update>
   <!-- 路由 -->
@@ -32,6 +34,7 @@ import Request from './library/request';
 import Storage from './library/storage';
 import Plus from './library/plus';
 /* 组件 */
+import Start from './views/tools/Start.vue';
 import Update from './views/tools/Update.vue';
 
 // 状态
