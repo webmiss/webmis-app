@@ -1,208 +1,177 @@
 <template>
-  <div ref="wmImageViewBg" class="wm-image_view" :style="{
-    backgroundColor: bgColor,
-    visibility:show?'inherit':'hidden',
-    opacity:show?'1':'0'
-  }">
-    <!-- Image -->
-    <i v-if="!isLoad" class="ui ui_loading loading" :style="{fontSize: icoSize}"></i>
-    <img v-else ref="wmImageView" :src="imgUrl" :style="{visibility:isLoad?'inherit':'hidden'}" />
-    <img ref="wmImageLoading" class="loading_img" />
-    <!-- Info -->
-     <div class="wm-image_view_info" v-if="title">
-      <span>{{ state.langs.name }}: {{title}}</span>
-      <template v-if="size">
-        <span>{{ state.langs.size }}: {{size}}</span>
-      </template>
-      <template v-if="other">
-        <template v-for="(v,k) in other" :key="k">
-          <span>{{ k }}: {{ v }}</span>
-        </template>
-      </template>
-      <span>{{ state.langs.page }}: {{ imgIndex+1 }}/{{ options.length }}</span>
+  <Teleport to="body">
+    <div v-if="visible" class="wm-preview_body" :style="{opacity: opacity}">
+      <div class="wm-preview_top" :style="{top: safe_top}">
+        <i class="ui ui_close" @click="close()"></i>
+        <span>{{ page }}/{{ props.images.length }}</span>
+      </div>
+      <div class="wm-preview_swipe" @touchstart.passive="TouchStart" @touchmove.passive="TouchMove" @touchend.passive="TouchEnd">
+        <div ref="previewTrack" class="wm-preview_track">
+          <div v-for="img in images" class="wm-preview_item" :style="{width: width+'px'}">
+            <div class="wm-preview_image">
+              <img :src="typeof img==='string'?img:img.value">
+            </div>
+            <div class="wm-preview_label" v-if="typeof img==='object'">{{ img.label }}</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <!-- Close -->
-    <i class="ui ui_close tools close" @click="close()"></i>
-    <!-- FullScreen -->
-    <i class="ui tools full" :class="isFull?'ui_video_fullscreen_exit':'ui_video_fullscreen'" @click="Fullscreen()"></i>
-    <!-- Prev -->
-    <div class="prev">
-      <i class="ui ui_arrow_left" @click.stop="loadImg(imgIndex-1)" :style="{
-        width: 'calc('+icoSize+' + 16px)',
-        lineHeight: 'calc('+icoSize+' + 16px)',
-        fontSize: 'calc('+icoSize+' - 12px)'
-      }"></i>
-    </div>
-    <!-- Next -->
-    <div class="next">
-      <i class="ui ui_arrow_right" @click.stop="loadImg(imgIndex+1)" :style="{
-        width: 'calc('+icoSize+' + 16px)',
-        lineHeight: 'calc('+icoSize+' + 16px)',
-        fontSize: 'calc('+icoSize+' - 12px)'
-      }"></i>
-    </div>
-  </div>
+  </Teleport>
 </template>
 
 <style lang="less" scoped>
-.wm-image_view{position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; transition: @Transition;}
-.wm-image_view .loading, .wm-image_view img{position: absolute; z-index: 1; left: 50%; top: 50%; transform: translate(-50%, -50%);}
-.wm-image_view .loading{color: @Minor; animation: loading 2s linear 0s infinite;}
-.wm-image_view img{transition: @Transition;}
-.wm-image_view .loading_img{display: none;}
-.wm-image_view_info{overflow: hidden; position: absolute; z-index: 10; white-space: nowrap; max-width: calc(100% - 200px); left: 50%; bottom: 16px; transform: translateX(-50%); padding: 0 16px; line-height: 40px; background-color: #00000080; color: #FFF; border-radius: 20px;}
-.wm-image_view_info span{padding: 0 8px;}
-/* Tools */
-.wm-image_view .tools{cursor: pointer; position: absolute; z-index: 10; width: 48px; line-height: 48px; color: #FFF; background-color: #00000005; text-align: center; border-radius: 50%;}
-.wm-image_view .tools:hover{background-color: #00000080; color: @Minor;}
-.wm-image_view .close{right: 16px; top: 16px; font-size: 20px;}
-.wm-image_view .full{right: 16px; bottom: 16px; font-size: 20px;}
-.wm-image_view .prev,.wm-image_view .next{position: absolute; z-index: 9; top: 0; width: 80px; height: 100%;}
-.wm-image_view .prev i,.wm-image_view .next i{cursor: pointer; position: absolute; top: 50%; transform: translateY(-50%); opacity: 0.3; color: #FFF; background-color: #00000050; text-align: center; border-radius: 50%;}
-.wm-image_view .prev{left: 0;}
-.wm-image_view .prev i{left: 16px;}
-.wm-image_view .prev:hover i,.wm-image_view .next:hover i{opacity: 1;}
-.wm-image_view .prev i:hover,.wm-image_view .next i:hover{color: @Minor;}
-.wm-image_view .next{right: 0;}
-.wm-image_view .next i{right: 16px;}
+.wm-preview_body{position: fixed; z-index: 999; top: 0; left: 0; width: 100%; height: 100%; color: #FFF; background-color: #000; opacity: 0; transition: opacity 0.4s;}
+.wm-preview_top{position: absolute; z-index: 2; padding: 8px 10px; width: 100%; height: 40px; display: flex; justify-content: center; align-items: center;}
+.wm-preview_top .ui_close{position: absolute; left: 10px; bottom: 8px; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;}
+.wm-preview_swipe{overflow: hidden; position: relative; width: 100%; height: 100%; touch-action: pan-x; -webkit-overflow-scrolling: touch;}
+.wm-preview_track{cursor: grab; height: 100%; transition-property: transform; display: flex;}
+.wm-preview_item{position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;}
+.wm-preview_image{width: 100%; transition-property: transform;}
+.wm-preview_image img{width: 100%;}
+.wm-preview_label{line-height: 24px; padding: 8px; border-radius: 8px; max-width: calc(100% - 40px); text-align: center; position: absolute; bottom: 16px; background-color: rgba(0,0,0,0.5);}
 </style>
 
 <script setup lang="ts">
-import { ref, watch, getCurrentInstance, nextTick } from 'vue';
-import { useStore } from 'vuex';
-import Ui from '../../library/ui';
+import { ref, onMounted } from 'vue';
+import Plus from '../../library/plus';
 
 /* 参数 */
 const props = defineProps({
-    show: {type: Boolean, default: false},              // 是否显示
-    index: {type: Number, default: 0},                  // 默认展示
-    options: {type: Array<any>, default: []},           // 图片地址: [{label:'名称', value:'', size:'', other:[{'名称':'内容'}]}]
-    bgColor: {type: String, default: 'rgba(0,0,0,.8)'}, // 背景颜色
-    icoSize: {type: String, default: '32px'},           // 图标大小
-  });
-const { proxy } = getCurrentInstance() as any ;
-const emit = defineEmits(['update:show']);
-// 状态
-const store = useStore();
-const state = store.state;
+  visible: {type: Boolean, default: false},               // 是否显示
+  title: {type: String, default: '标题'},                 // 标题
+  images: {type: Array<any>, default: []},                // 图片地址
+  index: {type: Number, default: 0},                      // 索引
+  tolerance: {type: Number, default: 0.2},                // 滑动容差: 0-0.5scaleN
+  minScale: {type: Number, default: 1},                   // 缩放: 最小
+  maxScale: {type: Number, default: 3},                   // 缩放: 最大
+});
+const emit = defineEmits(['update:visible', 'update:index', 'close']);
 // 变量
-const isLoad = ref(false);
-const imgIndex = ref(0);
-const imgUrl = ref('');
-const isFull = ref(false);
-const title = ref('');
-const size = ref('');
-const other = ref('');
+const safe_top = ref('env(safe-area-inset-top)');
+const page = ref(1);
+const width = ref(0);
+const opacity = ref('0');
+const previewTrack = ref(null);
+// 移动
+let startX=0, distance=0;
+let move = ref(0);
+// 缩放
+const scale = ref(1);
+let isScale = false;
+let scaleN = 0;
+let initialDistance = 0;
 
-/* 监听 */
-watch(()=>props.show, (val: boolean)=>{
-  if(val) {
-    imgIndex.value = props.index;
-    loadImg(imgIndex.value);
-    // 事件
-    window.addEventListener('resize', resizeFun);
-    document.addEventListener('keydown', keydownFun);
+/* 创建完成 */
+onMounted(()=>{
+  // 初始化
+  width.value = window.innerWidth;
+  let obj: any = previewTrack.value;
+  obj.style.width = width.value*props.images.length+'px';
+  if(props.index && props.index<props.images.length) {
+    page.value = props.index+1;
+    move.value = -width.value*props.index;
+    obj.style.transform = 'translateX('+move.value+'px)';
   }
-},{ deep: true });
+  // 动画
+  opacity.value = '1';
+  // 状态栏
+  Plus.Ready(()=>{
+    // @ts-ignore
+    if(plus.os.name.toLowerCase()==='android') safe_top.value = plus.navigator.getStatusbarHeight()+'px';
+  });
+});
 
-
-/* 窗口事件 */
-const resizeFun = (): void => {
-  if(props.show) loadImg(imgIndex.value);
-}
-
-/* 键盘事件 */
-const keydownFun = (event: any): void => {
-  const keyCode: any = event.keyCode || event.which;
-  switch (keyCode) {
-    case 37: loadImg(imgIndex.value-1); break;
-    case 39: loadImg(imgIndex.value+1); break;
-    case 27: close(); break;
+/* 开始 */
+const TouchStart = (e: any): void => {
+  isScale = false;
+  scaleN = 0;
+  if(e.touches.length===2) {
+    isScale = true;
+    initialDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  } else {
+    startX = e.touches[0].pageX;
   }
-}
+};
 
-/* 加载图片 */
-const loadImg = (k: number): void => {
-  // 上一页、下一页
-  if(k<0) k=props.options.length-1;
-  if(k>=props.options.length) k=0;
-  // 更新索引
-  imgIndex.value = k;
-  // 图片
-  let imgUrlTmp: string = props.options[k]?props.options[k].value:'';
-  if(!imgUrlTmp) {
-    close();
-    return Ui.Toast('无图片地址');
-  }
-  title.value = props.options[k].label;
-  size.value = props.options[k].size || '';
-  other.value = props.options[k].other || '';
-  // 加载图片
-  isLoad.value = false;
-  const imgLoad: any = proxy.$refs.wmImageLoading;
-  imgLoad.src = imgUrlTmp;
-  imgLoad.onload = ()=>{
-    const w: number = document.body.clientWidth;
-    const h: number = document.body.clientHeight;
-    const dst_size: number = w/h;
-    const src_size: number = imgLoad.width/imgLoad.height;
-    let width: string = 'auto';
-    let height: string = 'auto';
-    // 是否缩放
-    if(imgLoad.width>w || imgLoad.height>h){
-      if(src_size > dst_size) width = '100%';
-      else height = '100%';
+/* 移动 */
+const TouchMove = (e: any): void => {
+  // 容器
+  const obj: any = previewTrack.value;
+  if(!obj) return;
+  const imgObj = obj.children[page.value-1].children[0];
+  // 缩放
+  if(isScale) {
+    if(e.touches.length!==2) return;
+    const currentDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    const s = currentDistance / initialDistance;
+    const n = s>1?s-1:-(1-s);
+    scaleN = scale.value+n;
+    imgObj.style.transform = 'scale('+scaleN+')';
+    imgObj.style.transitionDuration = '0ms';
+  } else {
+    // 重置放大
+    scaleN = 0;
+    scale.value = 1;
+    for(let v of obj.children) {
+      v.children[0].style.transform = 'scale(1)';
+      v.children[0].style.transitionDuration = '300ms';
     }
-    // 显示
-    isLoad.value = true;
-    imgUrl.value = imgUrlTmp;
-    // 动画
-    nextTick(()=>{
-      const img: any = proxy.$refs.wmImageView;
-      img.style.opacity = '0';
-      img.style.width = '0';
-      img.style.height = '0';
-      setTimeout(()=>{
-        img.style.opacity = '1';
-        img.style.width = width;
-        img.style.height = height;
-      }, 300);
-    });
+    // 滑动
+    if(props.images.length<=1) return;
+    distance = e.touches[0].pageX - startX;
+    let x: number = move.value+distance;
+    if(x > width.value) move.value = -(props.images.length-1)*width.value;
+    else if(x < -props.images.length*width.value) move.value = 0;
+    obj.style.transform = 'translateX('+x+'px)';
+    obj.style.transitionDuration = '0ms';
+    // 首尾相连
+    if(x >= 0) {
+      obj.children[props.images.length-1].style.transform = 'translateX(-'+props.images.length*width.value+'px)';
+    } else if(x <= -(props.images.length-1)*width.value) {
+      obj.children[0].style.transform = 'translateX('+props.images.length*width.value+'px)';
+    } else {
+      obj.children[0].style.transform = '';
+      obj.children[props.images.length-1].style.transform = '';
+    }
   }
-}
+};
 
-/* 全屏 */
-const Fullscreen = (): void => {
-  isFull.value = !isFull.value;
-  let obj: any = proxy.$refs.wmImageViewBg;
-  if(obj.webkitRequestFullScreen){
-    // @ts-ignore Chrome
-    if(document.webkitIsFullScreen) document.webkitCancelFullScreen();
-    else obj.webkitRequestFullScreen();
-  }else if(obj.mozRequestFullScreen){
-    // @ts-ignore Firefox
-    if(document.mozFullScreen) document.mozCancelFullScreen();
-    else obj.mozRequestFullScreen();
-  }else if(obj.msRequestFullscreen){
-    // @ts-ignore IE11
-    if(document.msFullscreenElement) document.msExitFullscreen();
-    else obj.msRequestFullscreen();
-  }else if(obj.requestFullscreen){
-    // @ts-ignore W3C
-    if(document.exitFullscreen) document.exitFullscreen();
-    else obj.requestFullscreen();
+/* 结束 */
+const TouchEnd = (): void => {
+  // 缩放
+  if(isScale) {
+    if(!scaleN) return;
+    if(scaleN<props.minScale) scaleN=props.minScale;
+    if(scaleN>props.maxScale) scaleN=props.maxScale;
+    const obj: any = previewTrack.value;
+    const imgObj = obj.children[page.value-1].children[0];
+    imgObj.style.transform = 'scale('+scaleN+')';
+    imgObj.style.transitionDuration = '300ms';
+    scale.value = scaleN;
+    scaleN = 0;
+  } else {
+    // 滑动
+    move.value += Math.round(distance/width.value+(distance>=0?props.tolerance:-props.tolerance))*width.value;
+    let obj: any = previewTrack.value;
+    if(obj) {
+      obj.style.transform = 'translateX('+move.value+'px)';
+      obj.style.transitionDuration = '300ms';
+    }
+    // 页码
+    let index: number = Math.abs(move.value/width.value);
+    if(index>=props.images.length) index = 0;
+    page.value = index+1;
   }
-}
+};
 
 /* 关闭 */
 const close = (): void => {
+  emit('close');
   // 隐藏
-  emit('update:show', false);
-  // 退出全屏
-  if(isFull.value) Fullscreen();
-  // 移除事件
-  window.removeEventListener('resize', resizeFun);
-  document.removeEventListener('keydown', keydownFun);
+  opacity.value = '0';
+  setTimeout(()=>{
+    emit('update:visible', false);
+  }, 400);
 }
 
 </script>
