@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <div v-if="visible" class="wm-preview_body" :style="{opacity: opacity}">
-      <div class="wm-preview_top">
+      <div class="wm-preview_top" :style="{top: state.statusHeight?state.statusHeight:safe_top}">
         <i class="ui ui_close" @click="close()"></i>
         <span>{{ page }}/{{ props.images.length }}</span>
       </div>
@@ -33,6 +33,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { useStore } from 'vuex';
 
 /* 参数 */
 const props = defineProps({
@@ -45,6 +46,10 @@ const props = defineProps({
   maxScale: {type: Number, default: 3},                   // 缩放: 最大
 });
 const emit = defineEmits(['update:visible', 'update:index', 'close']);
+// 状态
+const store = useStore();
+const state = store.state;
+const safe_top = ref('env(safe-area-inset-top)');
 // 变量
 const page = ref(1);
 const width = ref(0);

@@ -76,7 +76,7 @@ onMounted(()=>{
     // @ts-ignore 状态栏-背景颜色
     plus.navigator.setStatusBarBackground('#FFFFFF');
     // @ts-ignore 状态栏高度
-    state.statusHeight = plus.navigator.getStatusbarHeight();
+    if(plus.os.name.toLowerCase()!=='ios') state.statusHeight = plus.navigator.getStatusbarHeight();
   });
   // 首页位置
   Storage.setItem('routePosition', '0');
