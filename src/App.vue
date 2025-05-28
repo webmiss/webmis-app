@@ -83,16 +83,15 @@ onMounted(()=>{
       // 背景音乐
       document.createElement('audio');
     }
-  });
-
-  /* Android返回键 */
-  let backcount = 0;
-  Plus.Back((e: any)=>{
-    // @ts-ignore
-    if(backcount>0) plus.runtime.quit();
-    Ui.Toast('再按一次退出应用!');
-    backcount++;
-    setTimeout(()=>{ backcount=0; },2000);
+    // Android返回键
+    let backcount = 0;
+    Plus.Back((e: any)=>{
+      // @ts-ignore
+      if(backcount>0) plus.runtime.quit();
+      Ui.Toast('再按一次退出应用!');
+      backcount++;
+      setTimeout(()=>{ backcount=0; },2000);
+    });
   });
 
   /* 首页位置 */
