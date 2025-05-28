@@ -63,11 +63,12 @@ watch(()=>route.path, (now: string, old: string)=>{
 
 /* 加载完成 */
 onMounted(()=>{
-  // 屏幕转动
+  /* 屏幕转动 */
   window.addEventListener('orientationchange', () => {
     if (Math.abs(window.orientation) === 90) Ui.Toast('请切换竖屏方式');
   }, false);
-  // 默认值
+
+  /* 手机设置 */
   Plus.Ready(()=>{
     // @ts-ignore 竖屏
     plus.screen.lockOrientation("portrait-primary");
@@ -75,12 +76,29 @@ onMounted(()=>{
     plus.navigator.setStatusBarStyle('dark');
     // @ts-ignore 状态栏-背景颜色
     plus.navigator.setStatusBarBackground('#FFFFFF');
-    // @ts-ignore 状态栏高度
-    if(plus.os.name.toLowerCase()!=='ios') state.statusHeight = plus.navigator.getStatusbarHeight();
+    // @ts-ignore
+    if(plus.os.name.toLowerCase()!=='ios') {
+      // @ts-ignore 状态栏高度
+      state.statusHeight = plus.navigator.getStatusbarHeight();
+      // 背景音乐
+      document.createElement('audio');
+    }
   });
-  // 首页位置
+
+  /* Android返回键 */
+  let backcount = 0;
+  Plus.Back((e: any)=>{
+    // @ts-ignore
+    if(backcount>0) plus.runtime.quit();
+    Ui.Toast('再按一次退出应用!');
+    backcount++;
+    setTimeout(()=>{ backcount=0; },2000);
+  });
+
+  /* 首页位置 */
   Storage.setItem('routePosition', '0');
-  // 验证Token
+  
+  /* 验证Token */
   isLogin();
   clearInterval(time);
   time = setInterval(()=>{ isLogin(); }, verifyTokenTime.value);
