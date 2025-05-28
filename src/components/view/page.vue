@@ -1,6 +1,6 @@
 <template>
   <div class="wm-page_body" :style="{background: bgColor, color: color}">
-    <div class="wm-page_bar" :style="{color: barColor, background: barBgColor, boxShadow: barShadow, height: barHeight, lineHeight: 'calc('+barHeight+' - 10px)', paddingTop: 'calc('+state.statusHeight?state.statusHeight:safe_top+' + 5px)'}">
+    <div class="wm-page_bar" :style="{color: barColor, background: barBgColor, boxShadow: barShadow, height: barHeight, lineHeight: 'calc('+barHeight+' - 10px)', paddingTop: 'calc('+(state.statusHeight?state.statusHeight+'px':safe_top)+' + 5px)'}">
       <div class="wm-page_bar_left" v-if="$slots.bar_left">
         <slot name="bar_left"></slot>
       </div>
@@ -11,10 +11,10 @@
         <slot name="bar_title"></slot>
       </div>
     </div>
-    <div v-if="immersed" class="wm-page_content" :style="{height: 'calc('+height+' - '+state.statusHeight?state.statusHeight:safe_top+')'}">
+    <div v-if="immersed" class="wm-page_content" :style="{height: 'calc('+height+' - '+(state.statusHeight?state.statusHeight+'px':safe_top)+')'}">
       <slot></slot>
     </div>
-    <div v-else class="wm-page_content" :style="{height: 'calc('+height+' - '+barHeight+' - '+state.statusHeight?state.statusHeight:safe_top+' - 10px)', paddingTop: 'calc('+barHeight+' + '+state.statusHeight?state.statusHeight:safe_top+' + 10px)'}">
+    <div v-else class="wm-page_content" :style="{height: 'calc('+height+' - '+barHeight+' - '+(state.statusHeight?state.statusHeight+'px':safe_top)+' - 10px)', paddingTop: 'calc('+barHeight+' + '+(state.statusHeight?state.statusHeight+'px':safe_top)+' + 10px)'}">
       <slot></slot>
     </div>
   </div>

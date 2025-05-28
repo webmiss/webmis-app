@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <div v-if="visible" class="wm-preview_body" :style="{opacity: opacity}">
-      <div class="wm-preview_top" :style="{top: state.statusHeight?state.statusHeight:safe_top}">
+      <div class="wm-preview_top" :style="{top: (state.statusHeight?state.statusHeight+'px':safe_top)}">
         <i class="ui ui_close" @click="close()"></i>
         <span>{{ page }}/{{ props.images.length }}</span>
       </div>
