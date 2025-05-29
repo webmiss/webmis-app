@@ -24,8 +24,10 @@ h3{font-size: 16px; font-weight: 500;}
 .html{height: 100%;}
 .link{cursor: pointer; color: @Primary; text-decoration: none;}
 .link:hover{opacity: 0.8;}
-.back{display: inline-block; width: 32px; text-align: center;}
-.back.icons{color: rgba(88,88,88,1);}
+.back{width: 40px; display: flex; justify-content: center; align-items: center;}
+.back.ui{color: rgba(88,88,88,1);}
+.more{width: 40px; display: flex; justify-content: center; align-items: center;}
+.more.ui{color: rgba(88,88,88,1); font-size: 20px;}
 .hide{display: none;}
 .redNum{position: absolute; right: -5px; zoom: 0.9; padding: 0 5px; margin-top: -5px; line-height: 16px; color: #FFF; font-size: 12px; font-weight: normal; border-radius: 8px; background-color: @Danger;}
 /* 位置 */
@@ -100,7 +102,7 @@ h3{font-size: 16px; font-weight: 500;}
 .wm-ui_load .ui{font-size: 32px; color: @Minor;}
 
 /* 轻提示 */
-.wm-ui_toast{position: fixed; z-index: 9999; opacity: 0; left: 50%; top: 0; max-width: 80%; word-break: break-all; transform: translate(-50%, -30%); transition: All 0.4s ease-in-out;}
+.wm-ui_toast{position: fixed; z-index: 9999; opacity: 0; left: 50%; top: 0; max-width: 90%; transform: translate(-50%, -30%); transition: All 0.4s ease-in-out;}
 .wm-ui_toast span{display: inline-block; line-height: 24px; padding: 8px 16px; font-size: 14px; color: #FFF; border-radius: 5px;}
 .wm-ui_toast .primary{background-color: rgba(0,0,0,.9);}
 .wm-ui_toast .success{background-color: @Success;}

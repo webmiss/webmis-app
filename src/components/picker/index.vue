@@ -25,7 +25,7 @@
 <style lang="less" scoped>
 .wm-picker_body{position: absolute; top: 0; left: 0; z-index: 999; width: 100%; height: 100%;}
 .wm-picker_mask{position: absolute; z-index: 1; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); transition: opacity 0.3s;}
-.wm-picker_content{overflow: hidden; position: absolute; z-index: 2; bottom: 0; width: 100%; transform: translateY(0%); text-align: center; background-color: #F8F8F8; border-radius: 8px 8px 0 0; transition: transform 0.3s;}
+.wm-picker_content{overflow: hidden; position: absolute; z-index: 2; bottom: 0; width: 100%; transform: translateY(100%); text-align: center; background-color: #F8F8F8; border-radius: 8px 8px 0 0; transition: transform 0.3s ease-in-out;}
 .wm-picker_title{position: relative; height: 50px; line-height: 50px; text-align: center; background-color: #FFF;}
 .wm-picker_title button{position: absolute; z-index: 1; padding: 0 16px; height: 100%; line-height: 100%; user-select: none; border: none; background: #FFF; font-size: 14px;}
 .wm-picker_title .cancel{left: 0;}
@@ -91,7 +91,7 @@ onMounted(()=>{
     objHeight = parseInt(props.optionHeight.split('px')[0]);
     objTop = objHeight*props.optionNum/2-objHeight/2;
     activeValue();
-  }, 300);
+  }, 100);
 });
 
 /* 默认值 */

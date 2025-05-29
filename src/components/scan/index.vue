@@ -26,8 +26,8 @@
 
 <style lang="less" scoped>
 .wm-scan_body{position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%;}
-.wm-scan_mask{position: absolute; z-index: 1; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); opacity: 0; transition: opacity .3s;}
-.wm-scan_content{overflow: hidden; position: absolute; z-index: 2; left: 0; top: 0; width: 100%; height: 100%; color: #FFF; background-color: #000; transition: @Transition;}
+.wm-scan_mask{position: absolute; z-index: 1; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s;}
+.wm-scan_content{overflow: hidden; position: absolute; z-index: 2; left: 0; top: 0; width: 100%; height: 100%; color: #FFF; background-color: #000; transition: transform 0.3s ease-in-out, opacity 0.3s;}
 .wm-scan_top{position: relative; line-height: 40px; padding: 8px 10px; display: flex; justify-content: center; align-items: center;}
 .wm-scan_top h2{font-size: 15px; font-weight: normal;}
 .wm-scan_top .ui_close{position: absolute; left: 10px; bottom: 8px; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;}
@@ -68,7 +68,7 @@ onMounted(()=>{
     translateX.value = '0%';
     msg.value = '获取授权';
     handleScanClick();
-  }, 300);
+  }, 100);
 });
 
 /* 获取摄像头授权 */

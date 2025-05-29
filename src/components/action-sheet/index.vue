@@ -25,8 +25,8 @@
 
 <style lang="less" scoped>
 .wm-action_sheet_body{position: absolute; top: 0; left: 0; z-index: 999; width: 100%; height: 100%;}
-.wm-action_sheet_mask{position: absolute; z-index: 1; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); transition: opacity 0.3s;}
-.wm-action_sheet_content{overflow: hidden; position: absolute; z-index: 2; bottom: 0; width: 100%; transform: translateY(0%); text-align: center; background-color: #F8F8F8; border-radius: 8px 8px 0 0; transition: transform 0.3s;}
+.wm-action_sheet_mask{position: absolute; z-index: 1; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s;}
+.wm-action_sheet_content{overflow: hidden; position: absolute; z-index: 2; bottom: 0; width: 100%; transform: translateY(100%); text-align: center; background-color: #F8F8F8; border-radius: 8px 8px 0 0; transition: transform 0.3s;}
 .wm-action_sheet_title{position: relative; height: 50px; line-height: 50px; text-align: center; background-color: #FFF; color: @Info;}
 .wm-action_sheet_title b{font-size: 16px; font-weight: 500;}
 .wm-action_sheet_title i{position: absolute; top: 50%; right: 4px; transform: translateY(-50%); width: 40px; height: 40px; line-height: 40px; text-align: center; font-size: 14px;}
@@ -67,7 +67,7 @@ onMounted(()=>{
   setTimeout(()=>{
     opacity.value = '1';
     translateY.value = '0%';
-  }, 300);
+  }, 100);
 });
 
 /* 确定 */

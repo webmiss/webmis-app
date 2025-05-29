@@ -46,10 +46,10 @@ const props = defineProps({
 });
 const emit = defineEmits(['update:visible', 'update:index', 'close']);
 // 变量
-const safe_top = ref('');
+const opacity = ref('0');
+const safe_top = ref('env(safe-area-inset-top)');
 const page = ref(1);
 const width = ref(0);
-const opacity = ref('0');
 const previewTrack = ref(null);
 // 移动
 let startX=0, distance=0;
@@ -77,7 +77,7 @@ onMounted(()=>{
     // @ts-ignore 状态栏
     if(plus.os.name.toLowerCase()!=='ios') safe_top.value = plus.navigator.getStatusbarHeight()+'px';
   } catch(e: any) {
-    safe_top.value = 'env(safe-area-inset-top)';
+    safe_top.value = '0px';
   }
 });
 

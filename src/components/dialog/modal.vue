@@ -5,7 +5,7 @@
       <div class="wm-show_modal_content" :style="{transform: 'translate3D(-50%, '+translateY+', 0)', opacity: opacity}">
         <h2 class="title">{{ title }}</h2>
         <div class="content">
-          <p v-if="!editable" v-html="content"></p>
+          <p v-if="!editable" v-html="content" :style="{color: color}"></p>
           <input v-else v-model="inputValue" :placeholder="placeholder" />
         </div>
         <div class="footer">
@@ -20,7 +20,7 @@
 <style lang="less" scoped>
 .wm-show_modal_body{position: absolute; top: 0; left: 0; z-index: 999; width: 100%; height: 100%;}
 .wm-show_modal_mask{position: absolute; z-index: 1; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s;}
-.wm-show_modal_content{overflow: hidden; position: absolute; z-index: 2; top: 50%; left: 50%; width: calc(100% - 40px); max-width: 420px; transform: translate(-50%, -50%); text-align: center; background-color: #FFF; border-radius: 8px; transition: @Transition;}
+.wm-show_modal_content{overflow: hidden; position: absolute; z-index: 2; top: 50%; left: 50%; width: calc(100% - 40px); max-width: 420px; transform: translate3D(-50%, -70%, 0); text-align: center; background-color: #FFF; border-radius: 8px; transition: transform 0.3s ease-in-out, opacity 0.3s;}
 .wm-show_modal_content .title{padding: 16px 10px 0; line-height: 40px; font-size: 16px; font-weight: 540;}
 .wm-show_modal_content .content{padding: 16px 16px 32px; line-height: 24px; color: @Info;}
 .wm-show_modal_content input{padding: 0 10px; width: 100%; height: 40px; box-sizing: border-box; border: none; background: none; appearance: none; outline: none; font: 400 14px Arial; caret-color: @Primary; border: @BaseBorder 1px solid; border-radius: 4px; background-color: #FFF;}
@@ -38,6 +38,7 @@ const props = defineProps({
   visible: { type: Boolean, default: false },             // 是否显示
   title: { type: String, default: '标题' },               // 标题
   content: { type: String, default: '内容' },             // 内容
+  color: { type: String, default: '#646566' },            // 颜色
   showCancel: { type: Boolean, default: true },           // 是否显示取消按钮
   cancelText: { type: String, default: '取消' },          // 取消按钮文本
   cancelColor: { type: String, default: '#73767A' },      // 确认按钮颜色
@@ -60,7 +61,7 @@ onMounted(()=>{
   setTimeout(()=>{
     opacity.value = '1';
     translateY.value = '-50%';
-  }, 300);
+  }, 100);
 });
 
 /* 确定 */

@@ -2,21 +2,21 @@ import { createApp, h } from 'vue';
 import Scan from '../components/scan/index.vue';
 
 export default {
-  install(app) {
-    const showScan = (options) => {
+  install(app: any) {
+    const showScan = (options: any) => {
       return new Promise((resolve) => {
         const container = document.createElement('div');
         const instance = createApp({
           render: () => h(Scan, {
             ...options,
             visible: true,
-            'onUpdate:visible': (val) => {
+            'onUpdate:visible': (val: boolean) => {
               if (!val) setTimeout(() => {
                 instance.unmount();
                 container.remove();
               }, 300);
             },
-            onConfirm: (value) => resolve({ confirm: true, content: value }),
+            onConfirm: (value: any) => resolve({ confirm: true, content: value }),
             onCancel: () => resolve({ confirm: false })
           })
         });

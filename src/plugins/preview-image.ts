@@ -2,8 +2,8 @@ import { createApp, h } from 'vue';
 import PreviewImage from '../components/image/preview.vue';
 
 export default {
-  install(app) {
-    const previewImage = (options) => {
+  install(app: any) {
+    const previewImage = (options: any) => {
       return new Promise((resolve) => {
         const container = document.createElement('div');
         const instance = createApp({
