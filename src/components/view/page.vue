@@ -23,10 +23,10 @@
 <style lang="less">
 .wm-page_body{width: 100%; height: 100%;}
 .wm-page_bar{position: absolute; z-index: 99; top: 0; width: calc(100% - 20px); padding: 5px 10px; display: flex; justify-content: center; align-items: center;}
-.wm-page_bar_left{position: absolute; left: 10px;}
-.wm-page_bar_right{position: absolute; right: 10px;}
+.wm-page_bar_left{position: absolute; z-index: 1; left: 10px;}
+.wm-page_bar_right{position: absolute; z-index: 1; right: 10px;}
 .wm-page_bar_right .text{padding: 5px 10px;}
-.wm-page_bar_title{text-align: center; font-size: 16px; font-weight: bold; display: flex; justify-content: center; align-items: center;}
+.wm-page_bar_title{width: 100%; text-align: center; font-size: 16px; font-weight: bold; display: flex; justify-content: center; align-items: center;}
 .wm-page_content{padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right);}
 </style>
 
