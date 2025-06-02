@@ -50,8 +50,8 @@ import { useRouter } from 'vue-router';
 /* JS组件 */
 import Request from '../../../library/request';
 import Ui from '../../../library/ui';
-import Files from '../../../library/files';
 import Time from '../../../library/time';
+import Files from '../../../library/files';
 /* 组件 */
 import PageView from '../../../components/view/page.vue';
 import ScrollView from '../../../components/view/scroll.vue';
@@ -61,7 +61,6 @@ const { proxy } = getCurrentInstance() as any ;
 const store = useStore();
 const state = store.state;
 const router = useRouter();
-// 变量
 
 /* 修改信息 */
 const changeInfo = async (name: string, value: string): Promise<void> => {
@@ -113,7 +112,7 @@ const upImg = (): void => {
       }, (err: string)=>{
         Ui.Toast(err);
       });
-    })
+    });
   }, (err: string)=>{
     Ui.Toast(err);
   });
