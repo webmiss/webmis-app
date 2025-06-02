@@ -1,6 +1,6 @@
 <template>
   <div class="wm-page_body" :style="{background: bgColor, color: color}">
-    <div class="wm-page_bar" :style="{color: barColor, background: barBgColor, boxShadow: barShadow, height: barHeight, lineHeight: 'calc('+barHeight+' - 10px)', paddingTop: 'calc('+(state.statusHeight?state.statusHeight+'px':safe_top)+' + 5px)'}">
+    <div class="wm-page_bar" :style="{color: barColor, background: barBgColor, boxShadow: barShadow, height: 'calc('+barHeight+' - 10px)', lineHeight: 'calc('+barHeight+' - 10px)', paddingTop: 'calc('+(state.statusHeight?state.statusHeight+'px':safe_top)+' + 5px)'}">
       <div class="wm-page_bar_left" v-if="$slots.bar_left">
         <slot name="bar_left"></slot>
       </div>

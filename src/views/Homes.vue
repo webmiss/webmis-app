@@ -309,7 +309,7 @@ const total = ref({time: '', list: <any>{now:<any>{}, old:<any>{}}});
 const homeForm = ref({active:'', stime: '', etime: ''});
 // 消息
 const indexMsg = ref();
-const indexScrollTop = ref(0);
+const msgScrollTop = ref(0);
 
 /* 监听 */
 watch(()=>state.isLogin, (val: boolean)=>{
@@ -333,13 +333,13 @@ onActivated(()=>{
     time = setInterval(()=>{ homeAnimation(); }, 20000);
     // 位置
     nextTick(()=>{
-      indexMsg.value.setScrollTop(indexScrollTop.value);
+      indexMsg.value.setScrollTop(msgScrollTop.value);
     });
   }
 });
 /* 离开页面 */
 onBeforeRouteLeave((to, from) =>{
-  indexScrollTop.value = indexMsg.value.getScrollTop();
+  msgScrollTop.value = indexMsg.value.getScrollTop();
   return true;
 });
 
