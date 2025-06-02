@@ -14,7 +14,7 @@
     <div v-if="immersed" class="wm-page_content" :style="{height: 'calc('+height+' - '+(state.statusHeight?state.statusHeight+'px':safe_top)+')'}">
       <slot></slot>
     </div>
-    <div v-else class="wm-page_content" :style="{height: 'calc('+height+' - '+barHeight+' - '+(state.statusHeight?state.statusHeight+'px':safe_top)+' - 10px)', paddingTop: 'calc('+barHeight+' + '+(state.statusHeight?state.statusHeight+'px':safe_top)+' + 10px)'}">
+    <div v-else class="wm-page_content" :style="{height: 'calc('+height+' - '+barHeight+' - '+(state.statusHeight?state.statusHeight+'px':safe_top)+')', paddingTop: 'calc('+barHeight+' + '+(state.statusHeight?state.statusHeight+'px':safe_top)+')'}">
       <slot></slot>
     </div>
   </div>
