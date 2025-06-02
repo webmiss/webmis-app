@@ -92,4 +92,15 @@ const Scroll = (): void => {
   emit('scroll', {scrollTop:el.scrollTop, scrollHeight:el.scrollHeight, clientHeight:el.clientHeight});
 }
 
+/* 位置-获取 */
+const getScrollTop = (): number => {
+  return (freshContainer.value as any).scrollTop;
+}
+const setScrollTop = (scrollTop: number): void => {
+  (freshContainer.value as any).scrollTop = scrollTop;
+}
+
+/* 外部函数 */
+defineExpose({getScrollTop, setScrollTop});
+
 </script>

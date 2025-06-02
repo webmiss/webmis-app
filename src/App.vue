@@ -109,7 +109,6 @@ const isLogin = (): void => {
     verifyToken();
   } else {
     const token: string = Storage.getItem('token') || '';
-    state.isLogin = true;
     state.token = token;
     verifyToken(true);
   }

@@ -84,9 +84,9 @@
           <div class="msg_sea flex_center"><i class="ui ui_search"></i><span>搜索</span></div>
         </div>
         <div class="msg_body">
-          <ScrollView v-model:refreshing="scrollMsg.refreshing" @refresh="loadData" :isLower="false">
+          <ScrollView ref="indexMsg" v-model:refreshing="scrollMsg.refreshing" @refresh="loadData" :isLower="false">
             <ul class="msg_list">
-              <li class="flex mtop1">
+              <li class="flex mtop1" @click="openUrl('/base/msg')">
                 <div class="img"><i class="ui ui_menus"></i></div>
                 <div class="msg_list_info">
                   <div class="title flex">
@@ -97,7 +97,7 @@
                   </div>
                 </div>
               </li>
-              <li class="flex mtop1">
+              <li class="flex mtop1" @click="openUrl('/base/msg')">
                 <div class="img"><i class="ui ui_user"></i></div>
                 <div class="msg_list_info">
                   <div class="title flex">
@@ -108,7 +108,7 @@
                   </div>
                 </div>
               </li>
-              <li class="flex mtop1">
+              <li class="flex mtop1" @click="openUrl('/base/msg')">
                 <div class="img"><i class="ui ui_user"></i></div>
                 <div class="msg_list_info">
                   <div class="title flex">
@@ -119,7 +119,7 @@
                   </div>
                 </div>
               </li>
-              <li class="flex mtop1">
+              <li class="flex mtop1" @click="openUrl('/base/msg')">
                 <div class="img"><i class="ui ui_user"></i></div>
                 <div class="msg_list_info">
                   <div class="title flex">
@@ -130,7 +130,7 @@
                   </div>
                 </div>
               </li>
-              <li class="flex mtop1">
+              <li class="flex mtop1" @click="openUrl('/base/msg')">
                 <div class="img"><i class="ui ui_user"></i></div>
                 <div class="msg_list_info">
                   <div class="title flex">
@@ -272,9 +272,9 @@
 </style>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onActivated, getCurrentInstance } from 'vue';
+import { ref, watch, onMounted, onActivated, getCurrentInstance, nextTick } from 'vue';
 import { useStore } from 'vuex';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
 /* JS组件 */
 import Ui from '../library/ui';
 import Util from '../library/utils';
@@ -307,6 +307,14 @@ const bubble = ref({left1:1, top1:3, left2:40, top2:20});
 let time: any = null;
 const total = ref({time: '', list: <any>{now:<any>{}, old:<any>{}}});
 const homeForm = ref({active:'', stime: '', etime: ''});
+// 消息
+const indexMsg = ref();
+const indexScrollTop = ref(0);
+
+/* 监听 */
+watch(()=>state.isLogin, (val: boolean)=>{
+  if(val) changeDay('today');
+}, { deep: true });
 
 /* 创建完成 */
 onMounted(()=>{
@@ -323,7 +331,16 @@ onActivated(()=>{
     setTimeout(()=>{ homeAnimation(); }, 3000);
     clearInterval(time);
     time = setInterval(()=>{ homeAnimation(); }, 20000);
+    // 位置
+    nextTick(()=>{
+      indexMsg.value.setScrollTop(indexScrollTop.value);
+    });
   }
+});
+/* 离开页面 */
+onBeforeRouteLeave((to, from) =>{
+  indexScrollTop.value = indexMsg.value.getScrollTop();
+  return true;
 });
 
 /* 登录 */
