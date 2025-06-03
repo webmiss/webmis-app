@@ -16,7 +16,7 @@
 <style lang="less">
 /* 表单缩放问题 */
 @media only screen and (min-device-width : 320px) and (max-device-width : 1024px) {
-  select:focus, textarea:focus, input:focus { font-size: 15px !important; }
+  select:focus, textarea:focus, input:focus { font-size: 14px !important; }
 }
 /* 样式 */
 @import url('./assets/style/icon.less');
@@ -63,6 +63,7 @@ watch(()=>route.path, (now: string, old: string)=>{
 
 /* 加载完成 */
 onMounted(()=>{
+
   /* 屏幕转动 */
   window.addEventListener('orientationchange', () => {
     if (Math.abs(window.orientation) === 90) Ui.Toast('请切换竖屏方式');

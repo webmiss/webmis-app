@@ -6,19 +6,19 @@
       <div class="login_logo" :style="{backgroundImage:form.uname===login.local_uname&&login.img?'url('+(login.img)+')':'', backgroundSize: form.uname===login.local_uname&&login.img?'100%':'60%'}"></div>
       <ul class="login_form">
         <li>
-          <wmInput v-model:value="form.uname" icon="ui ui_user" padding="0 10px 0 40px" :placeholder="form.type==='tel'?'手机号码':'用户名 / 手机号码 / 邮箱'" @keyup.enter="clickLogin()"></wmInput>
+          <wmInput v-model:value="form.uname" icon="ui ui_user" padding="0 10px 0 40px" :placeholder="form.type==='tel'?'手机号码':'用户名 / 手机号码 / 邮箱'" @keyup.enter="clickLogin()" enterkeyhint="go"></wmInput>
         </li>
         <li v-if="form.type==='passwd'&&login.is_safety">
           <img class="vcode" :src="login.vcode_url" alt="点击刷新" @click="changeVcode()">
-          <wmInput v-model:value="form.vcode" icon="ui ui_safety" padding="0 10px 0 40px" maxlength="4" placeholder="验证码" @keyup.enter="clickLogin()"></wmInput>
+          <wmInput v-model:value="form.vcode" icon="ui ui_safety" padding="0 10px 0 40px" maxlength="4" placeholder="验证码" @keyup.enter="clickLogin()" enterkeyhint="go"></wmInput>
         </li>
         <li v-if="form.type==='passwd'">
           <form onsubmit="return false">
-            <wmInput type="password" v-model:value="form.passwd" icon="ui ui_safety" padding="0 10px 0 40px" placeholder="请输入密码" @keyup.enter="clickLogin()"></wmInput>
+            <wmInput type="password" v-model:value="form.passwd" icon="ui ui_safety" padding="0 10px 0 40px" placeholder="请输入密码" @keyup.enter="clickLogin()" enterkeyhint="done"></wmInput>
           </form>
         </li>
         <li v-if="form.type==='tel'">
-          <wmInput v-model:value="form.vcode" icon="ui ui_safety" padding="0 10px 0 40px" maxlength="4" placeholder="验证码" :text="login.text" @textClick="getVcode()" @keyup.enter="clickLogin()"></wmInput>
+          <wmInput v-model:value="form.vcode" icon="ui ui_safety" padding="0 10px 0 40px" maxlength="4" placeholder="验证码" :text="login.text" @textClick="getVcode()" @keyup.enter="clickLogin()" enterkeyhint="go"></wmInput>
         </li>
         <li class="agreement flex_left">
           <wmCheckbox :options="login.agreement"></wmCheckbox>
@@ -49,9 +49,9 @@
 </style>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onActivated } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
 /* JS组件 */
 import Ui from '../../library/ui';
 import Time from '../../library/time';
@@ -79,12 +79,25 @@ const form = ref({type:'passwd', uname:'', passwd:'', vcode:''});
 
 /* 创建完成 */
 onMounted(()=>{
+  // 用户信息
   const uname: string = Storage.getItem('uname') || '';
   const img: string = Storage.getItem('user_img') || '';
   form.value.uname = uname;
   login.value.local_uname = uname;
   login.value.img = img;
+  // 阻止页面滚动
+  document.addEventListener('touchmove', preventScroll, { passive: false });
 });
+/* 离开页面 */
+onBeforeRouteLeave((to, from) =>{
+  document.removeEventListener('touchmove', preventScroll);
+  return true;
+});
+
+/* 阻止页面滚动 */
+const preventScroll = (e: any): void => {
+  e.preventDefault();
+}
 
 /* 登录方式 */
 const changeType = (type: string): void => {
