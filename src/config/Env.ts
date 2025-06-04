@@ -1,7 +1,9 @@
 /* 配置文件 */
 export default class Env {
 
-  public static mode: string = 'dev';              // 模式: 开发(dev)
+  public static mode: string = '';              // 模式: 开发(dev)
+  public static isLogin: boolean = true;        // 是否验证登录
+  public static startTime: number = 3000;       // 启动停留时间
   public static title: string = 'WebMIS';       // 项目名称
   public static version: string = '3.0.0';      // 版本
   public static lang: string = 'zh_CN'          // 语言

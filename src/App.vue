@@ -1,6 +1,6 @@
 <template>
   <!-- 启动页 -->
-  <Start></Start>
+  <Start :time="Env.startTime"></Start>
   <!-- 软件升级 -->
   <Update></Update>
   <!-- 路由 -->
@@ -16,7 +16,7 @@
 <style lang="less">
 /* 表单缩放问题 */
 @media only screen and (min-device-width : 320px) and (max-device-width : 1024px) {
-  select:focus, textarea:focus, input:focus { font-size: 14px !important; }
+  select:focus, textarea:focus, input:focus { font-size: 16px !important; }
 }
 /* 样式 */
 @import url('./assets/style/icon.less');
@@ -28,9 +28,10 @@
 import { ref, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
+/* JS组件 */
+import Env from './config/Env';
 /* UI组件 */
 import Ui from './library/ui';
-import Request from './library/request';
 import Storage from './library/storage';
 import Plus from './library/plus';
 /* 组件 */
@@ -44,8 +45,6 @@ const route = useRoute();
 const router = useRouter();
 // 变量
 const transitionName = ref('');         // 页面切换样式
-let time: any = null;                   // Token验证-对象
-const verifyTokenTime = ref(30000);     // Token验证-间隔时间
 
 /* 监听 */
 watch(()=>route.path, (now: string, old: string)=>{
@@ -68,6 +67,9 @@ onMounted(()=>{
   window.addEventListener('orientationchange', () => {
     if (Math.abs(window.orientation) === 90) Ui.Toast('请切换竖屏方式');
   }, false);
+
+  /* 首页位置 */
+  Storage.setItem('routePosition', '0');
 
   /* 手机设置 */
   Plus.Ready(()=>{
@@ -94,70 +96,7 @@ onMounted(()=>{
       setTimeout(()=>{ backcount=0; },2000);
     });
   });
-
-  /* 首页位置 */
-  Storage.setItem('routePosition', '0');
   
-  /* 验证Token */
-  isLogin();
-  clearInterval(time);
-  time = setInterval(()=>{ isLogin(); }, verifyTokenTime.value);
 });
-
-/* 是否登录 */
-const isLogin = (): void => {
-  if(state.token) {
-    verifyToken();
-  } else {
-    const token: string = Storage.getItem('token') || '';
-    state.token = token;
-    verifyToken(true);
-  }
-}
-
-/* 验证Token */
-const verifyToken = (uinfo: boolean=false): void => {
-  // 是否登录
-  if(!state.token) {
-    setTimeout(()=>{ router.push({path: '/user/login'}); }, 1000);
-    return;
-  }
-  // 请求
-  Request.Post('user/token', {token: state.token, uinfo: uinfo}, (res:any)=>{
-    const {code, msg, data}: any = res.data;
-    if(code==0 && data.token_time>0) {
-      state.isLogin = true;
-      // 修改密码
-      if(!state.isPasswd && state.lang) state.isPasswd = data.isPasswd;
-      // 用户信息
-      if(Object.keys(data.uinfo).length!=0) {
-        state.uinfo = data.uinfo;
-        Storage.setItem('uname', data.uinfo.uname);
-        Storage.setItem('uinfo', JSON.stringify(data.uinfo));
-        Storage.setItem('user_img', data.uinfo.img);
-      }
-    } else {
-      Ui.Toast(msg);
-      logout().then(()=>{
-        router.push({path: '/user/login'});
-      });
-    }
-  },()=>{
-    Ui.Toast('网络错误');
-    logout().then(()=>{
-      router.push({path: '/user/login'});
-    });
-  });
-}
-
-/* 退出登录 */
-const logout = async (): Promise<void> => {
-  // 缓存信息
-  state.isLogin = false;
-  state.token = '';
-  state.uinfo = {};
-  Storage.removeItem('token');
-  Storage.removeItem('uinfo');
-}
 
 </script>
