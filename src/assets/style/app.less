@@ -1,3 +1,12 @@
+/* 公共 */
+.refresh_time{line-height: 40px; text-align: center; font-size: 12px; color: @Primary; background-color: @Primary6;}
+.state0{background-color: @Danger; color: #FFF;}
+.state1{background-color: @Primary6; color: @Primary;}
+.state2{background-color: @Warning6; color: @Warning;}
+.state3{background-color: @Success6; color: @Minor;}
+.state4{background-color: @Minor; color: #FFF;}
+.state5{background-color: @Info; color: #FFF;}
+.state6{background-color: @Danger6; color: @Danger;}
 /* 菜单列表 */
 .menu_list{overflow: hidden;}
 .menu_list li{height: 40px; line-height: 40px; padding: 8px 10px 8px 16px; background-color: #FFF;}
@@ -7,3 +16,40 @@
 .menu_list .info{font-size: 14px; color: @Info;}
 .menu_list .ui_arrow_right{width: 28px; font-size: 12px; color: @Info;}
 .menu_list .ui_copy{width: 28px; font-size: 14px; color: @Info;}
+/* 商品信息 */
+.goods_search{position: relative; width: calc(100% - 90px);}
+.goods_search i{position: absolute; z-index: 1; top: 50%; transform: translateY(-50%); width: 40px; height: 100%; font-size: 24px; color: @IconColor; font-weight: normal;}
+.goods_search .ui_scan{left: 0;}
+.goods_search .ui_search{right: 0;}
+.goods_total{margin: 0 auto; padding: 24px 16px; background-color: #FFF; text-align: center;}
+.goods_total .title{line-height: 20px; color: @RegularText; font-size: 14px;}
+.goods_total .num{line-height: 64px; font-size: 36px; font-weight: bold;}
+.goods_total .other{zoom: 0.9; width: calc(100% - 32px); position: relative; display: inline-block; padding: 0 16px; line-height: 32px; border-radius: 4px; background-color: #F8F8F8; font-size: 12px;}
+.goods_total .other::before{content: ''; position: absolute; left: 50%; top: 0; transform: rotate(45deg) translateX(-50%); width: 16px; height: 16px; background-color: #F8F8F8;}
+.goods_total_list{overflow: hidden; padding: 10px 0;}
+.goods_total_list li{display: inline-block; box-sizing: border-box;}
+.goods_total_list .label{width: 70px; text-align: right;}
+.goods_total_list .value{width: calc(50% - 70px);}
+.goods_tabs{margin: 10px auto; position: sticky; width: calc(100% - 32px); z-index: 99; top: 0; overflow: hidden; padding: 0 16px; height: 48px; display: flex; justify-content: center; background-color: #FFF; box-shadow: 0 1px 0 #F8F8F8;}
+.goods_tabs li{position: relative; display: flex; justify-content: center; align-items: center; flex: 1;}
+.goods_tabs .active{color: @Primary; font-weight: bold;}
+.goods_tabs .active::before{zoom: 0.9; content: ''; position: absolute; bottom: 0; width: 100%; height: 3px; background-color: @Primary; border-radius: 2px;}
+.goods_tabs .num{position: relative; padding: 4px 12px;}
+.goods_list{overflow: hidden; margin: 10px auto;}
+.goods_list li{padding: 12px 16px; margin: 1px auto; background-color: #FFF;}
+.goods_list .ct_body{display: flex; justify-content: space-between;}
+.goods_list .action_img{overflow: hidden; position: relative; width: 72px; height: 72px; border-radius: 8px;}
+.goods_list .action_img i{color: @IconColor; font-size: 32px;}
+.goods_list .index{position: absolute; left: 0; top: 0; zoom: 0.7; line-height: 20px; padding: 0 8px; border-radius: 0 0 8px 0; font-size: 12px; color: #FFF; background-color: @Minor;}
+.goods_list .state{opacity: 0.7; position: absolute; bottom: 0; zoom: 0.8; width: 100%; line-height: 20px; text-align: center; font-size: 12px;}
+.goods_list .text_body{width: calc(100% - 82px); line-height: 24px;}
+.goods_list .title{line-height: 24px;}
+.goods_list .sku{position: relative; font-size: 16px; display: flex; justify-content: center;}
+.goods_list .ui_copy{position: absolute; right: -24px; width: 24px; height: 24px; color: @Info; text-align: center;}
+.goods_list .time{font-size: 12px; color: @Info;}
+.goods_list .info{color: @RegularText; font-size: 14px;}
+.goods_list .text{max-width: calc(100% - 40px); font-size: 13px;}
+.goods_list .other{line-height: 28px; font-size: 12px; zoom: 0.8;}
+.goods_list .other b{font-size: 12px;}
+.goods_list .action{padding-top: 8px; line-height: 40px; display: flex; justify-content: end;}
+.goods_list .action span{padding: 0 4px;}

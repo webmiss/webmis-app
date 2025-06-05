@@ -17,9 +17,9 @@
 </style>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onActivated, getCurrentInstance, nextTick } from 'vue';
+import { ref, watch, onMounted, onActivated } from 'vue';
 import { useStore } from 'vuex';
-import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
+import { useRouter } from 'vue-router';
 
 /* JS组件 */
 import Env from '../../config/Env';
@@ -30,15 +30,14 @@ import Storage from '../../library/storage';
 /* 组件 */
 import TabBar from '../../components/tabs/tabbar.vue';
 import Stock from './stock.vue';
-import Msg from './msg/index.vue';
+import Msg from '../msg/index.vue';
 import Me from './me.vue';
 
-// 配置
+// 公共
 defineOptions({name: 'Home'});
 // 状态
 const store = useStore();
 const state = store.state;
-const route = useRoute();
 const router = useRouter();
 // 变量
 const tabbar = ref({active: 'home', color: '', bgColor: '', activeColor: '', columns:[

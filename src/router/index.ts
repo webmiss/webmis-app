@@ -7,7 +7,16 @@ const routes: Array<RouteRecordRaw> = [
   { path: '/refresh', name: 'Refresh', component: ()=>import('../views/tools/Refresh.vue') },
   { path: '/demo', name: 'Demo', component: ()=>import('../views/demo/index.vue') },
   { path: '/base/html', name: 'BaseHtml', component: ()=>import('../views/base/html.vue') },
-  { path: '/base/msg', name: 'BaseMsg', component: ()=>import('../views/base/msg.vue') },
+  /* 首页 */
+  { path: '/purchase/stock', name: 'PurchaseStock', component: ()=>import('../views/purchase/stock.vue') },
+  { path: '/purchase/in', name: 'PurchaseIn', component: ()=>import('../views/purchase/in.vue') },
+  { path: '/purchase/out', name: 'PurchaseOut', component: ()=>import('../views/purchase/out.vue') },
+  { path: '/allocate/out', name: 'AllocateOut', component: ()=>import('../views/purchase/allocate_out.vue') },
+  { path: '/allocate/in', name: 'AllocateIn', component: ()=>import('../views/purchase/allocate_in.vue') },
+  { path: '/order/out', name: 'OrderOut', component: ()=>import('../views/purchase/order_out.vue') },
+  { path: '/order/in', name: 'OrderIn', component: ()=>import('../views/purchase/order_in.vue') },
+  /* 消息 */
+  { path: '/msg/show', name: 'MsgShow', component: ()=>import('../views/msg/show.vue') },
   /* 用户 */
   { path: '/user/login', name: 'UserLogin', component: ()=>import('../views/user/login.vue') },
   { path: '/user/setup', name: 'UserSetup', component: ()=>import('../views/user/setup/index.vue') },

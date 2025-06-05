@@ -2,6 +2,7 @@
 export default class Env {
 
   public static mode: string = '';              // 模式: 开发(dev)
+  public static isSocket: boolean = true;       // Socket开启
   public static isLogin: boolean = true;        // 是否验证登录
   public static startTime: number = 3000;       // 启动停留时间
   public static title: string = 'WebMIS';       // 项目名称
@@ -16,8 +17,7 @@ export default class Env {
   constructor() {
     if(Env.mode=='dev') {
       this.baseUrl = 'http://localhost:9000/';
-      // this.socketUrl = 'ws://127.0.0.1:9001';
-      this.socketUrl = 'wss://php.webmis.vip/wss';
+      this.socketUrl = 'ws://127.0.0.1:9001';
     } else {
       this.baseUrl = 'https://php.webmis.vip/';
       this.socketUrl = 'wss://php.webmis.vip/wss';
@@ -39,7 +39,7 @@ export default class Env {
   /* Socket */
   public socket(): object {
     return {
-      start: true,              // 启动
+      start: Env.isSocket,      // 启动
       server: this.socketUrl,   // 服务器
       channel: 'api',           // 频道
       time: 3000,               // 重连时间

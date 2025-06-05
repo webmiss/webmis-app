@@ -5,7 +5,7 @@
       <div class="msg_sea flex_center"><i class="ui ui_search"></i><span>搜索</span></div>
     </div>
     <div class="msg_body">
-      <ScrollView ref="indexMsg" v-model:refreshing="scrollMsg.refreshing" @refresh="loadData" :isLower="false">
+      <ScrollView ref="scrollObj" v-model:refreshing="scroll.refreshing" @refresh="loadData" :isLower="false">
         <ul class="msg_list">
           <li class="flex mtop1">
             <div class="img"><i class="ui ui_menus"></i></div>
@@ -51,7 +51,7 @@
               </div>
             </div>
           </li>
-          <li class="flex mtop1" @click="openUrl('/base/msg')">
+          <li class="flex mtop1" @click="openUrl('/msg/show')">
             <div class="img"><i class="ui ui_user"></i></div>
             <div class="msg_list_info">
               <div class="title flex">
@@ -136,33 +136,34 @@ import { ref, onMounted, onActivated, nextTick } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter, onBeforeRouteLeave } from 'vue-router';
 /* JS组件 */
-import Ui from '../../../library/ui';
+import Ui from '../../library/ui';
 /* 组件 */
-import PageView from '../../../components/view/page.vue';
-import ScrollView from '../../../components/view/scroll.vue';
+import PageView from '../../components/view/page.vue';
+import ScrollView from '../../components/view/scroll.vue';
 
 // 状态
 const store = useStore();
 const state = store.state;
 const router = useRouter();
 // 变量
-const scrollMsg = ref({refreshing: false, loading: false, finished: false});
-const indexMsg = ref();
-const msgScrollTop = ref(0);
+const scroll = ref({refreshing: false, loading: false, finished: false});
+const scrollObj = ref();
+const scrollTop = ref(0);
 
 /* 创建完成 */
 onMounted(()=>{
   loadData();
 });
 onActivated(()=>{
-  // 位置
+  // 跳转位置
   nextTick(()=>{
-    indexMsg.value.setScrollTop(msgScrollTop.value);
+    scrollObj.value.setScrollTop(scrollTop.value);
   });
 });
 /* 离开页面 */
 onBeforeRouteLeave((to, from) =>{
-  msgScrollTop.value = indexMsg.value.getScrollTop();
+  // 记忆位置
+  scrollTop.value = scrollObj.value.getScrollTop();
   return true;
 });
 

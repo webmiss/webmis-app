@@ -1,11 +1,11 @@
 <template>
   <PageView bgColor="#0064C8" barColor="#FFF" barBgColor="#0064C8" barShadow="">
     <template #bar_title>
-      <div class="home_sea flex_center" @click="state.goods.show=true;state.goods.sku_id=''">
+      <div class="home_sea flex_center" @click="router.push({path: '/base/goods'})">
         <i class="ui ui_search"></i><span>货品查询</span>
       </div>
     </template>
-    <ScrollView v-model:refreshing="scrollHome.refreshing" @refresh="loadData" :isLower="false">
+    <ScrollView v-model:refreshing="scroll.refreshing" @refresh="loadData" :isLower="false">
       <div class="home_body">
         <div class="bubble bubble1" :style="{left: bubble.left1+'%', top: bubble.top1+'%'}"></div>
         <div class="bubble bubble2" :style="{left: bubble.left2+'%', top: bubble.top2+'%'}"></div>
@@ -17,7 +17,7 @@
             <div id="wave4" class="wave"></div>
           </div>
           <div class="title">剩余库存</div>
-          <div class="num"><b @click="openUrl('/purchase/stock')">{{ total.list.num || 0 }}</b></div>
+          <div class="num"><b @click="router.push({path: '/purchase/stock'})">{{ total.list.num || 0 }}</b></div>
           <div class="day">{{ total.time?total.time.split(' ')[0]:'年/月/日' }}</div>
           <div class="time">{{ total.time?total.time.split(' ')[1]:'00:00:00' }}</div>
         </div>
@@ -32,46 +32,46 @@
         <ul class="home_total_list flex">
           <li>
             <div class="title">采购入库</div>
-            <div class="num flex" @click="openUrl('/purchase/in', {time: homeForm.active})">
+            <div class="num flex" @click="router.push({path: '/purchase/in', query: {time: homeForm.active}})">
               <h3>{{ total.list.now.in_num || 0 }}</h3>
               <span v-html="total.list.now.in_num?getRatio(total.list.now.in_num, total.list.old.in_num):'-'"></span>
             </div>
           </li>
           <li>
             <div class="title">采购退货</div>
-            <div class="num flex" @click="openUrl('/purchase/out', {time: homeForm.active})">
+            <div class="num flex" @click="router.push({path: '/purchase/out', query: {time: homeForm.active}})">
               <h3>{{ total.list.now.out_num || 0 }}</h3>
               <span v-html="total.list.now.out_num?getRatio(total.list.now.out_num, total.list.old.out_num):'-'"></span>
             </div>
           </li>
           <li>
             <div class="title">调拨出</div>
-            <div class="num flex" @click="openUrl('/allocate/out', {time: homeForm.active})">
+            <div class="num flex" @click="router.push({path: '/allocate/out', query: {time: homeForm.active}})">
               <h3>{{ total.list.now.allocate_out || 0 }}</h3>
               <span v-html="total.list.now.allocate_out?getRatio(total.list.now.allocate_out, total.list.old.allocate_out):'-'"></span>
             </div>
           </li>
           <li>
             <div class="title">调拨入</div>
-            <div class="num flex" @click="openUrl('/allocate/in', {time: homeForm.active})">
+            <div class="num flex" @click="router.push({path: '/allocate/in', query: {time: homeForm.active}})">
               <h3>{{ total.list.now.allocate_in || 0 }}</h3>
               <span v-html="total.list.now.allocate_in?getRatio(total.list.now.allocate_in, total.list.old.allocate_in):'-'"></span>
             </div>
           </li>
           <li>
             <div class="title">
-              <span class="title_num" @click="openUrl('/order/out', {time: homeForm.active, state: '1'})">
+              <span class="title_num" @click="router.push({path: '/order/out', query: {time: homeForm.active, state: '1'}})">
                 销售出仓<span class="redNum">{{ total.list.pay_num || 0 }}</span>
               </span>
             </div>
-            <div class="num flex" @click="openUrl('/order/out', {time: homeForm.active})">
+            <div class="num flex" @click="router.push({path: '/order/out', query: {time: homeForm.active}})">
               <h3>{{ total.list.now.order_out || 0 }}</h3>
               <span v-html="total.list.now.order_out?getRatio(total.list.now.order_out, total.list.old.order_out):'-'"></span>
             </div>
           </li>
           <li>
             <div class="title">售后退货</div>
-            <div class="num flex" @click="openUrl('/order/in', {time: homeForm.active})">
+            <div class="num flex" @click="router.push({path: '/order/in', query: {time: homeForm.active}})">
               <h3>{{ total.list.now.order_in || 0 }}</h3>
               <span v-html="total.list.now.order_in?getRatio(total.list.now.order_in, total.list.old.order_in):'-'"></span>
             </div>
@@ -111,7 +111,7 @@
 .home_total ul{margin: 0 auto; padding: 0 8px;}
 .home_total li{flex: 1; padding: 0 16px; margin: 0 8px; border-radius: 20px; text-align: center; color: rgba(255,255,255,0.8);}
 .home_total .active{color: #FFF; background-color: #007DFF; font-weight: bold;}
-.home_total_list{position: relative; margin: 10px auto; max-width: 1024px; border-top: rgba(255,255,255,0.08) 1px solid;}
+.home_total_list{position: relative; margin: 10px auto; border-top: rgba(255,255,255,0.08) 1px solid;}
 .home_total_list li{width: 50%; padding: 10px; border-bottom: rgba(255,255,255,0.04) 1px solid; box-sizing: border-box;}
 .home_total_list li:nth-child(odd){border-right: rgba(255,255,255,0.04) 1px solid;}
 .home_total_list .title{padding: 0 8px; line-height: 30px; font-size: 12px; color: rgba(255,255,255,0.8);}
@@ -141,9 +141,9 @@ const state = store.state;
 const router = useRouter();
 // 变量
 let time: any = null;
+const scroll = ref({refreshing: false, loading: false, finished: false});
 const total = ref({time: '', list: <any>{now:<any>{}, old:<any>{}}});
 const homeForm = ref({active:'', stime: '', etime: ''});
-const scrollHome = ref({refreshing: false, loading: false, finished: false});
 const bubble = ref({left1:1, top1:3, left2:40, top2:20});
 
 /* 监听 */
@@ -160,12 +160,6 @@ onMounted(()=>{
   clearInterval(time);
   time = setInterval(()=>{ homeAnimation(); }, 20000);
 });
-
-/* 打开连接 */
-const openUrl = (url: string, params: any={}): void => {
-  if(!state.isLogin) router.push({path: '/user/login'});
-  router.push({path: url, query: params});
-}
 
 /* 首页-动画 */
 const homeAnimation = (): void => {
@@ -209,7 +203,7 @@ const loadData = (): void => {
     token: state.token,
     data: {type: 'index', st: homeForm.value.stime, et: homeForm.value.etime},
   }, (res:any)=>{
-    scrollHome.value.refreshing = false;
+    scroll.value.refreshing = false;
     const {code, time, msg, data} = res.data;
     total.value.time = time;
     if(code===0) {
@@ -224,7 +218,7 @@ const loadData = (): void => {
     token: state.token,
     data: homeForm.value,
   }, (res:any)=>{
-    scrollHome.value.refreshing = false;
+    scroll.value.refreshing = false;
     const {code, time, msg, data} = res.data;
     total.value.time = time;
     if(code===0) {

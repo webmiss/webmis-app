@@ -52,7 +52,7 @@
 .me_body{overflow: hidden; background-color: #F8F8F8;}
 .me_top{position: relative; height: 280px; background-color: #FFF;}
 .me_bg{position: absolute; z-index: 1; width: 120%; height: 48%; left: 50%; transform: translateX(-50%); border-radius: 0 0 50% 50%; background: #007DFF;}
-.me_logo{position: absolute; z-index: 2; width: 120px; height: 120px; left: 50%; top: 46%; transform: translate(-50%, -50%); border-radius: 50%; border: #FFF 1px solid; background-image: url('../assets/logo.svg'); background-size: 60%; background-color: #F2F4F8; background-repeat: no-repeat; background-position: center;}
+.me_logo{position: absolute; z-index: 2; width: 128px; height: 128px; left: 50%; top: 46%; transform: translate(-50%, -50%); border-radius: 50%; border: #FFF 1px solid; background-image: url('../../assets/logo.svg'); background-size: 60%; background-color: #F8F8F8; background-repeat: no-repeat; background-position: center;}
 .me_info{position: absolute; padding: 16px 0; bottom: 0; text-align: center; left: 50%; transform: translateX(-50%);}
 .me_info h1{line-height: 40px; font-size: 21px;}
 .me_info span{line-height: 24px; color: @Info; font-size: 12px;}
@@ -76,7 +76,7 @@ const state = store.state;
 const route = useRoute();
 const router = useRouter();
 // 变量
-const scrollMe = ref({refreshing: false, loading: false, finished: false});
+const scroll = ref({refreshing: false, loading: false, finished: false});
 
 /* 打开连接 */
 const openUrl = (url: string, params: any={}): void => {
