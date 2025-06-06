@@ -3,6 +3,8 @@
   <Start :time="Env.startTime"></Start>
   <!-- 软件升级 -->
   <Update></Update>
+  <!-- Socket -->
+  <Socket v-if="state.isLogin"></Socket>
   <!-- 路由 -->
   <router-view v-slot="{ Component, route }">
     <transition :name="transitionName">
@@ -37,6 +39,7 @@ import Plus from './library/plus';
 /* 组件 */
 import Start from './views/tools/Start.vue';
 import Update from './views/tools/Update.vue';
+import Socket from './views/tools/Socket.vue';
 
 // 状态
 const store = useStore();
