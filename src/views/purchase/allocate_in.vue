@@ -138,7 +138,7 @@ onActivated(()=>{
   }
 });
 /* 离开页面 */
-onBeforeRouteLeave((to, from) =>{
+onBeforeRouteLeave(() =>{
   // 记忆位置
   scrollTop.value = scrollObj.value.getScrollTop();
   return true;

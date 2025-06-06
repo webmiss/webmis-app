@@ -89,7 +89,7 @@ onMounted(()=>{
   document.addEventListener('touchmove', preventScroll, { passive: false });
 });
 /* 离开页面 */
-onBeforeRouteLeave((to, from) =>{
+onBeforeRouteLeave(() =>{
   document.removeEventListener('touchmove', preventScroll);
   return true;
 });
