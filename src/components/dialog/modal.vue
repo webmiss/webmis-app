@@ -31,7 +31,7 @@
 </style>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 
 /* 参数 */
 const props = defineProps({
@@ -62,6 +62,12 @@ onMounted(()=>{
     opacity.value = '1';
     translateY.value = '-50%';
   }, 100);
+  // 监听后退
+  window.addEventListener('popstate', close);
+});
+/* 页面销毁 */
+onUnmounted(()=>{
+  window.removeEventListener('popstate', close);
 });
 
 /* 确定 */

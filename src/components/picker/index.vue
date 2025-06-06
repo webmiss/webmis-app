@@ -41,7 +41,7 @@
 </style>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 
 /* 参数 */
 const props = defineProps({
@@ -58,6 +58,7 @@ const props = defineProps({
   changeCallBack: { type: Function, default: ()=>{} },    // 回调-改变
   isAnimate: { type: Boolean, default: true },            // 惯性动画
 });
+/* 事件 */
 const emit = defineEmits(['confirm', 'cancel', 'update:visible']);
 /* 变量 */
 const opacity = ref('0');
@@ -92,6 +93,12 @@ onMounted(()=>{
     objTop = objHeight*props.optionNum/2-objHeight/2;
     activeValue();
   }, 100);
+  // 监听后退
+  window.addEventListener('popstate', close);
+});
+/* 页面销毁 */
+onUnmounted(()=>{
+  window.removeEventListener('popstate', close);
 });
 
 /* 默认值 */
@@ -251,7 +258,7 @@ const getValue = (): Array<any> => {
     y = parseInt(objRefs.value[k].style.transform.split(',')[1].split('px')[0]);
     index = (objTop-y)/objHeight;
     keys.push(index);
-    value.push(objList.value[k][index].value);
+    value.push({label: objList.value[k][index].label, value: objList.value[k][index].value});
   }
   objPos.value = keys;
   return value;

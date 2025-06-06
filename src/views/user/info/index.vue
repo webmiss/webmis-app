@@ -78,11 +78,12 @@ const changeInfo = async (name: string, value: string): Promise<void> => {
     let active = value?value.split('-'):[];
     const days = Time.daysLimit('1970-01-01', Time.Date('Y-m-d'));
     res = await proxy.$showPicker({title:'选择生日', active: active, columns: days});
+    if(res.confirm) res.content = res.content[0].value+'-'+res.content[1].value+'-'+res.content[2].value;
   }
   // 确认
   if(res.confirm) {
     const data: any = {};
-    data[name] = name==='birthday'?res.content.join('-'):res.content.trim();
+    data[name] = res.content.trim();
     // 请求
     Request.Post('user/change_uinfo', {token: state.token, uinfo:data}, (res:any)=>{
       const {code, msg} = res.data;

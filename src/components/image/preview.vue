@@ -32,7 +32,7 @@
 </style>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 
 /* 参数 */
 const props = defineProps({
@@ -79,6 +79,12 @@ onMounted(()=>{
   } catch(e: any) {
     safe_top.value = '0px';
   }
+  // 监听后退
+  window.addEventListener('popstate', close);
+});
+/* 页面销毁 */
+onUnmounted(()=>{
+  window.removeEventListener('popstate', close);
 });
 
 /* 开始 */

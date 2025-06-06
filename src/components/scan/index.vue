@@ -39,7 +39,7 @@
 </style>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { Html5Qrcode } from 'html5-qrcode';
 
 /* 参数 */
@@ -69,6 +69,12 @@ onMounted(()=>{
     msg.value = '获取授权';
     handleScanClick();
   }, 100);
+  // 监听后退
+  window.addEventListener('popstate', close);
+});
+/* 页面销毁 */
+onUnmounted(()=>{
+  window.removeEventListener('popstate', close);
 });
 
 /* 获取摄像头授权 */
