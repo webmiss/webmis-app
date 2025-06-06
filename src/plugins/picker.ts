@@ -16,7 +16,7 @@ export default {
                 container.remove();
               }, 300);
             },
-            onConfirm: (value: any) => resolve({ confirm: true, content: value }),
+            onConfirm: (value: any, pos: any) => resolve({ confirm: true, content: value, pos: pos}),
             onCancel: () => resolve({ confirm: false })
           })
         });

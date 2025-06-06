@@ -266,7 +266,7 @@ const getValue = (): Array<any> => {
 
 /* 确定 */
 const subConfirm = (): void => {
-  emit('confirm', getValue());
+  emit('confirm', getValue(), objPos.value);
   close();
 };
 
