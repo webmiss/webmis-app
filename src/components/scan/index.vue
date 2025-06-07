@@ -3,11 +3,11 @@
     <div v-if="visible" class="wm-scan_body">
       <div class="wm-scan_mask" :style="{opacity: opacity}"></div>
       <div class="wm-scan_content" :style="{transform: 'translate3D('+translateX+', 0, 0)', opacity: opacity}">
-        <div class="wm-scan_top">
+        <div class="wm-scan_top" :style="{paddingTop: 'calc(8px + '+safe_top+')'}">
           <i class="ui ui_close" @click="close()"></i>
           <h2>{{ title }}</h2>
         </div>
-        <div class="wm-scan">
+        <div class="wm-scan" :style="{height: 'calc(100% - 56px - '+safe_top+')'}">
           <!-- 视频 -->
           <div class="video" v-show="!msg">
             <div id="reader"></div>
@@ -31,7 +31,7 @@
 .wm-scan_top{position: relative; line-height: 40px; padding: 8px 10px; display: flex; justify-content: center; align-items: center;}
 .wm-scan_top h2{font-size: 15px; font-weight: normal;}
 .wm-scan_top .ui_close{position: absolute; left: 10px; bottom: 8px; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;}
-.wm-scan{position: relative; width: 100%; height: calc(100% - 56px); text-align: center; display: flex; justify-content: center; align-items: center;}
+.wm-scan{position: relative; width: 100%; text-align: center; display: flex; justify-content: center; align-items: center;}
 .wm-scan .msg{padding: 16px 32px; line-height: 24px; color: @Info;}
 .wm-scan .perm{display: inline-block; margin: 0 auto; padding: 4px 32px; line-height: 40px; border-radius: 24px; background-color: @Minor;}
 .wm-scan .video{overflow: hidden; position: absolute; width: 100%; height: 100%;}
@@ -39,8 +39,9 @@
 </style>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { Html5Qrcode } from 'html5-qrcode';
+import Store from '../../store/index';
 
 /* 参数 */
 const props = defineProps({
@@ -54,13 +55,19 @@ const props = defineProps({
 });
 const emit = defineEmits(['confirm', 'cancel', 'update:visible']);
 /* 变量 */
+const safe_top = ref('env(safe-area-inset-top)');
 const opacity = ref('0');
 const translateX = ref('100%');
 const msg = ref(<any>'');
 const stream = ref(<any>null);
 const html5QrCode = ref(<any>null);
 
-  /* 创建完成 */
+/* 监听 */
+watch(()=>Store.state.routeAction, (val: string)=>{
+  if(val==='prev') close();
+},{ deep: true });
+
+/* 创建完成 */
 onMounted(()=>{
   // 动画
   setTimeout(()=>{
@@ -69,12 +76,12 @@ onMounted(()=>{
     msg.value = '获取授权';
     handleScanClick();
   }, 100);
-  // 监听后退
-  window.addEventListener('popstate', close);
-});
-/* 页面销毁 */
-onUnmounted(()=>{
-  window.removeEventListener('popstate', close);
+  try{
+    // @ts-ignore 状态栏
+    if(plus.os.name.toLowerCase()!=='ios') safe_top.value = plus.navigator.getStatusbarHeight()+'px';
+  } catch(e: any) {
+    safe_top.value = '0px';
+  }
 });
 
 /* 获取摄像头授权 */

@@ -41,7 +41,8 @@
 </style>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, watch, onMounted } from 'vue';
+import Store from '../../store/index';
 
 /* 参数 */
 const props = defineProps({
@@ -60,6 +61,11 @@ const opacity = ref('0');
 const translateY = ref('100%');
 const content = ref(<any>'');
 
+/* 监听 */
+watch(()=>Store.state.routeAction, (val: string)=>{
+  if(val==='prev') close();
+},{ deep: true });
+
 /* 创建完成 */
 onMounted(()=>{
   content.value = '';
@@ -68,12 +74,6 @@ onMounted(()=>{
     opacity.value = '1';
     translateY.value = '0%';
   }, 100);
-  // 监听后退
-  window.addEventListener('popstate', close);
-});
-/* 页面销毁 */
-onUnmounted(()=>{
-  window.removeEventListener('popstate', close);
 });
 
 /* 确定 */

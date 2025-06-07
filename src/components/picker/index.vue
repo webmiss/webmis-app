@@ -41,7 +41,8 @@
 </style>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, watch, onMounted } from 'vue';
+import Store from '../../store/index';
 
 /* 参数 */
 const props = defineProps({
@@ -74,6 +75,11 @@ let startY=0, distance=0, velocity=0, lastTime=0;
 // 位置
 let objY=0, moveY=0, minY=0, maxY=0;
 
+/* 监听 */
+watch(()=>Store.state.routeAction, (val: string)=>{
+  if(val==='prev') close();
+},{ deep: true });
+
 /* 创建完成 */
 onMounted(()=>{
   // 数据
@@ -93,12 +99,6 @@ onMounted(()=>{
     objTop = objHeight*props.optionNum/2-objHeight/2;
     activeValue();
   }, 100);
-  // 监听后退
-  window.addEventListener('popstate', close);
-});
-/* 页面销毁 */
-onUnmounted(()=>{
-  window.removeEventListener('popstate', close);
 });
 
 /* 默认值 */

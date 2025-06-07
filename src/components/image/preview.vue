@@ -32,7 +32,8 @@
 </style>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, watch, onMounted } from 'vue';
+import Store from '../../store/index';
 
 /* 参数 */
 const props = defineProps({
@@ -46,8 +47,8 @@ const props = defineProps({
 });
 const emit = defineEmits(['update:visible', 'update:index', 'close']);
 // 变量
-const opacity = ref('0');
 const safe_top = ref('env(safe-area-inset-top)');
+const opacity = ref('0');
 const page = ref(1);
 const width = ref(0);
 const previewTrack = ref(null);
@@ -59,6 +60,11 @@ const scale = ref(1);
 let isScale = false;
 let scaleN = 0;
 let initialDistance = 0;
+
+/* 监听 */
+watch(()=>Store.state.routeAction, (val: string)=>{
+  if(val==='prev') close();
+},{ deep: true });
 
 /* 创建完成 */
 onMounted(()=>{
@@ -79,12 +85,6 @@ onMounted(()=>{
   } catch(e: any) {
     safe_top.value = '0px';
   }
-  // 监听后退
-  window.addEventListener('popstate', close);
-});
-/* 页面销毁 */
-onUnmounted(()=>{
-  window.removeEventListener('popstate', close);
 });
 
 /* 开始 */
