@@ -2,11 +2,16 @@
 /* 请求 */
 export default class Time {
 
-  /* 当前时间戳 */
+  /* 时间戳 */
   public static Time(data: string=''): number {
     const t: any = data?new Date(data):new Date();
     const now: number = t.getTime();
     return Math.round(now/1000);
+  }
+  /* 时间戳-毫秒 */
+  public static TimeMicro(data: string=''): number {
+    const t: any = data?new Date(data):new Date();
+    return t.getTime();
   }
 
   /* 日期格式 */

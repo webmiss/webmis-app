@@ -1,15 +1,18 @@
 <template>
   <PageView bgColor="#F2F2F2">
     <template #bar_left><i class="back ui ui_arrow_left" @click="router.go(-1)"></i></template>
-    <template #bar_title>{{ msg.title }}</template>
+    <template #bar_title>{{ state.msg.title }}</template>
+    <template #bar_right>
+      <i class="ui ui_more more" @click="showMore()"></i>
+    </template>
     <div class="msg_body" :style="{height: msgHeight}" @click="msgClose()">
-      <ScrollView class="msg_content" v-model:refreshing="scroll.refreshing" @refresh="loadData" :isLower="false">
+      <ScrollView class="msg_content" v-model:refreshing="scroll.refreshing" @refresh="onLoad" :isLower="false" :upper="20">
         <!-- Msg -->
         <div class="wm-msg_ct">
-            <template v-if="sendList.length>0">
-              <template v-for="(v,k) in sendList" :key="k">
+            <template v-if="state.msg.list.length>0">
+              <template v-for="(v,k) in state.msg.list" :key="k">
                 <!-- Time -->
-                <div class="time">{{ getMsgTime(sendList[k-1]?sendList[k-1].time:v.time, v.time) }}</div>
+                <div class="time">{{ getMsgTime(state.msg.list[k-1]?state.msg.list[k-1].time:v.time, v.time) }}</div>
                 <!-- Msg Left -->
                 <div class="msg_left flex_left" v-if="v.fid!=state.uinfo.uid">
                   <div class="img bgImg" :style="{backgroundImage: v.img?'url('+v.img+')':''}">
@@ -46,12 +49,12 @@
       </ScrollView>
     </div>
     <div class="msg_tools">
-      <div class="ico">1</div>
+      <div class="ico"></div>
       <div class="input">
-        <div class="text">{{ msg.content }}</div>
-        <textarea v-model="msg.content" @input="msgInput" @focus="msgFocus" @blur="msgClose()" enterkeyhint="send"></textarea>
+        <div class="text">{{ msgData.content }}</div>
+        <textarea v-model="msgData.content" @input="msgInput" @focus="msgFocus" @blur="msgClose()" @keydown.enter.exact="msgSend" :disabled="!state.msg.title" enterkeyhint="send"></textarea>
       </div>
-      <div class="ico">2</div>
+      <div class="ico"></div>
     </div>
   </PageView>
 </template>
@@ -80,8 +83,8 @@
 .msg_content .msg_right .red{left: -16px;}
 /* Tools */
 .msg_tools{width: 100%; min-height: 40px; padding: 5px 0; background-color: #F8F8F8; display: flex; justify-content: space-between; align-items: flex-end;}
-.msg_tools .ico{width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;}
-.msg_tools .input{position: relative; width: calc(100% - 80px); background-color: #FFF; border-radius: 4px;}
+.msg_tools .ico{width: 50px; height: 40px; display: flex; justify-content: center; align-items: center;}
+.msg_tools .input{position: relative; width: calc(100% - 100px); background-color: #FFF; border-radius: 4px;}
 .msg_tools .input textarea, .msg_tools .input .text{padding: 10px; line-height: 20px; font-size: 16px; white-space: pre-wrap; box-sizing: border-box;}
 .msg_tools .input textarea{overflow: hidden; position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; outline: none;}
 .msg_tools .input .text{visibility: hidden; min-height: 40px;}
@@ -89,7 +92,7 @@
 </style>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, watch, onMounted, getCurrentInstance, onBeforeUnmount } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
 /* JS组件 */
@@ -99,39 +102,75 @@ import Time from '../../library/time';
 /* 组件 */
 import PageView from '../../components/view/page.vue';
 import ScrollView from '../../components/view/scroll.vue';
+import { title } from 'process';
 
+// 公共
+const { proxy } = getCurrentInstance() as any ;
 // 状态
 const store = useStore();
 const state = store.state;
-const route = useRoute();
 const router = useRouter();
 // 变量
-const msg = ref({title:'用户呢称', content:''});
-const msgHeight = ref('calc(100% - 50px)');
 const scroll = ref({refreshing: false, loading: false, finished: false});
-// 消息间隔时间
+const page = ref({num:1, limit:12});
+const msgData = ref({content:''});
+const msgHeight = ref('calc(100% - 50px)');
+// 间隔时间
 let msgTime = ref(600);
-// 发送内容
-let sendGid = ref<number | string>('');
-let sendFid = ref<number | string>('');
-let sendTitle = ref('');
-let sendContent = ref('');
-let sendImg = ref('');
-let sendList = ref(<any>[
-  {gid: 1, fid: 0, uid: 0, time: '2025-06-04 09:28:00', img: 'https://php.webmis.vip/upload/robot.jpg', title:'Ai助理', content: 'Hi很高兴为您服务！'},
-  {gid: 0, fid: 33028323, uid: 33028323, time: '2025-06-04 09:28:01', img: 'https://cszbvip.oss-cn-guangzhou.aliyuncs.com/user/img/1.jpg', title:'我', content: '你好'},
 
-]);
+/* 监听-新信息 */
+watch(()=>state.msg.readId, (val: number)=>{
+  if(val>0) msgRead([val], false);
+  msgToBottom();
+  state.msg.readId = 0;
+},{ deep: true });
 
 /* 创建完成 */
 onMounted(()=>{
-  // loadData();
+  // 返回
+  if(state.msg.gid==='' || state.msg.fid==='') router.go(-1);
+  // 默认值
+  for(let v of state.msg.group) {
+    if(v.gid===state.msg.gid && v.fid===state.msg.fid) {
+      state.msg.title = v.title;
+      state.msg.img = v.img;
+      msgData.value.content = v.sendContent || '';
+    }
+  }
+  // 刷新
+  onRefresh();
+});
+/* 页面销毁 */
+onBeforeUnmount(()=>{
+  state.msg.gid = '';
+  state.msg.fid = '';
+  state.msg.title = '';
+  state.msg.img = '';
+  state.msg.list = [];
 });
 
-/* 消息-输入框高度 */
+/* 更多 */
+const showMore = async (): Promise<void> => {
+  const res = await proxy.$actionSheet({
+    title: '更多',
+    active: '',
+    actions:[
+      {label: '清空聊天记录', value: 'clear'},
+    ]
+  });
+  if(res.confirm) {
+    if(res.content.value==='clear') console.log('clear');;
+  }
+}
+
+/* 消息-输入 */
 const msgInput = (e: any): void => {
+  // 设置高度
   msgHeight.value = 'calc(100% - '+(e.target.scrollHeight+10)+'px)';
-  console.log(e.target.scrollHeight);
+  // 缓存消息
+  for(let v of state.msg.group) {
+    if(v.gid===state.msg.gid && v.fid===state.msg.fid) v.sendContent = msgData.value.content;
+  }
 }
 /* 消息-阻止页面滚动 */
 const msgClose = (): void => {
@@ -145,31 +184,139 @@ const preventScroll = (e: any): void => {
   e.preventDefault();
 }
 
-/* 加载数据 */
-const loadData = (): void => {
-  // 请求
-  // Request.Post('index/html', {name: route.query.name}, (res:any)=>{
-  //   const {code, msg, time, data} = res.data;
-  //   if(code===0 && data) {
-  //     info.value.time = time;
-  //     info.value.title = data.title;
-  //     info.value.content = data.content;
-  //     info.value.cdate = Time.Date('Y年m月d日', Time.StrToTime(data.ctime));
-  //     info.value.udate = Time.Date('Y年m月d日', Time.StrToTime(data.utime));
-  //     // 重置刷新
-  //     scroll.value.refreshing = false;
-  //   } else return Ui.Toast(msg);
-  // });
+/* 消息-发送 */
+const msgSend = (event: any=null): void => {
+  // 禁止换行
+  if(event) event.preventDefault();
+  if(!state.msg.title || msgData.value.content.trim()=='') return ;
+  // 本地
+  const loading: number = Time.TimeMicro();
+  const time: string = Time.Date('Y-m-d H:i:s');
+  const data: any = {
+    gid: state.msg.gid,
+    fid: parseInt(state.uinfo.uid),
+    uid: state.msg.fid,
+    is_new: false,
+    time: time,
+    format: 0,
+    title: state.uinfo.name,
+    img: state.uinfo.img,
+    content: msgData.value.content.trim(),
+    loading: loading,
+  };
+  state.msg.list.push(data);
+  // 发送
+  if(state.socket) {
+    data.type = 'msg';
+    state.socket.send(JSON.stringify(data));
+  }
+  // AI助理
+  if(state.msg.gid===1) {
+    state.msg.list.push({
+      fid: state.msg.fid,
+      uid: 0,
+      format: 0,
+      is_new: false,
+      time: time,
+      title: state.msg.title,
+      img: state.msg.img,
+      content: '...',
+      loading: loading+1,
+    });
+  }
+  // 底部
+  msgToBottom();
+  // 清空
+  msgClear();
+}
+/* 消息-清空 */
+const msgClear = (): void => {
+  msgData.value.content = '';
+  for(let v of state.msg.group) {
+    if(v.gid===state.msg.gid && v.fid===state.msg.fid) v.sendContent = '';
+  }
 }
 
-/* 日期转换 */
-const getMsgDate = (d: string): string => {
-  const day: string = Time.Date('Y-m-d');
-  const t1: number = Time.StrToTime(day+' 00:00:00');
-  const t2: number = Time.StrToTime(d);
-  let str: string = t2>=t1?d.substring(11, 16):d.substring(5, 10);
-  return str;
+/* 下拉刷新 */
+const onRefresh = (): void => {
+  page.value.num = 1;
+  scroll.value.finished = false;
+  state.msg.list = [];
+  loadData();
 }
+/* 上拉加载 */
+const onLoad = (): void => {
+  if(scroll.value.finished) {
+    if(state.msg.list.length>0) return Ui.Toast('已无历史消息!');
+    return;
+  }
+  page.value.num += 1;
+  loadData();
+}
+
+/* 加载数据 */
+const loadData = (): void => {
+  if(!state.token) return;
+  // 请求
+  Request.Post('msg/show?lang='+state.lang, {
+    token: state.token,
+    gid: state.msg.gid,
+    fid: state.msg.fid,
+    page: page.value.num,
+    limit: page.value.limit,
+  }, (res:any)=>{
+    const {code, msg, data} = res.data;
+    if(code===0) {
+      // 重置刷新
+      scroll.value.refreshing = true;
+      // 数据
+      if(data.length>0) {
+        state.msg.list.unshift(...data);
+        // 标记已读
+        let ids: Array<any> = [];
+        for(let v of data) {
+          if(v.is_new) ids.push(v.id);
+        }
+        msgRead(ids);
+      } else {
+        scroll.value.finished = true;
+        onLoad();
+      }
+      // 调转底部
+      if(page.value.num===1) msgToBottom();
+    } else return Ui.Toast(msg);
+  });
+}
+/* 消息-调转底部 */
+const msgToBottom = (): void => {
+  setTimeout(()=>{
+    document.querySelector('#msgBottom')?.scrollIntoView(true);
+    state.msg.isBottom = false;
+  }, 300);
+}
+/* 消息-标记已读 */
+const msgRead = (ids: any=[], isNum: boolean=true): void => {
+  if(ids.length==0) return;
+  // 扣减数量
+  if(isNum) {
+    state.msg.num -= ids.length;
+    for(let v of state.msg.group) {
+      if(v.gid===state.msg.gid && v.fid===state.msg.fid) {
+        v.num -= ids.length;
+        if(v.num<0) v.num = 0;
+      }
+    }
+  }
+  // 提交
+  Request.Post('msg/read?lang='+state.lang, {
+    token: state.token,
+    ids: ids,
+  }, (res:any)=>{
+    const {code, msg}: any = res.data;
+    if(code!==0) Ui.Toast(msg);
+  });
+}
+
 /* 时间转换 */
 const getMsgTime = (t1: string, t2: string): string => {
   if(t1===t2 || !t1) return Time.FormatTime(t2);

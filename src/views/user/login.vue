@@ -38,7 +38,7 @@
 <style lang="less" scoped>
 .login_body{position: relative; background-color: #FFF; width: 100%; height: 100%;}
 .login_ct{position: absolute; width: calc(100% - 64px); max-width: 360px; min-width: 240px; left: 50%; top: 48%; transform: translate(-50%, -50%);}
-.login_logo{margin: 16px auto; width: 120px; height: 120px; background-image: url('../../assets/logo.svg'); background-size: 60%; background-repeat: no-repeat; background-position: center; background-color: #F2F4F6; border-radius: 50%; transition: All 0.5s ease-in-out;}
+.login_logo{margin: 16px auto; width: 160px; height: 160px; background-image: url('../../assets/logo.svg'); background-size: 60%; background-repeat: no-repeat; background-position: center; background-color: #F2F4F6; border-radius: 50%; transition: All 0.5s ease-in-out;}
 .login_form{overflow: hidden;}
 .login_form li{position: relative; padding: 10px;}
 .login_form .vcode{position: absolute; z-index: 1; height: 40px; top: 50%; right: 10px; transform: translateY(-50%); border-radius: 4px;}

@@ -98,7 +98,8 @@ onMounted(()=>{
     // Android返回键
     let backcount = 0;
     Plus.Back((e: any)=>{
-      state.routeAction = 'prev';
+      state.routeAction = '';
+      setTimeout(()=>{ state.routeAction = 'prev'; }, 300);
       // @ts-ignore
       if(backcount>0) plus.runtime.quit();
       Ui.Toast('再按一次退出应用!');

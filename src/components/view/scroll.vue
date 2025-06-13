@@ -22,7 +22,7 @@
 
 <style lang="less">
 .wm-scroll_body{width: 100%; height: 100%;}
-.wm-scroll_ct{position: relative; width: 100%; height: 100%; overflow-y: auto; touch-action: pan-y; -webkit-overflow-scrolling: touch;}
+.wm-scroll_ct{position: relative; width: 100%; height: 100%; overflow-y: auto; touch-action: pan-y; scroll-behavior: smooth;}
 .wm-scroll_refresh{position: absolute; z-index: 99; left: 0; top: 0; width: 100%; text-align: center; transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); transform: translateZ(0);}
 .wm-scroll_load{position: fixed; z-index: 99; bottom: 0; width: 100%; text-align: center;}
 </style>
