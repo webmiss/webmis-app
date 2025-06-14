@@ -42,14 +42,14 @@ const router = useRouter();
 // 变量
 const tabbar = ref({active: 'home', color: '', bgColor: '', activeColor: '', columns:[
   {label: '首页', icon: 'icons icon_home', slot: 'home'},
-  {label: '消息', icon: 'icons icon_msg', slot: 'msg'},
+  {label: '消息', icon: 'icons icon_msg', slot: 'msg', num: state.msg.num},
   {label: '我的', icon: 'icons icon_me', slot: 'me'},
 ]});
 // Token验证
 let TokenTime: any = null;
 const verifyTokenTime = ref(30000);     // 间隔时间
 
-/* 监听 */
+/* 监听-登录状态 */
 watch(()=>state.isLogin, (val: boolean)=>{
   if(val) {
     clearInterval(TokenTime);
@@ -57,6 +57,10 @@ watch(()=>state.isLogin, (val: boolean)=>{
   } else {
     setTimeout(()=>{ router.push({path: '/user/login'}); }, 1000);
   }
+}, { deep: true });
+/* 监听-消息数量 */
+watch(()=>state.msg.num, (val: number)=>{
+  tabbar.value.columns[1].num = val;
 }, { deep: true });
 
 /* 创建完成 */
