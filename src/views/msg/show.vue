@@ -138,7 +138,7 @@ onMounted(()=>{
     }
   }
   // 刷新
-  onRefresh();
+  setTimeout(()=>{ onRefresh(); }, 300);
 });
 /* 页面销毁 */
 onBeforeUnmount(()=>{
