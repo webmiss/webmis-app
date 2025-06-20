@@ -174,7 +174,7 @@ let msgTime = ref(600);
 /* 监听-新信息 */
 watch(()=>state.msg.readId, (val: number)=>{
   if(val>0) msgRead([val], false);
-  msgToBottom();
+  msgToBottom(1000);
   state.msg.readId = 0;
 },{ deep: true });
 
@@ -300,7 +300,7 @@ const msgUploadFile = async (fileObj: any): Promise<void> => {
     state.msg.list.push(msgData);
     const k: number = state.msg.list.length-1;
     // 底部
-    msgToBottom(900);
+    msgToBottom();
     // 签名直传
     let formData = new FormData();
     formData.append('OSSAccessKeyId', data.accessid);
