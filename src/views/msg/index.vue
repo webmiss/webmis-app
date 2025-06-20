@@ -20,6 +20,7 @@
               </div>
               <div class="msg flex">
                 <span class="text nowrap" v-if="v.sendContent">[草稿]{{ v.sendContent}}</span>
+                <span class="text nowrap" v-if="v.format===1">[{{ isImgage(v.content.type)?'图片':'文件' }}] {{ v.content.name }}</span>
                 <span class="text nowrap" v-else>{{ v.content}}</span>
                 <span class="num" v-if="v.num">{{ v.num }}</span>
               </div>
@@ -152,6 +153,12 @@ const getMsgDate = (d: string): string => {
   const t2: number = Time.StrToTime(d);
   let str: string = t2>=t1?d.substring(11, 16):d.substring(5, 10);
   return str;
+}
+
+/* 图片-判断 */
+const isImgage = (type: string): boolean => {
+  const arr: Array<string> = ['image/jpeg', 'image/png', 'image/gif'];
+  return arr.includes(type);
 }
 
 </script>
