@@ -124,7 +124,7 @@
 /* Msg-File */
 .msg_content .file_ct{position: relative; background-color: #FFF;}
 .msg_content .file_ct .img_ct{position: relative; overflow: hidden; border: #FFF 1px solid; border-radius: 4px;}
-.msg_content .file_ct .img_ct img{cursor: pointer; max-width: 100%; max-height: 240px;}
+.msg_content .file_ct .img_ct img{cursor: pointer; max-width: 100%; max-height: 120px;}
 .msg_content .file_ct .other_ct{position: relative; padding: 10px; background-color: #FFF; display: flex; justify-content: space-between;}
 .msg_content .file_ct .other_ct i{width: 72px; height: 72px; font-size: 48px; color: @IconColor; background-color: #F2F2F2; border-radius: 4px; display: flex; justify-content: center; align-items: center;}
 .msg_content .file_ct .other_ct .text_body{position: relative; padding: 0 10px; max-width: 160px;}
