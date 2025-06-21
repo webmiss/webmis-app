@@ -28,7 +28,7 @@
                       <span class="arrow"></span>
                       <div class="img_ct" v-if="isImgage(v.content.type)">
                         <div class="wm-ui_load" v-if="v.loading"><span><i class="ui ui_loading"></i></span></div>
-                        <img :src="v.base64?v.base64:v.content.url+v.content.file" @click="msgImgView(v.content.url+v.content.file)">
+                        <img :src="v.base64?v.base64:v.content.url+v.content.file+'?x-oss-process=image/resize,l_160'" @click="msgImgView(v.content.url+v.content.file)">
                       </div>
                       <div class="other_ct" v-else>
                         <i class="ui ui_file"></i>
@@ -57,7 +57,7 @@
                       <span class="arrow"></span>
                       <div class="img_ct" v-if="isImgage(v.content.type)">
                         <div class="wm-ui_load" v-if="v.loading"><span><i class="ui ui_loading"></i></span></div>
-                        <img :src="v.base64?v.base64:v.content.url+v.content.file" @click="msgImgView(v.content.url+v.content.file)">
+                        <img :src="v.base64?v.base64:v.content.url+v.content.file+'?x-oss-process=image/resize,l_160'" @click="msgImgView(v.content.url+v.content.file)">
                       </div>
                       <div class="other_ct" v-else>
                         <i class="ui ui_file"></i>
@@ -123,7 +123,7 @@
 .msg_content .msg_right .msg_ct .red{left: -16px;}
 /* Msg-File */
 .msg_content .file_ct{position: relative; background-color: #FFF;}
-.msg_content .file_ct .img_ct{position: relative; overflow: hidden; border: #FFF 1px solid; border-radius: 4px;}
+.msg_content .file_ct .img_ct{position: relative; overflow: hidden; border: #FFF 1px solid; background-color: #FFF; border-radius: 4px;}
 .msg_content .file_ct .img_ct img{cursor: pointer; max-width: 100%; max-height: 120px;}
 .msg_content .file_ct .other_ct{position: relative; padding: 10px; background-color: #FFF; display: flex; justify-content: space-between;}
 .msg_content .file_ct .other_ct i{width: 72px; height: 72px; font-size: 48px; color: @IconColor; background-color: #F2F2F2; border-radius: 4px; display: flex; justify-content: center; align-items: center;}
@@ -143,7 +143,7 @@
 </style>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, getCurrentInstance, onBeforeUnmount } from 'vue';
+import { ref, watch, onMounted, getCurrentInstance, onBeforeUnmount, nextTick } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
 /* JS组件 */
@@ -174,7 +174,7 @@ let msgTime = ref(600);
 /* 监听-新信息 */
 watch(()=>state.msg.readId, (val: number)=>{
   if(val>0) msgRead([val], false);
-  msgToBottom(1000);
+  msgToBottom();
   state.msg.readId = 0;
 },{ deep: true });
 
@@ -456,11 +456,28 @@ const loadData = (): void => {
   });
 }
 /* 消息-调转底部 */
-const msgToBottom = (time: number=300): void => {
-  setTimeout(()=>{
-    document.querySelector('#msgBottom')?.scrollIntoView(true);
-    state.msg.isBottom = false;
-  }, time);
+const msgToBottom = (): void => {
+  let isImg: boolean = false;
+  state.msg.isBottom = false;
+  // 有图片
+  for(let v of state.msg.list) {
+    if(v.format===1 && isImgage(v.content.type)) {
+      isImg = true;
+      const img = new Image();
+      img.src = v.content.url+v.content.file;
+      img.onload = () => {
+        setTimeout(()=>{
+          document.querySelector('#msgBottom')?.scrollIntoView(true);
+        }, 100);
+      }
+    }
+  }
+  // 无图片
+  if(!isImg) {
+    nextTick(()=>{
+      document.querySelector('#msgBottom')?.scrollIntoView(true);
+    });
+  }
 }
 /* 消息-标记已读 */
 const msgRead = (ids: any=[], isNum: boolean=true): void => {

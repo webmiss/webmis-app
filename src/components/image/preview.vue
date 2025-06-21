@@ -26,8 +26,8 @@
 .wm-preview_swipe{overflow: hidden; position: relative; width: 100%; height: 100%; touch-action: pan-x; -webkit-overflow-scrolling: touch;}
 .wm-preview_track{cursor: grab; height: 100%; transition-property: transform; display: flex;}
 .wm-preview_item{position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;}
-.wm-preview_image{width: 100%; transition-property: transform;}
-.wm-preview_image img{width: 100%;}
+.wm-preview_image{width: 100%; transition-property: transform; display: flex; justify-content: center;}
+.wm-preview_image img{max-width: 100%;}
 .wm-preview_label{line-height: 24px; padding: 8px; border-radius: 8px; max-width: calc(100% - 40px); text-align: center; position: absolute; bottom: 16px; background-color: rgba(0,0,0,0.5);}
 </style>
 
@@ -47,8 +47,8 @@ const props = defineProps({
 });
 const emit = defineEmits(['update:visible', 'update:index', 'close']);
 // 变量
-const safe_top = ref('env(safe-area-inset-top)');
 const opacity = ref('0');
+const safe_top = ref('env(safe-area-inset-top)');
 const page = ref(1);
 const width = ref(0);
 const previewTrack = ref(null);
