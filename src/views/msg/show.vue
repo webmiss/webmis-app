@@ -6,7 +6,7 @@
       <i class="ui ui_more more" @click="showMore()"></i>
     </template>
     <div class="msg_body" :style="{height: msgHeight}" @click="msgClose()">
-      <ScrollView class="msg_content" v-model:refreshing="scroll.refreshing" @refresh="onLoad" :isLower="false" :upper="20">
+      <ScrollView class="msg_content" v-model:refreshing="scroll.refreshing" @refresh="onLoad" :isLower="false" :upper="20" behavior="smooth">
         <!-- Msg -->
         <div class="wm-msg_ct">
             <template v-if="state.msg.list.length>0">

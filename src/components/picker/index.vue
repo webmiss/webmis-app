@@ -8,13 +8,15 @@
           <button class="confirm" :style="{color: confirmColor}" @click="subConfirm()">{{ confirmText }}</button>
           <h2>{{ title }}</h2>
         </div>
-        <div class="wm-picker_columns" :style="{height: 'calc('+optionHeight+' * '+optionNum+')'}">
+        <div class="wm-picker_columns" :style="{height: 'calc('+optionHeight+'px * '+optionNum+')'}">
           <div class="wm-picker_column_mask" :style="{backgroundSize: '100% 110px'}"></div>
-          <div class="wm-picker_column_frame" :style="{height: optionHeight}"></div>
-          <div class="wm-picker_column" v-for="(v,k) in objList">
-            <ul :ref="(el)=>setObjRef(el, k)" class="wm-picker_list" :style="{transform: 'translate3d(0px, 110px, 0px)'}" @touchstart.passive="TouchStart($event, k)" @touchmove.passive="TouchMove" @touchend.passive="TouchEnd($event, k)">
-              <li v-for="row in v" :style="{height: optionHeight, lineHeight: optionHeight}">{{ row.label }}</li>
+          <div class="wm-picker_column_frame" :style="{height: optionHeight+'px'}"></div>
+          <div class="wm-picker_column" :style="{scrollBehavior: behavior as any}" v-for="(v,k) in objList" :ref="(el)=>setObjRef(el, k)" @scroll="Scroll($event, k)" @touchstart.passive="TouchStart($event, k)" @touchmove.passive="TouchMove" @touchend.passive="TouchEnd($event, k)">
+            <div class="wm-picker_seat" :style="{height: 'calc(50% - '+optionHeight+'px / 2)'}"></div>
+            <ul class="wm-picker_list">
+              <li v-for="row in v" :style="{height: optionHeight+'px', lineHeight: optionHeight+'px'}">{{ row.label }}</li>
             </ul>
+            <div class="wm-picker_seat" :style="{height: 'calc(50% - '+optionHeight+'px / 2)'}"></div>
           </div>
         </div>
       </div>
@@ -32,9 +34,10 @@
 .wm-picker_title .confirm{right: 0;}
 .wm-picker_title h2{font-size: 16px; font-weight: 500;}
 .wm-picker_columns{position: relative; cursor: grab; display: flex; background: linear-gradient(to bottom, #F2F2F2 0%, #FFF 50%, #F2F2F2 100%);}
-.wm-picker_column{overflow: hidden; flex: 110%;}
+.wm-picker_column{overflow: hidden; overflow-y: scroll; flex: 110%;}
 .wm-picker_column_mask{position: absolute; z-index: 1; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; background-image: linear-gradient(180deg, rgba(255, 255, 255, .9), rgba(255, 255, 255, .4)), linear-gradient(0deg, rgba(255, 255, 255, .9), rgba(255, 255, 255, .4)); background-repeat: no-repeat; background-position: center top, center bottom;}
 .wm-picker_column_frame{position: absolute; z-index: 2; width: 100%; top: 50%; left: 0; transform: translateY(-50%); pointer-events: none; box-shadow: 0 0 2px rgba(0, 0, 0, .1);}
+.wm-picker_seat{position: relative;}
 .wm-picker_list{user-select: none; overflow: hidden; user-select: none; will-change: transform;}
 .wm-picker_list li{text-align: center; font-size: 16px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;}
 .wm-picker_list .active{color: @Primary; background-color: @Primary6;}
@@ -54,26 +57,25 @@ const props = defineProps({
   cancelColor: { type: String, default: '#73767A' },      // 确认按钮颜色
   confirmText: { type: String, default: '确定' },         // 确认按钮文本
   confirmColor: { type: String, default: '#0064C8' },     // 确认按钮颜色
-  optionHeight: { type: String, default: '44px' },        // 配置-单行高度
+  optionHeight: { type: Number, default: 44 },            // 配置-单行高度(px)
   optionNum: { type: Number, default: 6 },                // 配置-数量
   changeCallBack: { type: Function, default: ()=>{} },    // 回调-改变
-  isAnimate: { type: Boolean, default: true },            // 惯性动画
+  behavior: {type: String, default: 'smooth'},            // 滑动效果: auto、smooth
 });
 /* 事件 */
 const emit = defineEmits(['confirm', 'cancel', 'update:visible']);
 /* 变量 */
 const opacity = ref('0');
 const translateY = ref('100%');
+/* 是否滚动 */
+let scrollTimer: any = null;
+const isScrolling = ref(false);
+const isTouching = ref(false);
 // 对象
 let isObj = ref(false);
 const objList = ref(<any>[]);
-let objHeight=0, objTop=0, objTime:any;
 const objRefs = ref<HTMLElement[]>([]);
-const objPos = ref(<any>[]); 
-// 移动
-let startY=0, distance=0, velocity=0, lastTime=0;
-// 位置
-let objY=0, moveY=0, minY=0, maxY=0;
+const objPos = ref(<any>[]);
 
 /* 监听 */
 watch(()=>Store.state.routeAction, (val: string)=>{
@@ -95,8 +97,6 @@ onMounted(()=>{
     opacity.value = '1';
     translateY.value = '0%';
     // 默认值
-    objHeight = parseInt(props.optionHeight.split('px')[0]);
-    objTop = objHeight*props.optionNum/2-objHeight/2;
     activeValue();
   }, 100);
 });
@@ -106,7 +106,7 @@ const activeValue = (): void => {
   for(let k1 in props.active) {
     for(let k2 in objList.value[k1]) {
       if(props.active[k1]==objList.value[k1][k2].value) {
-        setTransform(parseInt(k1), parseInt(k2));
+        setScrollTop(parseInt(k1), parseInt(k2));
         continue;
       }
     }
@@ -156,112 +156,60 @@ const getPos = (): Array<any> => {
 
 /* 动态绑定 */
 const setObjRef = (el: any, index: number): void => {
-  if (el) objRefs.value[index] = el;
+  if(el) objRefs.value[index] = el;
 };
-/* 调整位置 */
-const setTransform = (index: number, k: number): void => {
-  const obj = objRefs.value[index];
-  if(!obj) return;
-  const n = objTop-k*objHeight;
-  obj.style.transform = 'translate3d(0px, '+n+'px, 0px)';
-  obj.style.transitionDuration = '0ms';
+
+/* 滚动 */
+const Scroll = (e: any, index: number): void => {
+  isScrolling.value = true;
+  clearTimeout(scrollTimer);
+  scrollTimer = setTimeout(()=>{
+    isScrolling.value = false;
+    if(!isTouching.value) {
+      setScrollTop(index);
+      setTimeout(()=>{ props.changeCallBack(getValue()); }, 300);
+    }
+  }, 200);
 }
 
 /* 开始 */
 const TouchStart = (e: any, index: number): void => {
-  // 重置
-  clearTimeout(objTime);
-  const obj = e.currentTarget;
-  obj.style.transitionDuration = '0ms';
-  // 位置
-  startY = parseInt(e.touches[0].pageY);
-  objY = parseInt(obj.style.transform.split(',')[1].split('px')[0]);
-  minY = objTop + objHeight/2;
-  maxY = objTop - objHeight*objList.value[index].length + objHeight/2;
-  // 时间
-  lastTime = Date.now();
+  isTouching.value = true;
 };
 
 /* 移动 */
 const TouchMove = (e: any): void => {
-  const currentY: number = e.touches[0].pageY;
-  distance = currentY - startY;
-  moveY = objY+distance;
-  if(moveY>minY) moveY=minY;
-  if(moveY<maxY) moveY=maxY+1;
-  e.currentTarget.style.transform = 'translate3d(0px, '+moveY+'px, 0px)';
-  // 惯性
-  const currentTime = Date.now();
-  velocity = distance/(currentTime-lastTime);
-  lastTime = currentTime;
 };
 
 /* 结束 */
 const TouchEnd = async (e: any, index: number): Promise<void> => {
-  // 位置
-  const obj = e.currentTarget;
-  // 惯性动画
-  if(props.isAnimate) {
-    velocity *= 1.5;
-    if(velocity>5 || velocity<-5) await runAnimation(obj);
+  isTouching.value = false;
+  if(!isScrolling.value) {
+    setScrollTop(index);
+    setTimeout(()=>{ props.changeCallBack(getValue()); }, 300);
   }
-  // 调整位置
-  const n = objHeight*Math.ceil(moveY/objHeight)-objHeight/2;
-  obj.style.transform = 'translate3d(0px, '+n+'px, 0px)';
-  obj.style.transitionDuration = '200ms';
-  // 联动菜单
-  if(isObj.value) {
-    getValue();
-    if(index===0) {
-      // 一级
-      setList([0, objPos.value[0], 0]);
-      setTransform(1, 0);
-      setTransform(2, 0);
-    }else if(index===1) {
-      // 二级
-      setList([0, objPos.value[0], objPos.value[1]]);
-      setTransform(2, 0);
-    }
-  }
-  props.changeCallBack(getValue());
 };
-
-/* 惯性动画 */
-const FRICTION = 0.95;
-const MIN_VELOCITY = 0.5;
-const runAnimation = (obj: any) => {
-  return new Promise(resolve => {
-    function animate() {
-      if (Math.abs(velocity) > MIN_VELOCITY && moveY<minY && moveY>maxY) {
-        velocity *= FRICTION;
-        moveY += velocity;
-        if(moveY>minY) moveY=minY;
-        if(moveY<maxY) moveY=maxY+1;
-        obj.style.transform = 'translate3d(0px, '+parseInt(moveY.toString())+'px, 0px)';
-        obj.style.transitionDuration = '0ms';
-        requestAnimationFrame(animate);
-      } else {
-        resolve(true);
-      }
-    }
-    requestAnimationFrame(animate);
-  });
-}
 
 /* 获取值 */
 const getValue = (): Array<any> => {
   let keys: Array<any> = [];
   let value: Array<any> = [];
-  let y: number = 0;
   let index: number = 0;
-  for(let k in objRefs.value) {
-    y = parseInt(objRefs.value[k].style.transform.split(',')[1].split('px')[0]);
-    index = (objTop-y)/objHeight;
+  for(let i in objRefs.value) {
+    index = parseInt((objRefs.value[i].scrollTop/props.optionHeight).toFixed(0));
     keys.push(index);
-    value.push({label: objList.value[k][index].label, value: objList.value[k][index].value});
+    value.push({label: objList.value[i][index].label, value: objList.value[i][index].value});
   }
   objPos.value = keys;
   return value;
+}
+
+/* 调整位置 */
+const setScrollTop = (index: number, n: number=0): void => {
+  const obj = objRefs.value[index];
+  if(!obj) return;
+  n = n?n:parseInt((obj.scrollTop/props.optionHeight).toFixed(0));
+  obj.scrollTop = n*props.optionHeight;
 }
 
 /* 确定 */
