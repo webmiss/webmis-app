@@ -1,7 +1,7 @@
 <template>
   <PageView bgColor="#FFF">
     <template #bar_left><i class="back ui ui_arrow_left" @click="router.go(-1)"></i></template>
-    <template #bar_title>用户登录</template>
+    <template #bar_title>{{ Env.title }}</template>
     <div class="login_ct">
       <div class="login_logo" :style="{backgroundImage:form.uname===login.local_uname&&login.img?'url('+(login.img)+')':'', backgroundSize: form.uname===login.local_uname&&login.img?'100%':'60%'}"></div>
       <ul class="login_form">
@@ -53,6 +53,7 @@ import { ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
 /* JS组件 */
+import Env from '../../config/Env';
 import Ui from '../../library/ui';
 import Time from '../../library/time';
 import Safety from '../../library/safety';
@@ -129,7 +130,7 @@ const getVcode = (): void => {
     const {code, msg, data}: any = res.data;
     if(code==0) {
       vcodeTime();
-      form.value.vcode = data.toString();
+      if(data) form.value.vcode = data.toString();
     }else if(code==4001) {
       login.value.num = data;
       vcodeTime();
