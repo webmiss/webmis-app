@@ -61,7 +61,7 @@
           <li>
             <div class="title">
               <span class="title_num" @click="router.push({path: '/order/out', query: {time: homeForm.active, state: '1'}})">
-                销售出仓<span class="redNum">{{ total.list.pay_num || 0 }}</span>
+                销售出仓<span class="redNum">{{ total.list.pay_num<99?total.list.pay_num:99 }}</span>
               </span>
             </div>
             <div class="num flex" @click="router.push({path: '/order/out', query: {time: homeForm.active}})">
@@ -116,6 +116,7 @@
 .home_total_list li:nth-child(odd){border-right: rgba(255,255,255,0.04) 1px solid;}
 .home_total_list .title{padding: 0 8px; line-height: 30px; font-size: 12px; color: rgba(255,255,255,0.8);}
 .home_total_list .title_num{position: relative;}
+.home_total_list .title_num .redNum{top: -8px; right: -14px;}
 .home_total_list .num{position: relative; line-height: 40px;}
 .home_total_list .num h3{padding: 0 8px; font-size: 25px;}
 .home_total_list .green{color: @Success;}

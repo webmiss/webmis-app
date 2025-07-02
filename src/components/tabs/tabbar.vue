@@ -10,7 +10,7 @@
     <ul class="wm-tabbar_bottom flex" :style="{height: height, color: color, backgroundColor: bgColor, boxShadow: shadow}">
       <li v-for="v in columns" @click="tabClick(v)" :style="{color: v.slot===active?activeColor:''}">
         <i class="icon" :class="v.icon">
-          <span class="redNum" v-if="v.num">{{ v.num }}</span>
+          <span class="redNum" v-if="v.num">{{ v.num<99?v.num:99 }}</span>
         </i>
         <span class="name">{{ v.label }}</span>
       </li>
@@ -25,7 +25,7 @@
 .wm-tabbar_bottom li{display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: center;}
 .wm-tabbar_bottom .icon{position: relative; font-size: 24px;}
 .wm-tabbar_bottom .name{zoom: 0.8; font-size: 12px; padding-top: 4px;}
-.wm-tabbar_bottom .redNum{margin-top: -8px; right: -14px;}
+.wm-tabbar_bottom .redNum{top: -8px; right: -14px;}
 </style>
 
 <script setup lang="ts">

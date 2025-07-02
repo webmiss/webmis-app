@@ -22,7 +22,9 @@
                 <span class="text nowrap" v-if="v.sendContent">[草稿]{{ v.sendContent}}</span>
                 <span class="text nowrap" v-if="v.format===1">[{{ isImgage(v.content.type)?'图片':'文件' }}] {{ v.content.name }}</span>
                 <span class="text nowrap" v-else>{{ v.content}}</span>
-                <span class="num" v-if="v.num">{{ v.num }}</span>
+                <span class="num" v-if="v.num">
+                  <span class="redNum">{{ v.num<99?v.num:99 }}</span>
+                </span>
               </div>
             </div>
           </li>
@@ -51,7 +53,8 @@
 .msg_list_info .time{font-size: 12px; color: @Info;}
 .msg_list_info .msg{line-height: 20px;}
 .msg_list_info .text{display: block; width: calc(100% - 40px); color: @Info;}
-.msg_list_info .num{padding: 0 6px; font-size: 12px; background-color: @Danger; color: #FFF; border-radius: 10px;}
+.msg_list_info .num{position: relative;}
+.msg_list_info .num .redNum{zoom: 1.1; right: 0;}
 </style>
 
 <script setup lang="ts">
