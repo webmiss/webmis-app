@@ -71,6 +71,7 @@ const translateY = ref('100%');
 let scrollTimer: any = null;
 const isScrolling = ref(false);
 const isTouching = ref(false);
+const isDefault = ref(false);
 // 对象
 let isObj = ref(false);
 const objList = ref(<any>[]);
@@ -106,6 +107,7 @@ const activeValue = (): void => {
   for(let k1 in props.active) {
     for(let k2 in objList.value[k1]) {
       if(props.active[k1]==objList.value[k1][k2].value) {
+        isDefault.value = true;
         setScrollTop(parseInt(k1), parseInt(k2));
         continue;
       }
@@ -166,8 +168,11 @@ const Scroll = (e: any, index: number): void => {
   scrollTimer = setTimeout(()=>{
     isScrolling.value = false;
     if(!isTouching.value) {
-      setScrollTop(index);
-      setTimeout(()=>{ props.changeCallBack(getValue()); }, 300);
+      setScrollTop(index, -1);
+      setTimeout(()=>{
+        props.changeCallBack(getValue());
+        if(!isDefault.value) getLinkage(index);
+      }, 300);
     }
   }, 200);
 }
@@ -184,11 +189,27 @@ const TouchMove = (e: any): void => {
 /* 结束 */
 const TouchEnd = async (e: any, index: number): Promise<void> => {
   isTouching.value = false;
+  isDefault.value = false;
   if(!isScrolling.value) {
-    setScrollTop(index);
-    setTimeout(()=>{ props.changeCallBack(getValue()); }, 300);
+    setScrollTop(index, -1);
+    setTimeout(()=>{
+      props.changeCallBack(getValue());
+      getLinkage(index);
+    }, 300);
   }
 };
+
+/* 联动菜单 */
+const getLinkage = (index: number): void => {
+  if(index===0) {
+    setList([0, objPos.value[0], 0]);
+    setScrollTop(1, 0);
+    setScrollTop(2, 0);
+  }else if(index===1) {
+    setList([0, objPos.value[0], objPos.value[1]]);
+    setScrollTop(2, 0);
+  }
+}
 
 /* 获取值 */
 const getValue = (): Array<any> => {
@@ -208,7 +229,7 @@ const getValue = (): Array<any> => {
 const setScrollTop = (index: number, n: number=0): void => {
   const obj = objRefs.value[index];
   if(!obj) return;
-  n = n?n:parseInt((obj.scrollTop/props.optionHeight).toFixed(0));
+  n = n>=0?n:parseInt((obj.scrollTop/props.optionHeight).toFixed(0));
   obj.scrollTop = n*props.optionHeight;
 }
 
