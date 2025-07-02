@@ -235,7 +235,9 @@ const setScrollTop = (index: number, n: number=0): void => {
 
 /* 确定 */
 const subConfirm = (): void => {
-  emit('confirm', getValue(), objPos.value);
+  if(!isTouching.value) {
+    emit('confirm', getValue(), objPos.value);
+  }
   close();
 };
 
