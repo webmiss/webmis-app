@@ -155,7 +155,6 @@ import Format from '../../library/format';
 /* 组件 */
 import PageView from '../../components/view/page.vue';
 import ScrollView from '../../components/view/scroll.vue';
-import { title } from 'process';
 
 // 公共
 const { proxy } = getCurrentInstance() as any ;
@@ -212,7 +211,7 @@ const showMore = async (): Promise<void> => {
     ]
   });
   if(res.confirm) {
-    if(res.content.value==='clear') console.log('clear');;
+    if(res.content.value==='clear') msgDel();
   }
 }
 
@@ -403,6 +402,19 @@ const msgClear = (): void => {
   for(let v of state.msg.group) {
     if(v.gid===state.msg.gid && v.fid===state.msg.fid) v.sendContent = '';
   }
+}
+/* 消息-删除 */
+const msgDel = (): void => {
+  // 请求
+  Request.Post('msg/del?lang='+state.lang, {
+    token: state.token,
+    gid: state.msg.gid,
+    fid: state.msg.fid,
+  }, (res:any)=>{
+    const {code, msg} = res.data;
+    if(code===0) onRefresh();
+    else return Ui.Toast(msg);
+  });
 }
 
 /* 下拉刷新 */

@@ -6,7 +6,7 @@
       <div class="update_load" :style="{backgroundImage: 'linear-gradient(to right, #6FB737, #6FB737 '+update.loading+', #000000 '+update.loading+', #000000 100%)'}"></div>
       <div class="update_msg" v-html="update.msg "></div>
       <div class="update_bottom">
-        <wmButton type="primary" effect="dark" :disabled="!update.down" @click="updateDown()">{{ update.button }}</wmButton>
+        <wmButton type="primary" effect="dark" height="48px" :disabled="!update.down" @click="updateDown()">{{ update.button }}</wmButton>
       </div>
     </div>
     <div class="update_copy">{{ copy }}</div>
@@ -15,8 +15,8 @@
 
 <style lang="less" scoped>
 .update_body{position: absolute; z-index: 1000; width: 100%; height: 100%;}
-.update_ct{position: absolute; width: calc(100% - 80px); left: 50%; top: 40%; transform: translate(-50%, -50%);}
-.update_logo{margin: 16px auto; width: 160px; height: 160px; border: rgba(0, 0, 0, 0.9) 1px solid; background-size: 60%; background-image: url('../../assets/logo.svg'); border-radius: 50%; background-repeat: no-repeat; background-position: center; transition: All 0.5s ease-in-out;}
+.update_ct{position: absolute; width: calc(100% - 80px); left: 50%; top: 45%; transform: translate(-50%, -50%);}
+.update_logo{margin: 16px auto; width: 160px; height: 160px; background-size: 70%; background-image: url('../../assets/logo.svg'); border-radius: 50%; background-repeat: no-repeat; background-position: center; transition: All 0.5s ease-in-out;}
 .update_load{margin: 8px auto; height: 6px; border-radius: 3px;}
 .update_title{line-height: 48px; text-align: center; font-size: 24px;}
 .update_msg{line-height: 24px; text-align: center;}
@@ -25,12 +25,10 @@
 </style>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
-import { useStore } from 'vuex';
+import { ref, watch } from 'vue';
 /* JS组件 */
 import Env from '../../config/Env';
 import Ui from '../../library/ui';
-import Plus from '../../library/plus';
 import Request from '../../library/request';
 /* 组件 */
 import wmButton from '../../components/form/button/index.vue';
@@ -43,11 +41,8 @@ const props = defineProps({
 });
 const emit = defineEmits(['update:show']);
 // 状态
-const store = useStore();
-const state = store.state;
 const title: string = Env.title+' '+Env.version;
 const copy: string = Env.copy;
-const cfg: any = Env.update();
 // 变量
 const isShow = ref(false);
 // 更新APP
@@ -55,32 +50,26 @@ const update = ref({os: '', down:false, loading:'1%', msg:'检测更新', file:'
 
 /* 监听 */
 watch(()=>props.show, (val:boolean)=>{
-  isShow.value = val;
+  if(val) loadData();
 }, { deep: true });
-
-/* 创建完成 */
-onMounted(()=>{
-  if(cfg.start) loadData();
-});
 
 /* 加载数据 */
 const loadData = (): void => {
-  Plus.Ready(()=>{
-    // @ts-ignore
-    update.value.os = plus.os.name || '';
-    // update.value.os = 'Android';
-    Request.Post('index/version', {
-      os: update.value.os,
-    }, (res:any)=>{
-      const {code, msg, data} = res.data;
-      if(code===0 && data.version!==Env.version) {
-        isShow.value = true;
-        update.value.down = true;
-        update.value.file = data.file;
-        update.value.size = data.size;
-        update.value.msg = '新版本: '+data.version+'&nbsp;&nbsp;大小: '+(data.size/1024/1024).toFixed(2)+'MB';
-      } else Ui.Toast(msg);
-    });
+  // @ts-ignore
+  update.value.os = (plus.os.name as string).toLowerCase() || 'android';
+  // update.value.os = 'android';
+  Request.Post('index/version', {
+    os: update.value.os,
+    version: Env.version,
+  }, (res:any)=>{
+    const {code, msg, data} = res.data;
+    if(code===0 && data.version!==Env.version) {
+      isShow.value = true;
+      update.value.down = true;
+      update.value.file = data.file;
+      update.value.size = data.size;
+      update.value.msg = '新版本: '+data.version+'&nbsp;&nbsp;大小: '+(data.size/1024/1024).toFixed(2)+'MB';
+    } else Ui.Toast(msg);
   });
 }
 
@@ -89,7 +78,7 @@ const updateDown = (): void => {
   update.value.down = false;
   update.value.button = '正在下载';
   // 安卓手机
-  if(update.value.os=='Android') {
+  if(update.value.os=='android') {
     // @ts-ignore 安卓手机
     let down = plus.downloader.createDownload(update.value.file, {
       'timeout': 0,
@@ -117,10 +106,10 @@ const updateDown = (): void => {
       update.value.msg = '正在下载：'+update.value.loading;
       if (complete >= 100) update.value.msg = '下载完成，安装并重启';
     });
-  }else if(update.value.os=='iOS'){
+  }else if(update.value.os=='ios'){
     // 苹果手机
     Ui.Toast('请在桌面查看安装进度!');
-    window.open(cfg.iosUrl);
+    window.open(update.value.file);
     setTimeout(()=>{
       // @ts-ignore
       plus.runtime.quit();

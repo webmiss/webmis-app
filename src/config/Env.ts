@@ -2,6 +2,7 @@
 export default class Env {
 
   public static mode: string = '';              // 模式: 开发(dev)
+  public static isUpdate: boolean = true;       // 检测更新
   public static isSocket: boolean = false;      // Socket开启
   public static isLogin: boolean = true;        // 是否验证登录
   public static startTime: number = 3000;       // 启动停留时间
@@ -44,14 +45,6 @@ export default class Env {
       channel: 'api',           // 频道
       time: 3000,               // 重连时间
       heartbeat: 10000,         // 心跳时间
-    }
-  }
-
-  /* Update */
-  public static update(): object {
-    return {
-      start: true,              // 启动
-      iosUrl: 'itms-apps://itunes.apple.com/cn/app/tao-bao-sui-shi-sui-xiang/id387682726?mt=8',
     }
   }
 

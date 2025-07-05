@@ -2,7 +2,7 @@
   <!-- 启动页 -->
   <Start :time="Env.startTime"></Start>
   <!-- 软件升级 -->
-  <Update></Update>
+  <Update :show="isUpdate"></Update>
   <!-- Socket -->
   <Socket v-if="state.isLogin"></Socket>
   <!-- 路由 -->
@@ -47,6 +47,7 @@ const state = store.state;
 const route = useRoute();
 // 变量
 const transitionName = ref('');         // 页面切换样式
+const isUpdate = ref(false);            // 更新软件
 
 /* 监听 */
 watch(()=>route.path, (now: string, old: string)=>{
@@ -82,6 +83,8 @@ onMounted(()=>{
 
   /* 手机设置 */
   Plus.Ready(()=>{
+    // 检测更新
+    if(Env.isUpdate) isUpdate.value = true;
     // @ts-ignore 竖屏
     plus.screen.lockOrientation("portrait-primary");
     // @ts-ignore 状态栏-文本颜色
@@ -106,6 +109,8 @@ onMounted(()=>{
       backcount++;
       setTimeout(()=>{ backcount=0; },2000);
     });
+    // @ts-ignore 关闭启动界面
+    plus.navigator.closeSplashscreen();
   });
 
   /* 首页位置 */
