@@ -5,7 +5,7 @@
 </style>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { watch } from 'vue';
 import { useStore } from 'vuex';
 /* UI组件 */
 import Env from '../../config/Env';
@@ -19,10 +19,11 @@ let socketCfg: any = new Env().socket();
 let socketInterval: any = null;
 let heartbeatInterval: any = null;
 
-/* 创建完成 */
-onMounted(()=>{
-  if(Env.isSocket) socketStart();
-});
+/* 监听 */
+watch(()=>state.isLogin, (val: boolean)=>{
+  if(val && Env.isSocket) socketStart();
+  else socketClose();
+}, { deep: true });
 
 /* 路由 */
 const router = (d: any): void => {

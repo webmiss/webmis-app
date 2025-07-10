@@ -4,7 +4,7 @@
   <!-- 软件升级 -->
   <Update :show="isUpdate"></Update>
   <!-- Socket -->
-  <Socket v-if="state.isLogin"></Socket>
+  <Socket></Socket>
   <!-- 路由 -->
   <router-view v-slot="{ Component, route }">
     <transition :name="transitionName">
