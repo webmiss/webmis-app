@@ -3,7 +3,7 @@ export default class Env {
 
   public static mode: string = '';              // 模式: 开发(dev)
   public static isUpdate: boolean = true;       // 检测更新
-  public static isSocket: boolean = false;      // Socket开启
+  public static isSocket: boolean = true;       // Socket开启
   public static isLogin: boolean = true;        // 是否验证登录
   public static startTime: number = 3000;       // 启动停留时间
   public static title: string = 'WebMIS';       // 项目名称
