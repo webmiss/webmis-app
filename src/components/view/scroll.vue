@@ -1,5 +1,5 @@
 <template>
-  <div class="wm-scroll_body" :style="{backgroundColor: bgColor, color: color}">
+  <div class="wm-scroll_body" :style="{width:width, height:height, backgroundColor: bgColor, color: color}">
     <div class="wm-scroll_ct" :style="{scrollBehavior: behavior as any}" ref="freshContainer" @touchstart.passive="TouchStart" @touchmove.passive="TouchMove" @touchend.passive="TouchEnd" @scroll="Scroll">
       <!-- 下拉刷新 -->
       <div class="wm-scroll_refresh" :style="{marginTop: '-'+upper+'px', height: upper+'px', lineHeight: upper+'px', transform: `translateY(${distance}px)`}">
@@ -21,10 +21,10 @@
 </template>
 
 <style lang="less">
-.wm-scroll_body{width: 100%; height: 100%;}
+.wm-scroll_body{overflow: hidden;}
 .wm-scroll_ct{position: relative; width: 100%; height: 100%; overflow-y: auto; touch-action: pan-y;}
 .wm-scroll_refresh{position: absolute; z-index: 99; left: 0; top: 0; width: 100%; text-align: center; transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); transform: translateZ(0);}
-.wm-scroll_load{position: fixed; z-index: 99; bottom: 0; width: 100%; text-align: center;}
+.wm-scroll_load{position: sticky; z-index: 99; bottom: 0; width: 100%; text-align: center;}
 </style>
 
 <script setup lang="ts">
@@ -35,6 +35,8 @@ const props = defineProps({
   refreshing: {type: Boolean, default: false},        // 刷新中
   loading: {type: Boolean, default: false},           // 加载中
   finished: {type: Boolean, default: false},          // 加载中
+  width: {type: String, default: '100%'},             // 宽
+  height: {type: String, default: '100%'},            // 高
   color: {type: String, default: ''},                 // 文本颜色
   bgColor: {type: String, default: ''},               // 背景颜色
   upper: {type: Number, default: 64},                 // 顶部距离

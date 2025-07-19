@@ -14,7 +14,7 @@
               <span>-</span>
               <input type="text" :value="v.etime" placeholder="结束时间" @blur="subConfirm('etime', $event)">
             </div>
-            <div v-else @click="subConfirm('text', v)">{{ v.label }}</div>
+            <div v-else @click="subConfirm('text', v)" :style="v.style || {}">{{ v.label }}</div>
           </li>
           <li v-if="showCancel" class="mtop10" :style="{color: cancelColor}" @click="subCancel()">{{ cancelText }}</li>
         </ul>
