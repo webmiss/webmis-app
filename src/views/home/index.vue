@@ -17,16 +17,10 @@
 </style>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onActivated } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 
-/* JS组件 */
-import Env from '../../config/Env';
-/* UI组件 */
-import Ui from '../../library/ui';
-import Request from '../../library/request';
-import Storage from '../../library/storage';
 /* 组件 */
 import TabBar from '../../components/tabs/tabbar.vue';
 import Stock from './stock.vue';
@@ -45,19 +39,7 @@ const tabbar = ref({active: 'home', color: '', bgColor: '', activeColor: '', col
   {label: '消息', icon: 'icons icon_msg', slot: 'msg', num: state.msg.num},
   {label: '我的', icon: 'icons icon_me', slot: 'me'},
 ]});
-// Token验证
-let TokenTime: any = null;
-const verifyTokenTime = ref(30000);     // 间隔时间
 
-/* 监听-登录状态 */
-watch(()=>state.isLogin, (val: boolean)=>{
-  if(val) {
-    clearInterval(TokenTime);
-    TokenTime = setInterval(()=>{ verifyToken(); }, verifyTokenTime.value);
-  } else {
-    setTimeout(()=>{ router.push({path: '/user/login'}); }, 1000);
-  }
-}, { deep: true });
 /* 监听-消息数量 */
 watch(()=>state.msg.num, (val: number)=>{
   tabbar.value.columns[1].num = val;
@@ -67,10 +49,6 @@ watch(()=>state.msg.num, (val: number)=>{
 onMounted(()=>{
   // 首页数据
   tabChange({slot: 'home'});
-});
-onActivated(()=>{
-  /* 验证登录 */
-  if(Env.isLogin) isLogin();
 });
 
 /* 切换菜单 */
@@ -84,57 +62,6 @@ const tabChange = (d: any): void => {
     tabbar.value.bgColor = '#FFF';
     tabbar.value.activeColor = '#0064C8';
   }
-}
-
-/* 验证登录 */
-const isLogin = (): void => {
-  const token: string = Storage.getItem('token') || '';
-  if(!token) setTimeout(()=>{ router.push({path: '/user/login'}); }, 1000);
-  else {
-    state.token = token;
-    verifyToken(true);
-  }
-}
-
-/* 验证Token */
-const verifyToken = (uinfo: boolean=false): void => {
-  if(!state.token) return;
-  // 请求
-  Request.Post('user/token', {token: state.token, uinfo: uinfo}, (res:any)=>{
-    const {code, msg, data}: any = res.data;
-    if(code==0 && data.token_time>0) {
-      state.isLogin = true;
-      // 修改密码
-      if(!state.isPasswd && state.lang) state.isPasswd = data.isPasswd;
-      // 用户信息
-      if(Object.keys(data.uinfo).length!=0) {
-        state.uinfo = data.uinfo;
-        Storage.setItem('uname', data.uinfo.uname);
-        Storage.setItem('uinfo', JSON.stringify(data.uinfo));
-        Storage.setItem('user_img', data.uinfo.img);
-      }
-    } else {
-      Ui.Toast(msg);
-      logout().then(()=>{
-        router.push({path: '/user/login'});
-      });
-    }
-  },()=>{
-    Ui.Toast('网络错误');
-    logout().then(()=>{
-      router.push({path: '/user/login'});
-    });
-  });
-}
-
-/* 退出登录 */
-const logout = async (): Promise<void> => {
-  // 缓存信息
-  state.isLogin = false;
-  state.token = '';
-  state.uinfo = {};
-  Storage.removeItem('token');
-  Storage.removeItem('uinfo');
 }
 
 </script>

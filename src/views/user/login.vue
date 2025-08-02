@@ -1,9 +1,9 @@
 <template>
   <PageView bgColor="#FFF">
-    <template #bar_left><i class="back ui ui_arrow_left" @click="router.go(-1)"></i></template>
+    <template #bar_left><i class="back ui ui_arrow_left" @click="state.isLogin=true;router.go(-1)"></i></template>
     <template #bar_title>{{ Env.title }}</template>
     <div class="login_ct">
-      <div class="login_logo" :style="{backgroundImage:form.uname===login.local_uname&&login.img?'url('+(login.img)+')':'', backgroundSize: form.uname===login.local_uname&&login.img?'100%':'60%'}"></div>
+      <div class="login_logo" :style="{backgroundImage:form.uname===login.local_uname&&login.img?'url('+(login.img)+')':'', backgroundSize: form.uname===login.local_uname&&login.img?'100%':'70%'}"></div>
       <ul class="login_form">
         <li>
           <wmInput v-model:value="form.uname" icon="ui ui_user" padding="0 10px 0 40px" :placeholder="form.type==='tel'?'手机号码':'用户名 / 手机号码 / 邮箱'" @keyup.enter="clickLogin()" enterkeyhint="go"></wmInput>
@@ -38,7 +38,7 @@
 <style lang="less" scoped>
 .login_body{position: relative; background-color: #FFF; width: 100%; height: 100%;}
 .login_ct{position: absolute; width: calc(100% - 64px); max-width: 360px; min-width: 240px; left: 50%; top: 48%; transform: translate(-50%, -50%);}
-.login_logo{margin: 16px auto; width: 160px; height: 160px; background-image: url('../../assets/logo.svg'); background-size: 60%; background-repeat: no-repeat; background-position: center; background-color: #F2F4F6; border-radius: 50%; transition: All 0.5s ease-in-out;}
+.login_logo{margin: 16px auto; width: 160px; height: 160px; background-image: url('../../assets/logo.svg'); background-repeat: no-repeat; background-position: center; background-color: #FFF; border-radius: 50%; transition: All 0.5s ease-in-out;}
 .login_form{overflow: hidden;}
 .login_form li{position: relative; padding: 10px;}
 .login_form .vcode{position: absolute; z-index: 1; height: 40px; top: 50%; right: 10px; transform: translateY(-50%); border-radius: 4px;}
@@ -51,7 +51,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
-import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
+import { useRouter, onBeforeRouteLeave } from 'vue-router';
 /* JS组件 */
 import Env from '../../config/Env';
 import Ui from '../../library/ui';
@@ -68,7 +68,6 @@ import wmCheckbox from '../../components/form/checkbox/index.vue';
 // 状态
 const store = useStore();
 const state = store.state;
-const route = useRoute();
 const router = useRouter();
 // 变量
 let time: any;
