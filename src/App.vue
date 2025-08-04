@@ -76,7 +76,7 @@ watch(()=>route.path, (now: string, old: string)=>{
 
 /* 监听-登录状态 */
 watch(()=>state.isLogin, (val: boolean)=>{
-  if(val) verifyToken(true);
+  verifyToken(true);
 }, { deep: true });
 
 /* 加载完成 */
@@ -136,6 +136,7 @@ onMounted(()=>{
 
 /* 验证Token */
 const verifyToken = (uinfo: boolean=false): void => {
+  // 缓存
   const token: string = Storage.getItem('token') as string || '';
   if(!token) {
     state.isLogin = false;
