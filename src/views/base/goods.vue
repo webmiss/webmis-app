@@ -250,6 +250,7 @@
 import { ref, onMounted, getCurrentInstance } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
+import { env, scan } from 'dingtalk-jsapi';
 /* JS组件 */
 import Ui from '../../library/ui';
 import Request from '../../library/request';
@@ -312,8 +313,15 @@ const serachVal = (val: string): void => {
 
 /* 扫码 */
 const openScan = async (): Promise<void> => {
-  const res = await proxy.$showScan({title:'扫描商品编码'});
-  if(res.confirm) serachVal(res.content);
+  if(env.platform==='notInDingTalk') {
+    const res = await proxy.$showScan({title:'扫描商品编码'});
+    if(res.confirm) serachVal(res.content);
+  } else {
+    // 钉钉
+    scan({type: 'bar', success: (res: any)=>{
+      serachVal(res.text);
+    }});
+  }
 }
 
 /* 更多 */
