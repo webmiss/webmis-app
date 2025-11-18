@@ -91,10 +91,11 @@ onMounted(()=>{
     if (Math.abs(window.orientation) === 90) Ui.Toast('请切换竖屏方式');
   }, false);
 
+  /* 检测更新 */
+  if(Env.isUpdate) isUpdate.value = true;
+
   /* 手机设置 */
   Plus.Ready(()=>{
-    // 检测更新
-    if(Env.isUpdate) isUpdate.value = true;
     // @ts-ignore 竖屏
     plus.screen.lockOrientation("portrait-primary");
     // @ts-ignore 状态栏-文本颜色

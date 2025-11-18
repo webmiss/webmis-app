@@ -56,19 +56,25 @@ watch(()=>props.show, (val:boolean)=>{
 /* 加载数据 */
 const loadData = (): void => {
   // @ts-ignore
-  update.value.os = (plus.os.name as string).toLowerCase() || 'android';
+  update.value.os = (window as any).plus?(plus.os.name as string).toLowerCase():'web';
   // update.value.os = 'android';
   Request.Post('index/version', {
     os: update.value.os,
     version: Env.version,
   }, (res:any)=>{
     const {code, msg, data} = res.data;
-    if(code===0 && data.version!==Env.version) {
-      isShow.value = true;
-      update.value.down = true;
-      update.value.file = data.file;
-      update.value.size = data.size;
-      update.value.msg = '新版本: '+data.version+'&nbsp;&nbsp;大小: '+(data.size/1024/1024).toFixed(2)+'MB';
+    if(code===0) {
+      if(data.version===Env.version) return;
+      // 刷新
+      if(data.os==='web') {
+        setTimeout(()=>{ window.location.reload(); }, 3000);
+      } else {
+        isShow.value = true;
+        update.value.down = true;
+        update.value.file = data.file;
+        update.value.size = data.size;
+        update.value.msg = '新版本: '+data.version+'&nbsp;&nbsp;大小: '+(data.size/1024/1024).toFixed(2)+'MB';
+      }
     } else Ui.Toast(msg);
   });
 }

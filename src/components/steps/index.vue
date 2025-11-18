@@ -4,6 +4,7 @@
       <div class="wm-steps_title">
         <h2 v-if="v.label">{{ v.label }}</h2>
         <span class="time">{{ v.time }}</span>
+        <span class="status" v-if="v.status" v-html="v.status"></span>
       </div>
       <div class="wm-steps_text" v-html="v.value"></div>
     </div>
@@ -21,6 +22,7 @@
 .wm-steps_title::after{left: -25px; width: 8px; height: 8px; background-color: @Info;}
 .wm-steps_title h2{font-size: 15px; padding-right: 8px; font-weight: bold;}
 .wm-steps_title .time{font-size: 14px; color: @Info;}
+.wm-steps_title .status{position: absolute; right: 0; font-size: 12px;}
 .wm-steps_text{line-height: 24px;}
 .wm-steps.active .wm-steps_title::after{background-color: @Primary;}
 .wm-steps.active,.wm-steps.active .time{color: @Primary;}
@@ -31,7 +33,7 @@
 /* 参数 */
 const props = defineProps({
   active: { type: Number, default: 0 },             // 默认值
-  options: { type: Array<any>, default: [] },       // 数据: [{time:'', label:'', value:''}]
+  options: { type: Array<any>, default: [] },       // 数据: [{time:'', label:'', value:'', status:''}]
 });
 
 </script>
