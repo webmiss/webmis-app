@@ -91,7 +91,21 @@ onMounted(()=>{
     objList.value = props.columns;
   } else {
     isObj.value = true;
-    setList(getPos());
+    // 位置
+    let pos: Array<any> = [0, 0, 0];
+    for(let k1 in props.columns) {
+      if(props.active[0]==props.columns[k1].value) pos[0] = 0;
+      if(!props.columns[k1].children) continue;
+      for(let k2 in props.columns[k1].children) {
+        if(props.active[0]==props.columns[k1].value && props.active[1]==props.columns[k1].children[k2].value) pos[1] = k1;
+        if(!props.columns[k1].children[k2].children) continue;
+        for(let k3 in props.columns[k1].children[k2].children) {
+          if(props.active[0]==props.columns[k1].value && props.active[1]==props.columns[k1].children[k2].value && props.active[2]==props.columns[k1].children[k2].children[k3].value) pos[2] = k2;
+        }
+      }
+    }
+    // 默认数据
+    setList(pos);
   }
   setTimeout(()=>{
     // 动画
@@ -136,24 +150,6 @@ const setList = (pos: Array<any>=[0, 0, 0]): void => {
   if(arr1.length) objList.value.push(arr1);
   if(arr2.length) objList.value.push(arr2);
   if(arr3.length) objList.value.push(arr3);
-}
-
-/* 获取位置 */
-const getPos = (): Array<any> => {
-  let pos: Array<any> = [0, 0, 0];
-  if(!props.active.length) return pos;
-  for(let k1 in props.columns) {
-    if(props.active[0]==props.columns[k1].value)  pos[0] = 0;
-    if(!props.columns[k1].children) continue;
-    for(let k2 in props.columns[k1].children) {
-      if(props.active[1]==props.columns[k1].children[k2].value) pos[1] = k1;
-      if(!props.columns[k1].children[k2].children) continue;
-      for(let k3 in props.columns[k1].children[k2].children) {
-        if(props.active[2]==props.columns[k1].children[k2].children[k3].value) pos[2] = k2;
-      }
-    }
-  }
-  return pos;
 }
 
 /* 动态绑定 */

@@ -168,8 +168,8 @@ export default class Time {
         n = this.daysInMonth(y, m);
         for(let d=1; d<=n; d++) {
           // 限制
-          if(m===m1 && d<d1) continue;
-          if(m===m2 && d>d2) continue;
+          if(y===y1 && m===m1 && d<d1) continue;
+          if(y===y2 && m===m2 && d>d2) continue;
           // 日
           s = d<10?'0'+d:d.toString();
           c2.push({label: s+'日', value: s});
