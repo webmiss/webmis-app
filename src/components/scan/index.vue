@@ -1,8 +1,8 @@
 <template>
   <Teleport to="body">
     <div v-if="visible" class="wm-scan_body">
-      <div class="wm-scan_mask" :style="{opacity: opacity}"></div>
-      <div class="wm-scan_content" :style="{transform: 'translate3D('+translateX+', 0, 0)', opacity: opacity}">
+      <div class="wm-scan_mask" :style="{transition: 'opacity '+time, opacity: opacity}"></div>
+      <div class="wm-scan_content" :style="{transition: 'transform '+time+' ease-in-out, opacity '+time, transform: 'translate3D('+translateX+', 0, 0)', opacity: opacity}">
         <div class="wm-scan_top" :style="{paddingTop: 'calc(8px + '+safe_top+')'}">
           <i class="ui ui_close" @click="close()"></i>
           <h2>{{ title }}</h2>
@@ -26,8 +26,8 @@
 
 <style lang="less" scoped>
 .wm-scan_body{position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%;}
-.wm-scan_mask{position: absolute; z-index: 1; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s;}
-.wm-scan_content{overflow: hidden; position: absolute; z-index: 2; left: 0; top: 0; width: 100%; height: 100%; color: #FFF; background-color: #000; transition: transform 0.3s ease-in-out, opacity 0.3s;}
+.wm-scan_mask{position: absolute; z-index: 1; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); opacity: 0;}
+.wm-scan_content{overflow: hidden; position: absolute; z-index: 2; left: 0; top: 0; width: 100%; height: 100%; color: #FFF; background-color: #000;}
 .wm-scan_top{position: relative; line-height: 40px; padding: 8px 10px; display: flex; justify-content: center; align-items: center;}
 .wm-scan_top h2{font-size: 15px; font-weight: normal;}
 .wm-scan_top .ui_close{position: absolute; left: 10px; bottom: 8px; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;}
@@ -52,6 +52,7 @@ const props = defineProps({
   width: { type: Number, default: 250 },                  // 宽
   height: { type: Number, default: 250 },                 // 高
   isClose: { type: Boolean, default: true },              // 扫码成功退出
+  time: { type: String, default: '0.3s' },                // 动画时间
 });
 const emit = defineEmits(['confirm', 'cancel', 'update:visible']);
 /* 变量 */
