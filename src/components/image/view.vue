@@ -3,15 +3,14 @@
     <div v-if="visible" class="wm-preview_body" :style="{opacity: opacity}">
       <div class="wm-preview_top" :style="{top: safe_top}">
         <i class="ui ui_close" @click="close()"></i>
-        <span>{{ page }}/{{ props.images.length }}</span>
+        <span v-if="title">{{title}}</span>
       </div>
-      <div class="wm-preview_swipe" @touchstart.passive="TouchStart" @touchmove.passive="TouchMove" @touchend.passive="TouchEnd">
+      <div class="wm-preview_swipe" @wheel.passive="wheelRoller" @touchstart.passive="TouchStart" @touchmove.passive="TouchMove" @touchend.passive="TouchEnd">
         <div ref="previewTrack" class="wm-preview_track">
-          <div v-for="img in images" class="wm-preview_item" :style="{width: width+'px'}">
+          <div class="wm-preview_item" :style="{width: width+'px'}">
             <div class="wm-preview_image">
-              <img :src="typeof img==='string'?img:img.value">
+              <img :src="url">
             </div>
-            <div class="wm-preview_label" v-if="typeof img==='object'">{{ img.label }}</div>
           </div>
         </div>
       </div>
@@ -28,68 +27,67 @@
 .wm-preview_item{position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;}
 .wm-preview_image{width: 100%; transition-property: transform;}
 .wm-preview_image img{width: 100%;}
-.wm-preview_label{line-height: 24px; padding: 8px; border-radius: 8px; max-width: calc(100% - 40px); text-align: center; position: absolute; bottom: 16px; background-color: rgba(0,0,0,0.5);}
 </style>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import Plus from '../../library/plus';
+import { ref, watch, onMounted } from 'vue';
+import Store from '../../store/index';
 
 /* 参数 */
 const props = defineProps({
   visible: {type: Boolean, default: false},               // 是否显示
-  title: {type: String, default: '标题'},                 // 标题
-  images: {type: Array<any>, default: []},                // 图片地址
-  index: {type: Number, default: 0},                      // 索引
+  title: {type: String, default: ''},                     // 标题
+  url: {type: String, default: ''},                       // 图片地址
   tolerance: {type: Number, default: 0.2},                // 滑动容差: 0-0.5scaleN
   minScale: {type: Number, default: 1},                   // 缩放: 最小
   maxScale: {type: Number, default: 3},                   // 缩放: 最大
 });
 const emit = defineEmits(['update:visible', 'update:index', 'close']);
 // 变量
-const safe_top = ref('env(safe-area-inset-top)');
-const page = ref(1);
-const width = ref(0);
 const opacity = ref('0');
+const safe_top = ref('env(safe-area-inset-top)');
+const width = ref(0);
 const previewTrack = ref(null);
+// 屏幕宽高
+const screen: Array<any> = [window.innerWidth, window.innerHeight];
 // 移动
-let startX=0, distance=0;
-let move = ref(0);
+let startX=0, startY=0, moveX=0, moveY=0, recX=0, recY=0;
 // 缩放
 const scale = ref(1);
 let isScale = false;
-let scaleN = 0;
+let scaleN = 1;
 let initialDistance = 0;
+
+/* 监听 */
+watch(()=>Store.state.routeAction, (val: string)=>{
+  if(val==='prev') close();
+},{ deep: true });
 
 /* 创建完成 */
 onMounted(()=>{
   // 初始化
   width.value = window.innerWidth;
   let obj: any = previewTrack.value;
-  obj.style.width = width.value*props.images.length+'px';
-  if(props.index && props.index<props.images.length) {
-    page.value = props.index+1;
-    move.value = -width.value*props.index;
-    obj.style.transform = 'translateX('+move.value+'px)';
-  }
+  obj.style.width = width.value+'px';
   // 动画
   opacity.value = '1';
-  // 状态栏
-  Plus.Ready(()=>{
-    // @ts-ignore
-    if(plus.os.name.toLowerCase()==='android') safe_top.value = plus.navigator.getStatusbarHeight()+'px';
-  });
+  try{
+    // @ts-ignore 状态栏
+    if(plus.os.name.toLowerCase()!=='ios') safe_top.value = plus.navigator.getStatusbarHeight()+'px';
+  } catch(e: any) {
+    safe_top.value = '0px';
+  }
 });
 
 /* 开始 */
 const TouchStart = (e: any): void => {
   isScale = false;
-  scaleN = 0;
   if(e.touches.length===2) {
     isScale = true;
     initialDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
   } else {
     startX = e.touches[0].pageX;
+    startY = e.touches[0].pageY;
   }
 };
 
@@ -98,7 +96,7 @@ const TouchMove = (e: any): void => {
   // 容器
   const obj: any = previewTrack.value;
   if(!obj) return;
-  const imgObj = obj.children[page.value-1].children[0];
+  const imgObj = obj.children[0].children[0];
   // 缩放
   if(isScale) {
     if(e.touches.length!==2) return;
@@ -109,60 +107,69 @@ const TouchMove = (e: any): void => {
     imgObj.style.transform = 'scale('+scaleN+')';
     imgObj.style.transitionDuration = '0ms';
   } else {
-    // 重置放大
-    scaleN = 0;
-    scale.value = 1;
-    for(let v of obj.children) {
-      v.children[0].style.transform = 'scale(1)';
-      v.children[0].style.transitionDuration = '300ms';
-    }
-    // 滑动
-    if(props.images.length<=1) return;
-    distance = e.touches[0].pageX - startX;
-    let x: number = move.value+distance;
-    if(x > width.value) move.value = -(props.images.length-1)*width.value;
-    else if(x < -props.images.length*width.value) move.value = 0;
-    obj.style.transform = 'translateX('+x+'px)';
+    moveX = e.touches[0].pageX - startX + recX;
+    moveY = e.touches[0].pageY - startY + recY;
+    obj.style.transform = `translate(${moveX}px, ${moveY}px)`;
     obj.style.transitionDuration = '0ms';
-    // 首尾相连
-    if(x >= 0) {
-      obj.children[props.images.length-1].style.transform = 'translateX(-'+props.images.length*width.value+'px)';
-    } else if(x <= -(props.images.length-1)*width.value) {
-      obj.children[0].style.transform = 'translateX('+props.images.length*width.value+'px)';
-    } else {
-      obj.children[0].style.transform = '';
-      obj.children[props.images.length-1].style.transform = '';
-    }
   }
 };
 
 /* 结束 */
 const TouchEnd = (): void => {
+  recX = moveX;
+  recY = moveY;
   // 缩放
   if(isScale) {
-    if(!scaleN) return;
     if(scaleN<props.minScale) scaleN=props.minScale;
     if(scaleN>props.maxScale) scaleN=props.maxScale;
     const obj: any = previewTrack.value;
-    const imgObj = obj.children[page.value-1].children[0];
-    imgObj.style.transform = 'scale('+scaleN+')';
-    imgObj.style.transitionDuration = '300ms';
+    const imgObj = obj.children[0].children[0];
     scale.value = scaleN;
-    scaleN = 0;
-  } else {
-    // 滑动
-    move.value += Math.round(distance/width.value+(distance>=0?props.tolerance:-props.tolerance))*width.value;
-    let obj: any = previewTrack.value;
-    if(obj) {
-      obj.style.transform = 'translateX('+move.value+'px)';
-      obj.style.transitionDuration = '300ms';
-    }
-    // 页码
-    let index: number = Math.abs(move.value/width.value);
-    if(index>=props.images.length) index = 0;
-    page.value = index+1;
+    imgObj.style.transform = 'scale('+scaleN+')';
   }
+  float();
 };
+
+/* 当前图片的可移动的范围 */
+const float = (): void => {
+  const obj: any = previewTrack.value;
+  if(!obj) return;
+  const imgObj = obj.children[0].children[0];
+  const imgWh: Array<any> =  [Math.floor(imgObj.offsetWidth*scaleN), Math.floor(imgObj.offsetHeight*scaleN)];
+  // 可移动的范围
+  const scope: Array<any> = [(imgWh[0] - screen[0]) / 2, (imgWh[1] - screen[1]) / 2];
+  // 图片宽大于等于屏幕
+  if(imgWh[0] > screen[0]){
+    if(recX > scope[0]) recX = scope[0];
+    if(recX < -scope[0]) recX = -scope[0];
+  }else {
+    startX = 0;
+    moveX = 0;
+    recX = 0;
+  }
+  // 图片高大于等于屏幕
+  if(imgWh[1] > screen[1]){
+    if(recY > scope[1]) recY = scope[1];
+    if(recY < -scope[1]) recY = -scope[1];
+  }else {
+    startY = 0;
+    moveY = 0;
+    recY = 0;
+  }
+  obj.style.transform = `translate(${recX}px, ${recY}px)`;
+  obj.style.transitionDuration = '300ms';
+}
+
+/* 鼠标滚轮 */
+const wheelRoller = (e: any): void => {
+  scaleN += -e.deltaY/1000;
+  if(scaleN<props.minScale) scaleN=props.minScale;
+  if(scaleN>props.maxScale) scaleN=props.maxScale;
+  const obj: any = previewTrack.value;
+  const imgObj = obj.children[0].children[0];
+  imgObj.style.transform = 'scale('+scaleN+')';
+  float();
+}
 
 /* 关闭 */
 const close = (): void => {

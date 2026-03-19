@@ -101,7 +101,7 @@ const handleScanClick = async (): Promise<void> => {
     stream.value.getTracks().forEach((track: any) => track.stop());
     // 扫描
     startScan();
-  } catch (err) {
+  } catch (err: any) {
     msg.value = err.message;
   }
 }
